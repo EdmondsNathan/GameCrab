@@ -17,8 +17,4 @@ impl CPU {
             ram: RAM::new(),
         }
     }
-
-    pub fn test_overflow(&self) {
-        // self.ram.fetch_16(65535);
-    }
 }
