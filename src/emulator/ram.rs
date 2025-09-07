@@ -40,21 +40,21 @@ impl RAM {
     pub fn fetch(&self, address: u16) -> u8 {
         match self.try_fetch(address) {
             Ok(value) => { value }
-            Err(error) => { panic!("{error}"); }
+            Err(error) => { self.try_fetch(0).unwrap() }
         }
     }
 
     pub fn fetch_signed(&self, address: u16) -> i8 {
         match self.try_fetch_signed(address) {
             Ok(value) => { value }
-            Err(error) => { panic!("{error}"); }
+            Err(error) => { self.try_fetch_signed(0).unwrap() }
         }
     }
 
     pub fn fetch_16(&self, address: u16) -> u16 {
         match self.try_fetch_16(address) {
             Ok(value) => { value }
-            Err(error) => { panic!("{error}") }
+            Err(error) => { self.try_fetch_16(0).unwrap() }
         }
     }
 }
