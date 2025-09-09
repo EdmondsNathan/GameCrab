@@ -12,8 +12,8 @@ impl CPU {
     pub fn new() -> CPU {
         CPU {
             registers: Registers::new(),
-            stack_pointer: 0,
-            program_counter: 0,
+            stack_pointer: 0xFFFE,
+            program_counter: 0x0100,
             ram: RAM::new(),
         }
     }
