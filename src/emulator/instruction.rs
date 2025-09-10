@@ -31,6 +31,10 @@ pub enum Control {
     HALT,       //76, 1-4
     DI,         //F3, 1-4
     EI,         //FB, 1-4
+    DAA,        //27, 1-4
+    SCF,        //37, 1-4
+    CPL,        //2F, 1-4
+    CCF,        //3F, 1-4
 }
 
 pub enum JR {
