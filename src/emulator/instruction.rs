@@ -1,3 +1,158 @@
-pub struct Instruction {
-    
+pub enum Instruction {
+    CB,
+    Control(Control),
+    Load16(Load16),
+    Push(PushPop),
+    Pop(PushPop),
+    Load8(Load8, Load8),
+    Arithmetic16(Arithmetic16Ops),
+    Arithmetic8(Arithmetic8Ops),
+    JumpRelative(JumpRelative),
+    Jump(Jump),
+    Restart(u8),
+    Return(Return),
+    Call(Call),
+    RLC(BitArgs),
+    RRC(BitArgs),
+    RL(BitArgs),
+    RR(BitArgs),
+    SLA(BitArgs),
+    SRA(BitArgs),
+    Swap(BitArgs),
+    SRL(BitArgs),
+    Reset(u8, BitArgs),
+    Set(u8, BitArgs),
+    Rotate(Rotate),
+}
+
+pub enum Control {
+    NOP,        //00, 1-4
+    STOP,       //10, 1-4
+    HALT,       //76, 1-4
+    DI,         //F3, 1-4
+    EI,         //FB, 1-4
+}
+
+pub enum JumpRelative {
+    I8,         //18, 2-12
+    NC,         //20, 2-8/12
+    NZ,         //30, 2-8/12
+    Z,          //28, 2-8/12
+    C,          //38, 2-8/12
+}
+
+pub enum Jump {
+    U16,        //C2, 3-16
+    HL,         //C2, 1-4
+    NZ,         //C2, 3-12/16
+    NC,         //C2, 3-12/16
+    Z,          //C2, 3-12/16
+    C,          //C2, 3-12/16
+}
+
+pub enum Return {
+    NZ,         //C0, 1-8/20
+    NC,         //D0, 1-8/20
+    Z,          //C8, 1-8/20
+    C,          //D8, 1-8/20
+    Ret,        //C9, 1-16
+    I,          //D9, 1-16
+}
+
+pub enum Call {
+    NZ,         //C4, 3-12/24
+    NC,         //D4, 3-12/24
+    Z,          //CC, 3-12/24
+    C,          //DC, 3-12/24
+    U16,        //CD, 3-24
+}
+
+pub enum Load16 {
+    BCU16,      //01, 3-12
+    DEU16,      //11, 3-12
+    HLU16,      //21, 3-12
+    SPU16,      //31, 3-12
+    A16SP,      //08, 3-20
+    SPHL,       //F9, 1-8
+}
+
+pub enum PushPop {
+    BC,
+    DE,
+    HL,
+    AF,
+}
+
+pub enum Arithmetic16Ops {
+    Inc(Arithmetic16Args),
+    Dec(Arithmetic16Args),
+    Add(Arithmetic16Args),
+    AddI8,
+    LoadI8,
+}
+
+pub enum Arithmetic16Args {
+    BC,
+    DE,
+    HL,
+    SP,
+}
+
+pub enum Load8 {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    HL,
+    HLPlus,
+    HLMinus,
+    BC,
+    DE,
+    A16,
+    U8,
+    FF00AddU8,
+    FF00AddC,
+}
+
+pub enum BitArgs {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    HL,
+}
+
+pub enum Rotate {
+    RLCA,
+    RLA,
+    RRCA,
+    RRA,
+}
+
+pub enum Arithmetic8Ops {
+    Add(Arithmetic8Args),
+    AddCarry(Arithmetic8Args),
+    Sub(Arithmetic8Args),
+    SubCarry(Arithmetic8Args),
+    And(Arithmetic8Args),
+    Or(Arithmetic8Args),
+    Xor(Arithmetic8Args),
+    Cmp(Arithmetic8Args),
+}
+pub enum Arithmetic8Args {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    HL,
+    U8,
 }
