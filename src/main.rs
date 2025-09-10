@@ -1,3 +1,5 @@
+pub mod emulator;
+
 use macroquad::prelude::*;
 
 const RESOLUTION: Vec2 = vec2(160f32, 144f32);
