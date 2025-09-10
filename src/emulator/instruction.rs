@@ -111,7 +111,7 @@ pub enum Ld8 {
     HLMinus,
     BC,
     DE,
-    A16,
+    U16,
     U8,
     FF00AddU8,
     FF00AddC,
