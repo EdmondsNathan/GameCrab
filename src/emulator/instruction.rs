@@ -136,6 +136,8 @@ pub enum Rotate {
 }
 
 pub enum Arithmetic8Ops {
+    Inc(Arithmetic8Args),
+    Dec(Arithmetic8Args),
     Add(Arithmetic8Args),
     AddCarry(Arithmetic8Args),
     Sub(Arithmetic8Args),
