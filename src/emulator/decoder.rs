@@ -1,7 +1,7 @@
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::Control::*;
 use crate::emulator::instruction::Ld16::*;
-use crate::emulator::instruction::Rotate::*;
+use crate::emulator::instruction::BitOps::*;
 use crate::emulator::instruction::*;
 
 pub fn decode(byte: u8) -> Result<Instruction, u8> {
@@ -18,7 +18,7 @@ pub fn decode(byte: u8) -> Result<Instruction, u8> {
                 0x4 => { Ok(Arithmetic8(A8Ops::Inc(A8Args::B))) }
                 0x5 => { Ok(Arithmetic8(A8Ops::Dec(A8Args::B))) }
                 0x6 => { Ok(Load8(Ld8::B, Ld8::U8)) }
-                0x7 => { Ok(Rotate(RLCA)) }
+                0x7 => { Ok(BitOp(RLCA)) }
                 0x8 => { Ok(Load16(U16SP)) }
                 0x9 => { Ok(Arithmetic16(A16Ops::Add(A16Args::BC))) }
                 0xA => { Ok(Load8(Ld8::A, Ld8::BC)) }
@@ -26,7 +26,7 @@ pub fn decode(byte: u8) -> Result<Instruction, u8> {
                 0xC => { Ok(Arithmetic8(A8Ops::Inc(A8Args::C))) }
                 0xD => { Ok(Arithmetic8(A8Ops::Dec(A8Args::C))) }
                 0xE => { Ok(Load8(Ld8::C, Ld8::U8)) }
-                0xF => { Ok(Rotate(RRCA)) }
+                0xF => { Ok(BitOp(RRCA)) }
                 _ =>   { Err(byte) }
             }
         }
@@ -39,7 +39,7 @@ pub fn decode(byte: u8) -> Result<Instruction, u8> {
                 0x4 => { Ok(Arithmetic8(A8Ops::Inc(A8Args::D))) }
                 0x5 => { Ok(Arithmetic8(A8Ops::Dec(A8Args::D))) }
                 0x6 => { Ok(Load8(Ld8::D, Ld8::U8)) }
-                0x7 => { Ok(Rotate(RLA)) }
+                0x7 => { Ok(BitOp(RLA)) }
                 0x8 => { Ok(JumpRelative(JR::I8)) }
                 0x9 => { Ok(Arithmetic16(A16Ops::Add(A16Args::DE))) }
                 0xA => { Ok(Load8(Ld8::A, Ld8::DE)) }
@@ -47,7 +47,7 @@ pub fn decode(byte: u8) -> Result<Instruction, u8> {
                 0xC => { Ok(Arithmetic8(A8Ops::Inc(A8Args::E))) }
                 0xD => { Ok(Arithmetic8(A8Ops::Dec(A8Args::E))) }
                 0xE => { Ok(Load8(Ld8::E, Ld8::U8)) }
-                0xF => { Ok(Rotate(RRA)) }
+                0xF => { Ok(BitOp(RRA)) }
                 _ =>   { Err(byte) }
             }
         }
