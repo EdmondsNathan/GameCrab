@@ -23,6 +23,7 @@ pub enum Instruction {
     Reset(u8, BitArgs),
     Set(u8, BitArgs),
     Rotate(Rotate),
+    BitOp(BitOps),
 }
 
 pub enum Control {
@@ -132,7 +133,7 @@ pub enum BitArgs {
     HL,
 }
 
-pub enum Rotate {
+pub enum BitOps {
     RLCA,
     RLA,
     RRCA,
