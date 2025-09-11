@@ -12,17 +12,6 @@ pub enum Instruction {
     Restart(u8),
     Return(Ret),
     Call(Calls),
-    RLC(BitArgs),
-    RRC(BitArgs),
-    RL(BitArgs),
-    RR(BitArgs),
-    SLA(BitArgs),
-    SRA(BitArgs),
-    Swap(BitArgs),
-    SRL(BitArgs),
-    Reset(u8, BitArgs),
-    Set(u8, BitArgs),
-    Rotate(Rotate),
     BitOp(BitOps),
 }
 
@@ -138,6 +127,17 @@ pub enum BitOps {
     RLA,
     RRCA,
     RRA,
+    RLC(BitArgs),
+    RRC(BitArgs),
+    RL(BitArgs),
+    RR(BitArgs),
+    SLA(BitArgs),
+    SRA(BitArgs),
+    Swap(BitArgs),
+    SRL(BitArgs),
+    Bit(u8, BitArgs),
+    Reset(u8, BitArgs),
+    Set(u8, BitArgs),
 }
 
 pub enum A8Ops {
