@@ -348,3 +348,348 @@ pub fn decode(byte: u8) -> Result<Instruction, u8> {
         _ => { Err(byte) }
     }
 }
+
+pub fn decode_cb(byte: u8) -> Result<Instruction, u8> {
+    let high_nibble = byte & 0xF0;
+    let low_nibble = byte & 0x0F;
+
+    match high_nibble {
+        0x0 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(RLC(BitArgs::B))) }
+                0x1 => { Ok(BitOp(RLC(BitArgs::C))) }
+                0x2 => { Ok(BitOp(RLC(BitArgs::D))) }
+                0x3 => { Ok(BitOp(RLC(BitArgs::E))) }
+                0x4 => { Ok(BitOp(RLC(BitArgs::H))) }
+                0x5 => { Ok(BitOp(RLC(BitArgs::L))) }
+                0x6 => { Ok(BitOp(RLC(BitArgs::HL))) }
+                0x7 => { Ok(BitOp(RLC(BitArgs::A))) }
+                0x8 => { Ok(BitOp(RRC(BitArgs::B))) }
+                0x9 => { Ok(BitOp(RRC(BitArgs::C))) }
+                0xA => { Ok(BitOp(RRC(BitArgs::D))) }
+                0xB => { Ok(BitOp(RRC(BitArgs::E))) }
+                0xC => { Ok(BitOp(RRC(BitArgs::H))) }
+                0xD => { Ok(BitOp(RRC(BitArgs::L))) }
+                0xE => { Ok(BitOp(RRC(BitArgs::HL))) }
+                0xF => { Ok(BitOp(RRC(BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x1 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(RL(BitArgs::B))) }
+                0x1 => { Ok(BitOp(RL(BitArgs::C))) }
+                0x2 => { Ok(BitOp(RL(BitArgs::D))) }
+                0x3 => { Ok(BitOp(RL(BitArgs::E))) }
+                0x4 => { Ok(BitOp(RL(BitArgs::H))) }
+                0x5 => { Ok(BitOp(RL(BitArgs::L))) }
+                0x6 => { Ok(BitOp(RL(BitArgs::HL))) }
+                0x7 => { Ok(BitOp(RL(BitArgs::A))) }
+                0x8 => { Ok(BitOp(RR(BitArgs::B))) }
+                0x9 => { Ok(BitOp(RR(BitArgs::C))) }
+                0xA => { Ok(BitOp(RR(BitArgs::D))) }
+                0xB => { Ok(BitOp(RR(BitArgs::E))) }
+                0xC => { Ok(BitOp(RR(BitArgs::H))) }
+                0xD => { Ok(BitOp(RR(BitArgs::L))) }
+                0xE => { Ok(BitOp(RR(BitArgs::HL))) }
+                0xF => { Ok(BitOp(RR(BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x2 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(SLA(BitArgs::B))) }
+                0x1 => { Ok(BitOp(SLA(BitArgs::C))) }
+                0x2 => { Ok(BitOp(SLA(BitArgs::D))) }
+                0x3 => { Ok(BitOp(SLA(BitArgs::E))) }
+                0x4 => { Ok(BitOp(SLA(BitArgs::H))) }
+                0x5 => { Ok(BitOp(SLA(BitArgs::L))) }
+                0x6 => { Ok(BitOp(SLA(BitArgs::HL))) }
+                0x7 => { Ok(BitOp(SLA(BitArgs::A))) }
+                0x8 => { Ok(BitOp(SRA(BitArgs::B))) }
+                0x9 => { Ok(BitOp(SRA(BitArgs::C))) }
+                0xA => { Ok(BitOp(SRA(BitArgs::D))) }
+                0xB => { Ok(BitOp(SRA(BitArgs::E))) }
+                0xC => { Ok(BitOp(SRA(BitArgs::H))) }
+                0xD => { Ok(BitOp(SRA(BitArgs::L))) }
+                0xE => { Ok(BitOp(SRA(BitArgs::HL))) }
+                0xF => { Ok(BitOp(SRA(BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x3 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Swap(BitArgs::B))) }
+                0x1 => { Ok(BitOp(Swap(BitArgs::C))) }
+                0x2 => { Ok(BitOp(Swap(BitArgs::D))) }
+                0x3 => { Ok(BitOp(Swap(BitArgs::E))) }
+                0x4 => { Ok(BitOp(Swap(BitArgs::H))) }
+                0x5 => { Ok(BitOp(Swap(BitArgs::L))) }
+                0x6 => { Ok(BitOp(Swap(BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Swap(BitArgs::A))) }
+                0x8 => { Ok(BitOp(SRL(BitArgs::B))) }
+                0x9 => { Ok(BitOp(SRL(BitArgs::C))) }
+                0xA => { Ok(BitOp(SRL(BitArgs::D))) }
+                0xB => { Ok(BitOp(SRL(BitArgs::E))) }
+                0xC => { Ok(BitOp(SRL(BitArgs::H))) }
+                0xD => { Ok(BitOp(SRL(BitArgs::L))) }
+                0xE => { Ok(BitOp(SRL(BitArgs::HL))) }
+                0xF => { Ok(BitOp(SRL(BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x4 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Bit(0, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Bit(0, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Bit(0, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Bit(0, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Bit(0, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Bit(0, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Bit(0, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Bit(0, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Bit(1, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Bit(1, BitArgs::C))) }
+                0xA => { Ok(BitOp(Bit(1, BitArgs::D))) }
+                0xB => { Ok(BitOp(Bit(1, BitArgs::E))) }
+                0xC => { Ok(BitOp(Bit(1, BitArgs::H))) }
+                0xD => { Ok(BitOp(Bit(1, BitArgs::L))) }
+                0xE => { Ok(BitOp(Bit(1, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Bit(1, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x5 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Bit(2, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Bit(2, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Bit(2, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Bit(2, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Bit(2, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Bit(2, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Bit(2, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Bit(2, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Bit(3, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Bit(3, BitArgs::C))) }
+                0xA => { Ok(BitOp(Bit(3, BitArgs::D))) }
+                0xB => { Ok(BitOp(Bit(3, BitArgs::E))) }
+                0xC => { Ok(BitOp(Bit(3, BitArgs::H))) }
+                0xD => { Ok(BitOp(Bit(3, BitArgs::L))) }
+                0xE => { Ok(BitOp(Bit(3, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Bit(3, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x6 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Bit(4, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Bit(4, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Bit(4, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Bit(4, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Bit(4, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Bit(4, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Bit(4, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Bit(4, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Bit(5, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Bit(5, BitArgs::C))) }
+                0xA => { Ok(BitOp(Bit(5, BitArgs::D))) }
+                0xB => { Ok(BitOp(Bit(5, BitArgs::E))) }
+                0xC => { Ok(BitOp(Bit(5, BitArgs::H))) }
+                0xD => { Ok(BitOp(Bit(5, BitArgs::L))) }
+                0xE => { Ok(BitOp(Bit(5, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Bit(5, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x7 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Bit(6, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Bit(6, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Bit(6, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Bit(6, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Bit(6, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Bit(6, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Bit(6, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Bit(6, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Bit(7, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Bit(7, BitArgs::C))) }
+                0xA => { Ok(BitOp(Bit(7, BitArgs::D))) }
+                0xB => { Ok(BitOp(Bit(7, BitArgs::E))) }
+                0xC => { Ok(BitOp(Bit(7, BitArgs::H))) }
+                0xD => { Ok(BitOp(Bit(7, BitArgs::L))) }
+                0xE => { Ok(BitOp(Bit(7, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Bit(7, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x8 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Reset(0, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Reset(0, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Reset(0, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Reset(0, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Reset(0, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Reset(0, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Reset(0, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Reset(0, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Reset(1, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Reset(1, BitArgs::C))) }
+                0xA => { Ok(BitOp(Reset(1, BitArgs::D))) }
+                0xB => { Ok(BitOp(Reset(1, BitArgs::E))) }
+                0xC => { Ok(BitOp(Reset(1, BitArgs::H))) }
+                0xD => { Ok(BitOp(Reset(1, BitArgs::L))) }
+                0xE => { Ok(BitOp(Reset(1, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Reset(1, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0x9 => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Reset(2, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Reset(2, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Reset(2, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Reset(2, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Reset(2, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Reset(2, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Reset(2, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Reset(2, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Reset(3, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Reset(3, BitArgs::C))) }
+                0xA => { Ok(BitOp(Reset(3, BitArgs::D))) }
+                0xB => { Ok(BitOp(Reset(3, BitArgs::E))) }
+                0xC => { Ok(BitOp(Reset(3, BitArgs::H))) }
+                0xD => { Ok(BitOp(Reset(3, BitArgs::L))) }
+                0xE => { Ok(BitOp(Reset(3, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Reset(3, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xA => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Reset(4, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Reset(4, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Reset(4, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Reset(4, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Reset(4, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Reset(4, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Reset(4, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Reset(4, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Reset(5, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Reset(5, BitArgs::C))) }
+                0xA => { Ok(BitOp(Reset(5, BitArgs::D))) }
+                0xB => { Ok(BitOp(Reset(5, BitArgs::E))) }
+                0xC => { Ok(BitOp(Reset(5, BitArgs::H))) }
+                0xD => { Ok(BitOp(Reset(5, BitArgs::L))) }
+                0xE => { Ok(BitOp(Reset(5, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Reset(5, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xB => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Reset(6, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Reset(6, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Reset(6, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Reset(6, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Reset(6, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Reset(6, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Reset(6, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Reset(6, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Reset(7, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Reset(7, BitArgs::C))) }
+                0xA => { Ok(BitOp(Reset(7, BitArgs::D))) }
+                0xB => { Ok(BitOp(Reset(7, BitArgs::E))) }
+                0xC => { Ok(BitOp(Reset(7, BitArgs::H))) }
+                0xD => { Ok(BitOp(Reset(7, BitArgs::L))) }
+                0xE => { Ok(BitOp(Reset(7, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Reset(7, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xC => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Set(0, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Set(0, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Set(0, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Set(0, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Set(0, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Set(0, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Set(0, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Set(0, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Set(1, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Set(1, BitArgs::C))) }
+                0xA => { Ok(BitOp(Set(1, BitArgs::D))) }
+                0xB => { Ok(BitOp(Set(1, BitArgs::E))) }
+                0xC => { Ok(BitOp(Set(1, BitArgs::H))) }
+                0xD => { Ok(BitOp(Set(1, BitArgs::L))) }
+                0xE => { Ok(BitOp(Set(1, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Set(1, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xD => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Set(2, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Set(2, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Set(2, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Set(2, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Set(2, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Set(2, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Set(2, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Set(2, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Set(3, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Set(3, BitArgs::C))) }
+                0xA => { Ok(BitOp(Set(3, BitArgs::D))) }
+                0xB => { Ok(BitOp(Set(3, BitArgs::E))) }
+                0xC => { Ok(BitOp(Set(3, BitArgs::H))) }
+                0xD => { Ok(BitOp(Set(3, BitArgs::L))) }
+                0xE => { Ok(BitOp(Set(3, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Set(3, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xE => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Set(4, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Set(4, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Set(4, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Set(4, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Set(4, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Set(4, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Set(4, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Set(4, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Set(5, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Set(5, BitArgs::C))) }
+                0xA => { Ok(BitOp(Set(5, BitArgs::D))) }
+                0xB => { Ok(BitOp(Set(5, BitArgs::E))) }
+                0xC => { Ok(BitOp(Set(5, BitArgs::H))) }
+                0xD => { Ok(BitOp(Set(5, BitArgs::L))) }
+                0xE => { Ok(BitOp(Set(5, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Set(5, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        0xF => {
+            match low_nibble {
+                0x0 => { Ok(BitOp(Set(6, BitArgs::B))) }
+                0x1 => { Ok(BitOp(Set(6, BitArgs::C))) }
+                0x2 => { Ok(BitOp(Set(6, BitArgs::D))) }
+                0x3 => { Ok(BitOp(Set(6, BitArgs::E))) }
+                0x4 => { Ok(BitOp(Set(6, BitArgs::H))) }
+                0x5 => { Ok(BitOp(Set(6, BitArgs::L))) }
+                0x6 => { Ok(BitOp(Set(6, BitArgs::HL))) }
+                0x7 => { Ok(BitOp(Set(6, BitArgs::A))) }
+                0x8 => { Ok(BitOp(Set(7, BitArgs::B))) }
+                0x9 => { Ok(BitOp(Set(7, BitArgs::C))) }
+                0xA => { Ok(BitOp(Set(7, BitArgs::D))) }
+                0xB => { Ok(BitOp(Set(7, BitArgs::E))) }
+                0xC => { Ok(BitOp(Set(7, BitArgs::H))) }
+                0xD => { Ok(BitOp(Set(7, BitArgs::L))) }
+                0xE => { Ok(BitOp(Set(7, BitArgs::HL))) }
+                0xF => { Ok(BitOp(Set(7, BitArgs::A))) }
+                _ =>   { Err(byte) }
+            }
+        }
+        _ => { Err(byte) }
+    }
+}
