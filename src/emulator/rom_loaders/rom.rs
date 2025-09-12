@@ -16,12 +16,4 @@ impl ROM {
             Err(_) => { Err("INVALID ROM PATH".to_string()) }
         }
     }
-
-    pub fn dump_rom(&self) {
-        let mut i = 0;
-        for byte in &self.bytes {
-            println!("{:X?}: {:X?}", i, byte);
-            i += 1;
-        }
-    }
 }
