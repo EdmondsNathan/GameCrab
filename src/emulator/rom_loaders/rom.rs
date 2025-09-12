@@ -1,7 +1,7 @@
 use std::fs;
 
-    bytes: Vec<u8>,
 pub struct ROM {
+    pub bytes: Vec<u8>,
 }
 
 impl ROM {
