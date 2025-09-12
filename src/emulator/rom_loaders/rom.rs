@@ -5,6 +5,10 @@ pub struct ROM {
 }
 
 impl ROM {
+    pub fn new() -> ROM {
+        ROM { bytes: vec![] }
+    }
+
     pub fn try_new(path: &str) -> Result<ROM, String> {
         let rom_bytes = fs::read(path);
         match rom_bytes {
