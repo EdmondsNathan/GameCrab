@@ -1,14 +1,14 @@
 use std::fs;
 
-pub struct Rom {
     bytes: Vec<u8>,
+pub struct ROM {
 }
 
-impl Rom {
-    pub fn try_new(path: &str) -> Result<Rom, String> {
+impl ROM {
+    pub fn try_new(path: &str) -> Result<ROM, String> {
         let rom_bytes = fs::read(path);
         match rom_bytes {
-            Ok(value) => { Ok(Rom { bytes: value, }) }
+            Ok(value) => { Ok(ROM { bytes: value, }) }
             Err(_) => { Err("INVALID ROM PATH".to_string()) }
         }
     }
