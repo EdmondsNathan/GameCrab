@@ -9,52 +9,30 @@ impl RAM {
         }
     }
 
-    pub fn try_fetch(&self, address: u16) -> Result<u8, String> {
-        match address {
-            u16::MAX => { Err("Tried to access memory address ".to_string() + &address.to_string())}
-            _ => { Ok(self.memory[address as usize]) }
-        }
+    pub fn fetch(&self, address: u16) -> u8 {
+        self.memory[address as usize]
     }
 
-    pub fn try_fetch_signed(&self, address: u16) -> Result<i8, String> {
-        match self.try_fetch(address) {
-            Ok(value) => { Ok(value as i8) }
-            Err(error) => { Err(error) }
-        }
+    pub fn fetch_signed(&self, address: u16) -> i8 {
+        self.memory[address as usize] as i8
     }
 
-    pub fn try_fetch_16(&self, address: u16) -> Result<u16, String> {
-        let return_value: u16;
+    pub fn fetch_16(&self, address: u16) -> u16 {
+        let address = address as usize;
 
-        match self.try_fetch(address) {
-            Ok(value) => { return_value = (value as u16) << 8; }
-            Err(error) => { return Err(error); }
-        }
-
-        match self.try_fetch(address + 1) {
-            Ok(value) => { Ok(return_value + (value as u16)) }
-            Err(error) => { Err(error) }
-        }
+        ((self.memory[address] as u16) << 8) + (self.memory[address] as u16)
     }
 
-    pub fn fetch_wrapped(&self, address: u16) -> u8 {
-        match self.try_fetch(address) {
-            Ok(value) => { value }
-            Err(error) => { self.try_fetch(0).unwrap() }
-        }
+    pub fn set(&mut self, value: u8, address: u16) {
+        self.memory[address as usize] = value;
     }
 
-    pub fn fetch_signed_wrapped(&self, address: u16) -> i8 {
-        match self.try_fetch_signed(address) {
-            Ok(value) => { value }
-            Err(error) => { self.try_fetch_signed(0).unwrap() }
-        }
-    }
+    pub fn set_16(&mut self, value: u16, address: u16) {
+        let high_byte = (value >> 8) as u8;
+        let low_byte = (value & 0xFF) as u8;
 
-    pub fn fetch_16_wrapped(&self, address: u16) -> u16 {
-        match self.try_fetch_16(address) {
-            Ok(value) => { value }
-            Err(error) => { self.try_fetch_16(0).unwrap() }
-        }
+        let address = address as usize;
+        self.memory[address] = high_byte;
+        self.memory[address + 1] = low_byte;
     }
 }
