@@ -10,7 +10,7 @@ fn conf() -> Conf {
     Conf {
         window_title: "Game Crab".to_string(),
         window_width: SCALED_RESOLUTION.x as i32,
-        window_height: SCALED_RESOLUTION.y as i32 ,
+        window_height: SCALED_RESOLUTION.y as i32,
         high_dpi: false,
         fullscreen: false,
         sample_count: 0,
@@ -43,7 +43,7 @@ fn update_texture(texture: &Texture2D, bytes: &mut Box<[u8]>) {
     for y in 0..RESOLUTION.y as usize {
         for x in 0..RESOLUTION.x as usize {
             let start = (y * 160 * 4) + (x * 4);
-            bytes[start..start + 4].copy_from_slice(&[x as u8, 0, y as u8, 255,]);
+            bytes[start..start + 4].copy_from_slice(&[x as u8, 0, y as u8, 255]);
         }
     }
 
@@ -51,12 +51,18 @@ fn update_texture(texture: &Texture2D, bytes: &mut Box<[u8]>) {
 }
 
 fn render_texture(texture: &Texture2D) {
-    draw_texture_ex(texture, 0f32, 0f32, WHITE, DrawTextureParams {
-        dest_size: Some(SCALED_RESOLUTION),
-        rotation: 0f32,
-        flip_x: false,
-        flip_y: false,
-        pivot: None,
-        source: None
-    });
+    draw_texture_ex(
+        texture,
+        0f32,
+        0f32,
+        WHITE,
+        DrawTextureParams {
+            dest_size: Some(SCALED_RESOLUTION),
+            rotation: 0f32,
+            flip_x: false,
+            flip_y: false,
+            pivot: None,
+            source: None,
+        },
+    );
 }
