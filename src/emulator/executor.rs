@@ -1,5 +1,4 @@
 use crate::emulator::cpu::CPU;
-use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
 
 pub fn cb_instruction() {}
