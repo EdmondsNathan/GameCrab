@@ -11,6 +11,7 @@ pub struct CPU {
     pub(crate) program_counter: u16,
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
+    pub(crate) cb_mode: bool,
 }
 
 impl CPU {
@@ -21,6 +22,7 @@ impl CPU {
             program_counter: 0x0100,
             rom: ROM::new(),
             ram: RAM::new(),
+            cb_mode: false,
         }
     }
 
@@ -34,6 +36,7 @@ impl CPU {
                     program_counter: 0x0100,
                     rom,
                     ram: RAM::new(),
+                    cb_mode: false,
                 };
                 cpu.rom_into_ram();
                 cpu
