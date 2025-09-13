@@ -6,11 +6,11 @@ use crate::emulator::registers::Registers;
 use crate::emulator::rom_loaders::rom::ROM;
 
 pub struct CPU {
-    registers: Registers,
-    stack_pointer: u16,
-    program_counter: u16,
-    rom: ROM,
-    ram: RAM,
+    pub(crate) registers: Registers,
+    pub(crate) stack_pointer: u16,
+    pub(crate) program_counter: u16,
+    pub(crate) rom: ROM,
+    pub(crate) ram: RAM,
 }
 
 impl CPU {
@@ -71,43 +71,43 @@ impl CPU {
                 cb_instruction();
             }
             Control(control) => {
-                control_instruction(control);
+                control_instruction(self, control);
             }
             Load16(ld16) => {
-                load16(ld16);
+                load16(self, ld16);
             }
             Push(op) => {
-                push(op);
+                push(self, op);
             }
             Pop(op) => {
-                pop(op);
+                pop(self, op);
             }
             Load8(to, from) => {
-                load8(to, from);
+                load8(self, to, from);
             }
             Arithmetic16(op) => {
-                arithmetic16(op);
+                arithmetic16(self, op);
             }
             Arithmetic8(op) => {
-                arithmetic8(op);
+                arithmetic8(self, op);
             }
             JumpRelative(jr) => {
-                jump_relative(jr);
+                jump_relative(self, jr);
             }
             Jump(jp) => {
-                jump(jp);
+                jump(self, jp);
             }
             Restart(arg) => {
-                restart(arg);
+                restart(self, arg);
             }
             Return(op) => {
-                ret(op);
+                ret(self, op);
             }
             Call(op) => {
-                call(op);
+                call(self, op);
             }
             BitOp(op) => {
-                bit_op(op);
+                bit_op(self, op);
             }
         }
     }
