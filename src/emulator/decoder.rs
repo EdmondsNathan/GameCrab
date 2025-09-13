@@ -1,5 +1,5 @@
 use crate::emulator::instruction::BitOps::*;
-use crate::emulator::instruction::Control_Ops::*;
+use crate::emulator::instruction::ControlOps::*;
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::Ld16::*;
 use crate::emulator::instruction::*;
