@@ -1,6 +1,7 @@
 pub mod cpu;
-mod instruction;
-mod registers;
-mod ram;
-mod rom_loaders;
 mod decoder;
+mod executor;
+mod instruction;
+mod ram;
+mod registers;
+mod rom_loaders;
