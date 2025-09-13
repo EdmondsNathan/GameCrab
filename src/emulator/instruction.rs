@@ -1,6 +1,6 @@
 pub enum Instruction {
     CB,
-    Control(Control),
+    Control(Control_Ops),
     Load16(Ld16),
     Push(PushPop),
     Pop(PushPop),
@@ -15,7 +15,7 @@ pub enum Instruction {
     BitOp(BitOps),
 }
 
-pub enum Control {
+pub enum Control_Ops {
     NOP,  //00, 1-4
     STOP, //10, 1-4
     HALT, //76, 1-4
