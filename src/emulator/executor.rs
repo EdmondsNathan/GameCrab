@@ -3,7 +3,7 @@ use crate::emulator::instruction::*;
 
 pub fn cb_instruction() {}
 
-pub fn control_instruction(control: ControlOps) {
+pub(crate) fn control_instruction(cpu: &mut CPU, control: ControlOps) {
     match control {
         ControlOps::NOP => {}
         ControlOps::STOP => {}
@@ -17,7 +17,7 @@ pub fn control_instruction(control: ControlOps) {
     }
 }
 
-pub fn load16(ld16: Ld16) {
+pub(crate) fn load16(cpu: &mut CPU, ld16: Ld16) {
     match ld16 {
         Ld16::BCU16 => {}
         Ld16::DEU16 => {}
@@ -28,7 +28,7 @@ pub fn load16(ld16: Ld16) {
     }
 }
 
-pub fn push(push: PushPop) {
+pub(crate) fn push(cpu: &mut CPU, push: PushPop) {
     match push {
         PushPop::BC => {}
         PushPop::DE => {}
@@ -37,7 +37,7 @@ pub fn push(push: PushPop) {
     }
 }
 
-pub fn pop(pop: PushPop) {
+pub(crate) fn pop(cpu: &mut CPU, pop: PushPop) {
     match pop {
         PushPop::BC => {}
         PushPop::DE => {}
@@ -46,7 +46,7 @@ pub fn pop(pop: PushPop) {
     }
 }
 
-pub fn load8(to: Ld8, from: Ld8) {
+pub(crate) fn load8(cpu: &mut CPU, to: Ld8, from: Ld8) {
     match to {
         Ld8::A => {}
         Ld8::B => {}
@@ -66,7 +66,7 @@ pub fn load8(to: Ld8, from: Ld8) {
         Ld8::FF00AddC => {}
     }
 
-    fn get_from_value(from: Ld8) {
+    fn get_from_value(cpu: &CPU, from: Ld8) {
         match from {
             Ld8::A => {}
             Ld8::B => {}
@@ -88,7 +88,7 @@ pub fn load8(to: Ld8, from: Ld8) {
     }
 }
 
-pub fn arithmetic16(op: A16Ops) {
+pub(crate) fn arithmetic16(cpu: &mut CPU, op: A16Ops) {
     match op {
         A16Ops::Inc(arg) => {}
         A16Ops::Dec(arg) => {}
@@ -98,7 +98,7 @@ pub fn arithmetic16(op: A16Ops) {
     }
 }
 
-pub fn arithmetic8(op: A8Ops) {
+pub(crate) fn arithmetic8(cpu: &mut CPU, op: A8Ops) {
     match op {
         A8Ops::Inc(arg) => {}
         A8Ops::Dec(arg) => {}
@@ -113,7 +113,7 @@ pub fn arithmetic8(op: A8Ops) {
     }
 }
 
-pub fn jump_relative(jr: JR) {
+pub(crate) fn jump_relative(cpu: &mut CPU, jr: JR) {
     match jr {
         JR::I8 => {}
         JR::NC => {}
@@ -123,7 +123,7 @@ pub fn jump_relative(jr: JR) {
     }
 }
 
-pub fn jump(jp: JP) {
+pub(crate) fn jump(cpu: &mut CPU, jp: JP) {
     match jp {
         JP::U16 => {}
         JP::HL => {}
@@ -134,7 +134,7 @@ pub fn jump(jp: JP) {
     }
 }
 
-pub fn restart(arg: u8) {
+pub(crate) fn restart(cpu: &mut CPU, arg: u8) {
     match arg {
         0 => {}
         1 => {}
@@ -148,7 +148,7 @@ pub fn restart(arg: u8) {
     }
 }
 
-pub fn ret(op: Ret) {
+pub(crate) fn ret(cpu: &mut CPU, op: Ret) {
     match op {
         Ret::NZ => {}
         Ret::NC => {}
@@ -159,7 +159,7 @@ pub fn ret(op: Ret) {
     }
 }
 
-pub fn call(op: Calls) {
+pub(crate) fn call(cpu: &mut CPU, op: Calls) {
     match op {
         Calls::NZ => {}
         Calls::NC => {}
@@ -169,7 +169,7 @@ pub fn call(op: Calls) {
     }
 }
 
-pub fn bit_op(op: BitOps) {
+pub(crate) fn bit_op(cpu: &mut CPU, op: BitOps) {
     match op {
         BitOps::RLCA => {}
         BitOps::RLA => {}
