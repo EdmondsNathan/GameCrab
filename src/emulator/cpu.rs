@@ -1,3 +1,6 @@
+use crate::emulator::executor::*;
+use crate::emulator::instruction::Instruction;
+use crate::emulator::instruction::Instruction::*;
 use crate::emulator::ram::RAM;
 use crate::emulator::registers::Registers;
 use crate::emulator::rom_loaders::rom::ROM;
@@ -59,6 +62,53 @@ impl CPU {
         for byte in &self.rom.bytes {
             self.ram.set(*byte, i);
             i = i + 1;
+        }
+    }
+
+    pub fn execute(&mut self, instruction: Instruction) {
+        match instruction {
+            CB => {
+                cb_instruction();
+            }
+            Control(control) => {
+                control_instruction(control);
+            }
+            Load16(ld16) => {
+                Load16(ld16);
+            }
+            Push(op) => {
+                push(op);
+            }
+            Pop(op) => {
+                pop(op);
+            }
+            Load8(to, from) => {
+                Load8(to, from);
+            }
+            Arithmetic16(op) => {
+                Arithmetic16(op);
+            }
+            Arithmetic8(op) => {
+                Arithmetic8(op);
+            }
+            JumpRelative(jr) => {
+                jump_relative(jr);
+            }
+            Jump(jp) => {
+                jump(jp);
+            }
+            Restart(arg) => {
+                restart(arg);
+            }
+            Return(op) => {
+                ret(op);
+            }
+            Call(op) => {
+                call(op);
+            }
+            BitOp(op) => {
+                bit_op(op);
+            }
         }
     }
 }
