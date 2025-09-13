@@ -46,7 +46,7 @@ pub fn pop(pop: PushPop) {
     }
 }
 
-pub fn ld8(to: Ld8, from: Ld8) {
+pub fn load8(to: Ld8, from: Ld8) {
     match to {
         Ld8::A => {}
         Ld8::B => {}

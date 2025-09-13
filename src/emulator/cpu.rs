@@ -74,7 +74,7 @@ impl CPU {
                 control_instruction(control);
             }
             Load16(ld16) => {
-                Load16(ld16);
+                load16(ld16);
             }
             Push(op) => {
                 push(op);
@@ -83,13 +83,13 @@ impl CPU {
                 pop(op);
             }
             Load8(to, from) => {
-                Load8(to, from);
+                load8(to, from);
             }
             Arithmetic16(op) => {
-                Arithmetic16(op);
+                arithmetic16(op);
             }
             Arithmetic8(op) => {
-                Arithmetic8(op);
+                arithmetic8(op);
             }
             JumpRelative(jr) => {
                 jump_relative(jr);
