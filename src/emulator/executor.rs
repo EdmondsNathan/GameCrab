@@ -1,7 +1,7 @@
 use crate::emulator::cpu::CPU;
 use crate::emulator::instruction::*;
 
-pub fn cb_instruction() {}
+pub(crate) fn cb_instruction() {}
 
 pub(crate) fn control_instruction(cpu: &mut CPU, control: ControlOps) {
     match control {
