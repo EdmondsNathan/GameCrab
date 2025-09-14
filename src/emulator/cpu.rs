@@ -71,7 +71,7 @@ impl CPU {
     pub fn execute(&mut self, instruction: Instruction) {
         match instruction {
             CB => {
-                cb_instruction();
+                cb_instruction(self);
             }
             Control(control) => {
                 control_instruction(self, control);
