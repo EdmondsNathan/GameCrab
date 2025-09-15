@@ -1,9 +1,11 @@
+use crate::emulator::decoder::{decode, decode_cb};
 use crate::emulator::executor::*;
 use crate::emulator::instruction::Instruction;
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::ram::RAM;
 use crate::emulator::registers::Registers;
 use crate::emulator::rom_loaders::rom::ROM;
+use std::collections::VecDeque;
 
 pub struct CPU {
     pub(crate) registers: Registers,
@@ -12,6 +14,7 @@ pub struct CPU {
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
     pub(crate) cb_mode: bool,
+    pub(crate) execution_queue: VecDeque<fn(&mut CPU)>,
 }
 
 impl CPU {
@@ -23,6 +26,7 @@ impl CPU {
             rom: ROM::new(),
             ram: RAM::new(),
             cb_mode: false,
+            execution_queue: VecDeque::new(),
         }
     }
 
@@ -65,6 +69,41 @@ impl CPU {
         for byte in &self.rom.bytes {
             self.ram.set(*byte, i);
             i = i + 1;
+        }
+    }
+
+    pub(crate) fn tick(&mut self, tick_counter: u64) {
+        match self.execution_queue.pop_front() {
+            None => {
+                if tick_counter % 4 != 0 {
+                    return;
+                }
+            }
+            Some(command) => {
+                command(self);
+                return;
+            }
+        }
+
+        self.queue_new_instruction();
+        self.tick(tick_counter);
+    }
+
+    fn queue_new_instruction(&mut self) {
+        let byte = self.ram.fetch(self.program_counter);
+        let instruction = if self.cb_mode {
+            decode_cb(byte)
+        } else {
+            decode(byte)
+        };
+
+        match instruction {
+            Ok(instruction) => {
+                self.execute(instruction);
+            }
+            Err(error) => {
+                panic!("{error}");
+            }
         }
     }
 

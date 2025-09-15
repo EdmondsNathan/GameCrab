@@ -2,10 +2,12 @@ use crate::emulator::cpu::CPU;
 use crate::emulator::instruction::*;
 
 pub(crate) fn cb_instruction(cpu: &mut CPU) {
+    cpu.cb_mode = true;
+}
 
 pub(crate) fn control_instruction(cpu: &mut CPU, control: ControlOps) {
     match control {
-        ControlOps::NOP => {}
+        ControlOps::NOP => nop(cpu),
         ControlOps::STOP => {}
         ControlOps::HALT => {}
         ControlOps::DI => {}
@@ -14,6 +16,10 @@ pub(crate) fn control_instruction(cpu: &mut CPU, control: ControlOps) {
         ControlOps::SCF => {}
         ControlOps::CPL => {}
         ControlOps::CCF => {}
+    }
+
+    fn nop(cpu: &mut CPU) {
+        cpu.program_counter += 1;
     }
 }
 
