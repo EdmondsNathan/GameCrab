@@ -1,6 +1,4 @@
 use crate::emulator::cpu::CPU;
-use crate::emulator::execution_request::ExecutionRequest;
-use std::collections::VecDeque;
 
 pub struct Console {
     cpu: CPU,
@@ -18,7 +16,7 @@ impl Console {
     }
 
     pub fn tick(&mut self) {
-        self.tick_counter = self.tick_counter + 1;
+        self.tick_counter += 1;
 
         /*match self.cpu_execution_queue.pop_front() {
             None => {

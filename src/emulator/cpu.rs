@@ -68,7 +68,7 @@ impl CPU {
         let mut i: u16 = 0x100;
         for byte in &self.rom.bytes {
             self.ram.set(*byte, i);
-            i = i + 1;
+            i += 1;
         }
     }
 
