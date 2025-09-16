@@ -17,6 +17,12 @@ pub struct CPU {
     pub(crate) execution_queue: VecDeque<fn(&mut CPU)>,
 }
 
+impl Default for CPU {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CPU {
     pub fn new() -> CPU {
         CPU {
