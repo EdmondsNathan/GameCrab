@@ -15,5 +15,6 @@ impl Console {
 
     pub fn tick(&mut self) {
         self.tick_counter += 1;
+        self.cpu.tick(self.tick_counter);
     }
 }
