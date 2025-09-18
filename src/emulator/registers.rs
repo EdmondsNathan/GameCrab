@@ -10,7 +10,7 @@ pub struct Registers {
 }
 
 impl Registers {
-    pub fn new() -> Registers{
+    pub fn new() -> Registers {
         Registers {
             a: 0x01,
             b: 0xFF,
