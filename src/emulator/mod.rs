@@ -1,7 +1,6 @@
 pub mod console;
 pub mod cpu;
 mod decoder;
-mod execution_request;
 mod executor;
 mod instruction;
 mod ram;
