@@ -12,8 +12,8 @@ impl ROM {
     pub fn try_new(path: &str) -> Result<ROM, String> {
         let rom_bytes = fs::read(path);
         match rom_bytes {
-            Ok(value) => { Ok(ROM { bytes: value, }) }
-            Err(_) => { Err("INVALID ROM PATH".to_string()) }
+            Ok(value) => Ok(ROM { bytes: value }),
+            Err(_) => Err("INVALID ROM PATH".to_string()),
         }
     }
 }
