@@ -1,7 +1,55 @@
 use crate::emulator::cpu::CPU;
+use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
 
-pub(crate) fn cb_instruction(cpu: &mut CPU) {
+pub(crate) fn execute(cpu: &mut CPU, instruction: Instruction) {
+    match instruction {
+        CB => {
+            cb_instruction(cpu);
+        }
+        Control(control) => {
+            control_instruction(cpu, control);
+        }
+        Load16(ld16) => {
+            load16(cpu, ld16);
+        }
+        Push(op) => {
+            push(cpu, op);
+        }
+        Pop(op) => {
+            pop(cpu, op);
+        }
+        Load8(to, from) => {
+            load8(cpu, to, from);
+        }
+        Arithmetic16(op) => {
+            arithmetic16(cpu, op);
+        }
+        Arithmetic8(op) => {
+            arithmetic8(cpu, op);
+        }
+        JumpRelative(jr) => {
+            jump_relative(cpu, jr);
+        }
+        Jump(jp) => {
+            jump(cpu, jp);
+        }
+        Restart(arg) => {
+            restart(cpu, arg);
+        }
+        Return(op) => {
+            ret(cpu, op);
+        }
+        Call(op) => {
+            call(cpu, op);
+        }
+        BitOp(op) => {
+            bit_op(cpu, op);
+        }
+    }
+}
+
+fn cb_instruction(cpu: &mut CPU) {
     cpu.cb_mode = true;
 }
 

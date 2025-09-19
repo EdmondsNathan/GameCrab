@@ -1,7 +1,5 @@
 use crate::emulator::decoder::{decode, decode_cb};
-use crate::emulator::executor::*;
-use crate::emulator::instruction::Instruction;
-use crate::emulator::instruction::Instruction::*;
+use crate::emulator::executor::execute;
 use crate::emulator::ram::RAM;
 use crate::emulator::registers::Registers;
 use crate::emulator::rom_loaders::rom::ROM;
@@ -14,7 +12,7 @@ pub struct CPU {
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
     pub(crate) cb_mode: bool,
-    pub(crate) execution_queue: VecDeque<fn(&mut CPU)>,
+    execution_queue: VecDeque<fn(&mut CPU)>,
 }
 
 impl Default for CPU {
@@ -47,6 +45,7 @@ impl CPU {
                     rom,
                     ram: RAM::new(),
                     cb_mode: false,
+                    execution_queue: VecDeque::new(),
                 };
                 cpu.rom_into_ram();
                 cpu
@@ -79,23 +78,20 @@ impl CPU {
     }
 
     pub(crate) fn tick(&mut self, tick_counter: u64) {
-        match self.execution_queue.pop_front() {
-            None => {
-                if tick_counter % 4 != 0 {
-                    return;
-                }
-            }
-            Some(command) => {
-                command(self);
-                return;
-            }
+        if self.execution_queue.is_empty() {
+            self.fetch_decode_execute();
         }
 
-        self.queue_new_instruction();
-        self.tick(tick_counter);
+        if let Some(command) = self.execution_queue.pop_front() {
+            command(self);
+        }
     }
 
-    fn queue_new_instruction(&mut self) {
+    pub(crate) fn push_operation(&mut self, operation: fn(&mut CPU)) {
+        self.execution_queue.push_back(operation);
+    }
+
+    fn fetch_decode_execute(&mut self) {
         let byte = self.ram.fetch(self.program_counter);
         let instruction = if self.cb_mode {
             decode_cb(byte)
@@ -105,57 +101,10 @@ impl CPU {
 
         match instruction {
             Ok(instruction) => {
-                self.execute(instruction);
+                execute(self, instruction);
             }
             Err(error) => {
                 panic!("{error}");
-            }
-        }
-    }
-
-    pub fn execute(&mut self, instruction: Instruction) {
-        match instruction {
-            CB => {
-                cb_instruction(self);
-            }
-            Control(control) => {
-                control_instruction(self, control);
-            }
-            Load16(ld16) => {
-                load16(self, ld16);
-            }
-            Push(op) => {
-                push(self, op);
-            }
-            Pop(op) => {
-                pop(self, op);
-            }
-            Load8(to, from) => {
-                load8(self, to, from);
-            }
-            Arithmetic16(op) => {
-                arithmetic16(self, op);
-            }
-            Arithmetic8(op) => {
-                arithmetic8(self, op);
-            }
-            JumpRelative(jr) => {
-                jump_relative(self, jr);
-            }
-            Jump(jp) => {
-                jump(self, jp);
-            }
-            Restart(arg) => {
-                restart(self, arg);
-            }
-            Return(op) => {
-                ret(self, op);
-            }
-            Call(op) => {
-                call(self, op);
-            }
-            BitOp(op) => {
-                bit_op(self, op);
             }
         }
     }
