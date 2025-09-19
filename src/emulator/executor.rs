@@ -3,6 +3,9 @@ use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
 
 pub(crate) fn execute(cpu: &mut CPU, instruction: Instruction) {
+}
+
+fn run_instruction(cpu: &mut CPU, instruction: Instruction) {
     match instruction {
         CB => {
             cb_instruction(cpu);
