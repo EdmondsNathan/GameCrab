@@ -65,7 +65,9 @@ fn control_instruction(cpu: &mut CPU, control: ControlOps) {
         ControlOps::NOP => cpu.push_operation(op_wait),
         ControlOps::STOP => {}
         ControlOps::HALT => {}
-        ControlOps::DI => {}
+        ControlOps::DI => cpu.push_operation(|cpu: &mut CPU| {
+            cpu.enable_interrupts = false;
+        }),
         ControlOps::EI => {}
         ControlOps::DAA => {}
         ControlOps::SCF => {}
