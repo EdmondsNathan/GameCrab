@@ -12,6 +12,7 @@ pub struct CPU {
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
     pub(crate) cb_mode: bool,
+    pub(crate) enable_interrupts: bool,
     execution_queue: VecDeque<fn(&mut CPU)>,
 }
 
@@ -30,6 +31,7 @@ impl CPU {
             rom: ROM::new(),
             ram: RAM::new(),
             cb_mode: false,
+            enable_interrupts: false,
             execution_queue: VecDeque::new(),
         }
     }
