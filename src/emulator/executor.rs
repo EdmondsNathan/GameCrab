@@ -3,6 +3,10 @@ use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
 
 pub(crate) fn execute(cpu: &mut CPU, instruction: Instruction) {
+    cpu.push_operation(op_wait);
+    cpu.push_operation(|cpu: &mut CPU| cpu.program_counter += 1);
+    cpu.push_operation(op_wait);
+    run_instruction(cpu, instruction);
 }
 
 fn run_instruction(cpu: &mut CPU, instruction: Instruction) {
@@ -244,4 +248,8 @@ fn bit_op(cpu: &mut CPU, op: BitOps) {
         BitOps::Reset(value, arg) => {}
         BitOps::Set(value, arg) => {}
     }
+}
+
+fn op_wait(cpu: &mut CPU) {
+    //this page intentionally left blank
 }
