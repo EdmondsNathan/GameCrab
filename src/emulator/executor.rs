@@ -62,7 +62,7 @@ fn cb_instruction(cpu: &mut CPU) {
 
 fn control_instruction(cpu: &mut CPU, control: ControlOps) {
     match control {
-        ControlOps::NOP => nop(cpu),
+        ControlOps::NOP => cpu.push_operation(op_wait),
         ControlOps::STOP => {}
         ControlOps::HALT => {}
         ControlOps::DI => {}
@@ -71,10 +71,6 @@ fn control_instruction(cpu: &mut CPU, control: ControlOps) {
         ControlOps::SCF => {}
         ControlOps::CPL => {}
         ControlOps::CCF => {}
-    }
-
-    fn nop(cpu: &mut CPU) {
-        cpu.program_counter += 1;
     }
 }
 
