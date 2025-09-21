@@ -11,6 +11,21 @@ pub(crate) struct Registers {
     pub pc: u16,
 }
 
+pub(crate) enum Register {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    H,
+    L,
+    SpLow,
+    SpHigh,
+    PcLow,
+    PcHigh,
+}
+
 impl Registers {
     pub fn new() -> Registers {
         Registers {
