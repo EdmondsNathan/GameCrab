@@ -6,3 +6,4 @@ mod instruction;
 mod ram;
 mod registers;
 mod rom_loaders;
+mod tick_map;
