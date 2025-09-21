@@ -1,4 +1,4 @@
-pub struct Registers {
+pub(crate) struct Registers {
     pub a: u8,
     pub b: u8,
     pub c: u8,
@@ -7,6 +7,8 @@ pub struct Registers {
     pub f: u8,
     pub h: u8,
     pub l: u8,
+    pub sp: u16,
+    pub pc: u16,
 }
 
 impl Registers {
@@ -20,6 +22,8 @@ impl Registers {
             f: 0x00,
             h: 0x84,
             l: 0x03,
+            sp: 0xFFFE,
+            pc: 0x0100,
         }
     }
     pub fn get_af(&self) -> u16 {
