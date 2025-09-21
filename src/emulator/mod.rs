@@ -1,5 +1,5 @@
 pub mod console;
-pub mod cpu;
+mod cpu;
 mod decoder;
 mod executor;
 mod instruction;
