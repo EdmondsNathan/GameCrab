@@ -55,8 +55,8 @@ impl Console {
     }
 
     pub fn tick(&mut self) {
-        self.tick_counter += 1;
         self.run_commands();
+        self.tick_counter += 1;
     }
 
     fn run_commands(&mut self) {
