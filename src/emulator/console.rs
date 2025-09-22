@@ -1,13 +1,11 @@
-use std::collections::{HashMap, VecDeque};
-
-use crate::emulator::{cpu::CPU, ram::RAM, rom_loaders::rom::ROM};
+use crate::emulator::{cpu::CPU, execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM};
 
 pub struct Console {
     pub(crate) cpu: CPU,
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
     pub(crate) tick_counter: u64,
-    tick_map: HashMap<u64, VecDeque<fn(&mut Console)>>,
+    pub(crate) execution_queue: ExecutionQueue,
 }
 
 impl Default for Console {
@@ -23,7 +21,7 @@ impl Console {
             rom: ROM::new(),
             ram: RAM::new(),
             tick_counter: 0,
-            tick_map: HashMap::new(),
+            execution_queue: ExecutionQueue::new(),
         }
     }
 
@@ -57,19 +55,8 @@ impl Console {
         self.run_commands();
     }
 
-    pub(crate) fn push_command(&mut self, tick: u64, command: fn(&mut Console)) {
-        match self.tick_map.get_mut(&tick) {
-            Some(cmds) => {
-                cmds.push_back(command);
-            }
-            None => {
-                self.tick_map.insert(tick, VecDeque::from([command]));
-            }
-        }
-    }
-
     fn run_commands(&mut self) {
-        let map_option = self.tick_map.remove(&self.tick_counter);
+        let map_option = self.execution_queue.remove(&self.tick_counter);
         if let Some(queue) = map_option {
             for command in queue {
                 command(self);
