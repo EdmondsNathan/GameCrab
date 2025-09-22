@@ -1,13 +1,13 @@
 use crate::emulator::console::Console;
 use std::collections::{HashMap, VecDeque};
 
-pub(crate) struct TickMap {
+pub(crate) struct ExecutionQueue {
     map: HashMap<u64, VecDeque<fn(&mut Console)>>,
 }
 
-impl TickMap {
-    pub(crate) fn new() -> TickMap {
-        TickMap {
+impl ExecutionQueue {
+    pub(crate) fn new() -> ExecutionQueue {
+        ExecutionQueue {
             map: HashMap::new(),
         }
     }
