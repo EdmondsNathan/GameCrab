@@ -1,253 +1,61 @@
-use crate::emulator::cpu::CPU;
+use crate::emulator::console::Console;
+use crate::emulator::decoder::{decode, decode_cb};
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
+use crate::emulator::registers::Register;
 
-pub(crate) fn execute(cpu: &mut CPU, instruction: Instruction) {
-    cpu.push_operation(op_wait);
-    cpu.push_operation(|cpu: &mut CPU| cpu.program_counter += 1);
-    cpu.push_operation(op_wait);
-    run_instruction(cpu, instruction);
-}
-
-fn run_instruction(cpu: &mut CPU, instruction: Instruction) {
-    match instruction {
-        CB => {
-            cb_instruction(cpu);
-        }
-        Control(control) => {
-            control_instruction(cpu, control);
-        }
-        Load16(ld16) => {
-            load16(cpu, ld16);
-        }
-        Push(op) => {
-            push(cpu, op);
-        }
-        Pop(op) => {
-            pop(cpu, op);
-        }
-        Load8(to, from) => {
-            load8(cpu, to, from);
-        }
-        Arithmetic16(op) => {
-            arithmetic16(cpu, op);
-        }
-        Arithmetic8(op) => {
-            arithmetic8(cpu, op);
-        }
-        JumpRelative(jr) => {
-            jump_relative(cpu, jr);
-        }
-        Jump(jp) => {
-            jump(cpu, jp);
-        }
-        Restart(arg) => {
-            restart(cpu, arg);
-        }
-        Return(op) => {
-            ret(cpu, op);
-        }
-        Call(op) => {
-            call(cpu, op);
-        }
-        BitOp(op) => {
-            bit_op(cpu, op);
-        }
-    }
-}
-
-fn cb_instruction(cpu: &mut CPU) {
-    cpu.cb_mode = true;
-}
-
-fn control_instruction(cpu: &mut CPU, control: ControlOps) {
-    match control {
-        ControlOps::NOP => cpu.push_operation(op_wait),
-        ControlOps::STOP => {}
-        ControlOps::HALT => {}
-        ControlOps::DI => cpu.push_operation(|cpu: &mut CPU| {
-            cpu.enable_interrupts = false;
-        }),
-        ControlOps::EI => {}
-        ControlOps::DAA => {}
-        ControlOps::SCF => {}
-        ControlOps::CPL => {}
-        ControlOps::CCF => {}
-    }
-}
-
-fn load16(cpu: &mut CPU, ld16: Ld16) {
-    match ld16 {
-        Ld16::BCU16 => {}
-        Ld16::DEU16 => {}
-        Ld16::HLU16 => {}
-        Ld16::SPU16 => {}
-        Ld16::U16SP => {}
-        Ld16::SPHL => {}
-    }
-}
-
-fn push(cpu: &mut CPU, push: PushPop) {
-    match push {
-        PushPop::BC => {}
-        PushPop::DE => {}
-        PushPop::HL => {}
-        PushPop::AF => {}
-    }
-}
-
-fn pop(cpu: &mut CPU, pop: PushPop) {
-    match pop {
-        PushPop::BC => {}
-        PushPop::DE => {}
-        PushPop::HL => {}
-        PushPop::AF => {}
-    }
-}
-
-fn load8(cpu: &mut CPU, to: Ld8, from: Ld8) {
-    match to {
-        Ld8::A => {}
-        Ld8::B => {}
-        Ld8::C => {}
-        Ld8::D => {}
-        Ld8::E => {}
-        Ld8::H => {}
-        Ld8::L => {}
-        Ld8::HL => {}
-        Ld8::HLPlus => {}
-        Ld8::HLMinus => {}
-        Ld8::BC => {}
-        Ld8::DE => {}
-        Ld8::U16 => {}
-        Ld8::U8 => {}
-        Ld8::FF00AddU8 => {}
-        Ld8::FF00AddC => {}
+impl Console {
+    pub(crate) fn execute(&mut self, instruction: Instruction) {
+        self.execution_queue
+            .push_command(self.tick_counter + 1, |console: &mut Console| {
+                console.cpu.registers.pc += 1
+            });
+        self.run_instruction(instruction);
     }
 
-    fn get_from_value(cpu: &CPU, from: Ld8) {
-        match from {
-            Ld8::A => {}
-            Ld8::B => {}
-            Ld8::C => {}
-            Ld8::D => {}
-            Ld8::E => {}
-            Ld8::H => {}
-            Ld8::L => {}
-            Ld8::HL => {}
-            Ld8::HLPlus => {}
-            Ld8::HLMinus => {}
-            Ld8::BC => {}
-            Ld8::DE => {}
-            Ld8::U16 => {}
-            Ld8::U8 => {}
-            Ld8::FF00AddU8 => {}
-            Ld8::FF00AddC => {}
+    fn run_instruction(&mut self, instruction: Instruction) {
+        match instruction {
+            CB => todo!(),
+            Control(control_ops) => todo!(),
+            Load16(ld16) => todo!(),
+            Push(push_pop) => todo!(),
+            Pop(push_pop) => todo!(),
+            Load8(to, from) => todo!(),
+            Arithmetic16(a16_ops) => todo!(),
+            Arithmetic8(a8_ops) => todo!(),
+            JumpRelative(jr) => todo!(),
+            Jump(jp) => todo!(),
+            Restart(arg) => todo!(),
+            Return(ret) => todo!(),
+            Call(calls) => todo!(),
+            BitOp(bit_ops) => todo!(),
         }
     }
-}
 
-fn arithmetic16(cpu: &mut CPU, op: A16Ops) {
-    match op {
-        A16Ops::Inc(arg) => {}
-        A16Ops::Dec(arg) => {}
-        A16Ops::Add(arg) => {}
-        A16Ops::AddI8 => {}
-        A16Ops::LdI8 => {}
+    fn command_read(&mut self, address: u16, register: Register) {
+        let value = self.ram.fetch(address);
+
+        self.cpu.set_register(value, register);
     }
-}
 
-fn arithmetic8(cpu: &mut CPU, op: A8Ops) {
-    match op {
-        A8Ops::Inc(arg) => {}
-        A8Ops::Dec(arg) => {}
-        A8Ops::Add(arg) => {}
-        A8Ops::AddCarry(arg) => {}
-        A8Ops::Sub(arg) => {}
-        A8Ops::SubCarry(arg) => {}
-        A8Ops::And(arg) => {}
-        A8Ops::Or(arg) => {}
-        A8Ops::Xor(arg) => {}
-        A8Ops::Cmp(arg) => {}
+    fn command_write(&mut self, register: Register, address: u16) {
+        let value = self.cpu.get_register(register);
+
+        self.ram.set(value, address);
     }
-}
 
-fn jump_relative(cpu: &mut CPU, jr: JR) {
-    match jr {
-        JR::I8 => {}
-        JR::NC => {}
-        JR::NZ => {}
-        JR::Z => {}
-        JR::C => {}
+    pub(crate) fn command_fetch_decode_execute(&mut self) {
+        let instruction = match self.cpu.cb_mode {
+            true => match decode_cb(self.ram.fetch(self.cpu.registers.pc)) {
+                Ok(value) => value,
+                Err(error) => panic!("{error}"),
+            },
+            false => match decode(self.ram.fetch(self.cpu.registers.pc)) {
+                Ok(value) => value,
+                Err(error) => panic!("{error}"),
+            },
+        };
+
+        self.execute(instruction);
     }
-}
-
-fn jump(cpu: &mut CPU, jp: JP) {
-    match jp {
-        JP::U16 => {}
-        JP::HL => {}
-        JP::NZ => {}
-        JP::NC => {}
-        JP::Z => {}
-        JP::C => {}
-    }
-}
-
-fn restart(cpu: &mut CPU, arg: u8) {
-    match arg {
-        0 => {}
-        1 => {}
-        2 => {}
-        3 => {}
-        4 => {}
-        5 => {}
-        6 => {}
-        7 => {}
-        _ => {}
-    }
-}
-
-fn ret(cpu: &mut CPU, op: Ret) {
-    match op {
-        Ret::NZ => {}
-        Ret::NC => {}
-        Ret::Z => {}
-        Ret::C => {}
-        Ret::None => {}
-        Ret::I => {}
-    }
-}
-
-fn call(cpu: &mut CPU, op: Calls) {
-    match op {
-        Calls::NZ => {}
-        Calls::NC => {}
-        Calls::Z => {}
-        Calls::C => {}
-        Calls::U16 => {}
-    }
-}
-
-fn bit_op(cpu: &mut CPU, op: BitOps) {
-    match op {
-        BitOps::RLCA => {}
-        BitOps::RLA => {}
-        BitOps::RRCA => {}
-        BitOps::RRA => {}
-        BitOps::RLC(arg) => {}
-        BitOps::RRC(arg) => {}
-        BitOps::RL(arg) => {}
-        BitOps::RR(arg) => {}
-        BitOps::SLA(arg) => {}
-        BitOps::SRA(arg) => {}
-        BitOps::Swap(arg) => {}
-        BitOps::SRL(arg) => {}
-        BitOps::Bit(value, arg) => {}
-        BitOps::Reset(value, arg) => {}
-        BitOps::Set(value, arg) => {}
-    }
-}
-
-fn op_wait(cpu: &mut CPU) {
-    //this page intentionally left blank
 }
