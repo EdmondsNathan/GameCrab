@@ -31,7 +31,7 @@ impl ExecutionQueue {
         }
     }
 
-    pub(crate) fn remove(&mut self, tick: &u64) -> Option<VecDeque<fn(&mut Console)>> {
-        self.map.remove(&tick)
+    pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<fn(&mut Console)>> {
+        self.map.remove(tick)
     }
 }

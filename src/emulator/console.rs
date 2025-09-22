@@ -56,7 +56,7 @@ impl Console {
     }
 
     fn run_commands(&mut self) {
-        let map_option = self.execution_queue.remove(&self.tick_counter);
+        let map_option = self.execution_queue.pop(&self.tick_counter);
         if let Some(queue) = map_option {
             for command in queue {
                 command(self);
