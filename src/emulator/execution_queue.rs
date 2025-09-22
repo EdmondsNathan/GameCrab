@@ -23,6 +23,14 @@ impl ExecutionQueue {
         }
     }
 
+    pub(crate) fn merge(&mut self, execution_queue: ExecutionQueue) {
+        for queue in execution_queue.map {
+            for command in queue.1 {
+                self.push_command(queue.0, command);
+            }
+        }
+    }
+
     pub(crate) fn remove(&mut self, tick: &u64) -> Option<VecDeque<fn(&mut Console)>> {
         self.map.remove(&tick)
     }
