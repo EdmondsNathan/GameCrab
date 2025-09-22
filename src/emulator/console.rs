@@ -16,13 +16,17 @@ impl Default for Console {
 
 impl Console {
     pub fn new() -> Console {
-        Console {
+        let mut console = Console {
             cpu: CPU::new(),
             rom: ROM::new(),
             ram: RAM::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
-        }
+        };
+        console
+            .execution_queue
+            .push_command(0, |c: &mut Console| c.command_fetch_decode_execute());
+        console
     }
 
     pub fn new_with_rom(path: String) -> Console {
