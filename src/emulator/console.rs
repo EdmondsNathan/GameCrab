@@ -25,9 +25,7 @@ impl Console {
         };
         new_console
             .execution_queue
-            .push_command(0, |console: &mut Console| {
-                console.command_fetch_decode_execute()
-            });
+            .push_command(0, Console::fetch_decode_execute);
         new_console
     }
 
