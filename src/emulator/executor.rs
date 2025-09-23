@@ -5,6 +5,21 @@ use crate::emulator::instruction::*;
 use crate::emulator::registers::Register;
 
 impl Console {
+    pub(crate) fn command_fetch_decode_execute(&mut self) {
+        let instruction = match self.cpu.cb_mode {
+            true => match decode_cb(self.ram.fetch(self.cpu.registers.pc)) {
+                Ok(value) => value,
+                Err(error) => panic!("{error}"),
+            },
+            false => match decode(self.ram.fetch(self.cpu.registers.pc)) {
+                Ok(value) => value,
+                Err(error) => panic!("{error}"),
+            },
+        };
+
+        self.command_execute(instruction);
+    }
+
     fn run_instruction(&mut self, instruction: Instruction) {
         match instruction {
             CB => todo!(),
@@ -34,21 +49,6 @@ impl Console {
         let value = self.cpu.get_register(register);
 
         self.ram.set(value, address);
-    }
-
-    pub(crate) fn command_fetch_decode_execute(&mut self) {
-        let instruction = match self.cpu.cb_mode {
-            true => match decode_cb(self.ram.fetch(self.cpu.registers.pc)) {
-                Ok(value) => value,
-                Err(error) => panic!("{error}"),
-            },
-            false => match decode(self.ram.fetch(self.cpu.registers.pc)) {
-                Ok(value) => value,
-                Err(error) => panic!("{error}"),
-            },
-        };
-
-        self.command_execute(instruction);
     }
 
     fn command_execute(&mut self, instruction: Instruction) {
