@@ -26,6 +26,13 @@ pub(crate) enum Register {
     PcHigh,
 }
 
+pub(crate) enum Flags {
+    Z,
+    N,
+    H,
+    C,
+}
+
 impl Registers {
     pub fn new() -> Registers {
         Registers {
