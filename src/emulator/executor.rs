@@ -5,14 +5,6 @@ use crate::emulator::instruction::*;
 use crate::emulator::registers::Register;
 
 impl Console {
-    pub(crate) fn execute(&mut self, instruction: Instruction) {
-        self.execution_queue
-            .push_command(self.tick_counter + 1, |console: &mut Console| {
-                console.cpu.registers.pc += 1
-            });
-        self.run_instruction(instruction);
-    }
-
     fn run_instruction(&mut self, instruction: Instruction) {
         match instruction {
             CB => todo!(),
@@ -56,6 +48,14 @@ impl Console {
             },
         };
 
-        self.execute(instruction);
+        self.command_execute(instruction);
+    }
+
+    fn command_execute(&mut self, instruction: Instruction) {
+        self.execution_queue
+            .push_command(self.tick_counter + 1, |console: &mut Console| {
+                console.cpu.registers.pc += 1
+            });
+        self.run_instruction(instruction);
     }
 }
