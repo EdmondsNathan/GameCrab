@@ -1,4 +1,4 @@
-use crate::emulator::registers::{Register, Registers};
+use crate::emulator::registers::{Flags, Register, Registers};
 
 pub(crate) struct CPU {
     pub(crate) registers: Registers,
@@ -51,6 +51,36 @@ impl CPU {
             }
             Register::PcHigh => {
                 self.registers.pc = (self.registers.pc & 0x00FF) + ((value as u16) << 8);
+            }
+        }
+    }
+
+    pub(crate) fn get_flag(&mut self, flag: Flags) -> bool {
+        match flag {
+            Flags::Z => ((self.registers.f >> 7) & 1) == 1,
+            Flags::N => ((self.registers.f >> 6) & 1) == 1,
+            Flags::H => ((self.registers.f >> 5) & 1) == 1,
+            Flags::C => ((self.registers.f >> 4) & 1) == 1,
+        }
+    }
+
+    pub(crate) fn set_flag(&mut self, value: bool, flag: Flags) {
+        match flag {
+            Flags::Z => {
+                let z = (value as u8) << 7;
+                self.registers.f = (self.registers.f & 0b01111111) + z;
+            }
+            Flags::N => {
+                let n = (value as u8) << 6;
+                self.registers.f = (self.registers.f & 0b10111111) + n;
+            }
+            Flags::H => {
+                let h = (value as u8) << 5;
+                self.registers.f = (self.registers.f & 0b11011111) + h;
+            }
+            Flags::C => {
+                let c = (value as u8) << 4;
+                self.registers.f = (self.registers.f & 0b11101111) + c;
             }
         }
     }
