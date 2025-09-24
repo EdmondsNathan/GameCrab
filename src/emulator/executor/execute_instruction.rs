@@ -1,25 +1,28 @@
 use crate::emulator::console::Console;
 use crate::emulator::decoder::{decode, decode_cb};
+use crate::emulator::execution_queue::Command;
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
-use crate::emulator::registers::Register16;
+use crate::emulator::registers::{Register16, Register8};
 
 impl Console {
     fn queue_next_instruction(&mut self, tick: u64) {
         self.execution_queue
-            .push_command(tick, Console::fetch_decode_execute);
+            .push_command(tick, Command::Standard(Console::fetch_decode_execute));
     }
 
     pub(super) fn execute(&mut self, instruction: Instruction) {
-        self.execution_queue
-            .push_command(self.tick_counter + 1, |console: &mut Console| {
-                console.command_increment_pc();
-            });
+        self.execution_queue.push_command(
+            self.tick_counter + 1,
+            Command::Standard(Console::command_increment_pc),
+        );
 
         match instruction {
             CB => {
-                self.execution_queue
-                    .push_command(self.tick_counter + 4, Console::instruction_cb);
+                self.execution_queue.push_command(
+                    self.tick_counter + 4,
+                    Command::Standard(Console::instruction_cb),
+                );
             }
             Control(control_op) => {
                 self.instruction_control(control_op);
@@ -59,18 +62,18 @@ impl Console {
             ControlOps::DI => {
                 self.execution_queue.push_command(
                     self.tick_counter + 3,
-                    |console: &mut Console| {
+                    Command::Standard(|console: &mut Console| {
                         console.cpu.enable_interrupts = false;
-                    },
+                    }),
                 );
                 self.queue_next_instruction(self.tick_counter + 4);
             }
             ControlOps::EI => {
                 self.execution_queue.push_command(
                     self.tick_counter + 3,
-                    |console: &mut Console| {
+                    Command::Standard(|console: &mut Console| {
                         console.cpu.enable_interrupts = false;
-                    },
+                    }),
                 );
                 self.queue_next_instruction(self.tick_counter + 4);
             }
