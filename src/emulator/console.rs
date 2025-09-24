@@ -71,6 +71,9 @@ impl Console {
                 match command {
                     Command::Standard(cmd) => cmd(self),
                     Command::ReadWrite(cmd, address, register) => cmd(self, address, register),
+                    Command::SetRegister(cmd, value, register) => {
+                        cmd(&mut self.cpu, value, register)
+                    }
                 }
             }
         }
