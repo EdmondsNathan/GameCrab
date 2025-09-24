@@ -38,7 +38,7 @@ impl Console {
         }
     }
 
-    pub(crate) fn fetch_decode_execute(&mut self) {
+    fn fetch_decode_execute(&mut self) {
         let instruction = match decode(self.ram.fetch(self.cpu.get_register_16(Register16::Pc))) {
             Ok(value) => value,
             Err(error) => panic!("{error}"),
@@ -47,7 +47,7 @@ impl Console {
         self.execute(instruction);
     }
 
-    fn queue_next_instruction(&mut self, tick: u64) {
+    pub(crate) fn queue_next_instruction(&mut self, tick: u64) {
         self.execution_queue
             .push_command(tick, Command::Standard(Console::fetch_decode_execute));
     }

@@ -28,9 +28,7 @@ impl Console {
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
         };
-        new_console
-            .execution_queue
-            .push_command(0, Command::Standard(Console::fetch_decode_execute));
+        new_console.queue_next_instruction(0);
         new_console
     }
 
