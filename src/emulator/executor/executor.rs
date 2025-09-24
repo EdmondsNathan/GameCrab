@@ -18,7 +18,7 @@ impl Console {
         self.cpu.set_register(value, register);
     }
 
-    pub(super) fn command_register_to_ram(&mut self, register: Register8, address: u16) {
+    pub(super) fn command_register_to_ram(&mut self, address: u16, register: Register8) {
         let value = self.cpu.get_register(register);
 
         self.ram.set(value, address);
