@@ -25,10 +25,8 @@ impl Console {
                 );
                 None
             }
-            Control(control_op) => {
-                self.instruction_control(control_op);
-            }
             Load16(ld16) => todo!(),
+            Control(control_op) => self.instruction_control(control_op),
             Push(push_pop) => todo!(),
             Pop(push_pop) => todo!(),
             Load8(to, from) => todo!(),
