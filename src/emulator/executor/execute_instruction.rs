@@ -17,12 +17,13 @@ impl Console {
             Command::Standard(Console::command_increment_pc),
         );
 
-        match instruction {
+        if let Some(next_instruction_offset) = match instruction {
             CB => {
                 self.execution_queue.push_command(
                     self.tick_counter + 4,
                     Command::Standard(Console::instruction_cb),
                 );
+                None
             }
             Control(control_op) => {
                 self.instruction_control(control_op);
@@ -39,6 +40,8 @@ impl Console {
             Return(ret) => todo!(),
             Call(calls) => todo!(),
             BitOp(bit_ops) => todo!(),
+        } {
+            self.queue_next_instruction(self.tick_counter + 4);
         }
     }
 
@@ -52,12 +55,10 @@ impl Console {
         self.execute(instruction);
     }
 
-    fn instruction_control(&mut self, control_op: ControlOps) {
+    fn instruction_control(&mut self, control_op: ControlOps) -> Option<u8> {
         match control_op {
-            ControlOps::NOP => {
-                self.queue_next_instruction(self.tick_counter + 4);
-            }
-            ControlOps::STOP => {}
+            ControlOps::NOP => Some(4),
+            ControlOps::STOP => todo!(),
             ControlOps::HALT => todo!(),
             ControlOps::DI => {
                 self.execution_queue.push_command(
@@ -66,7 +67,7 @@ impl Console {
                         console.cpu.enable_interrupts = false;
                     }),
                 );
-                self.queue_next_instruction(self.tick_counter + 4);
+                Some(4)
             }
             ControlOps::EI => {
                 self.execution_queue.push_command(
@@ -75,7 +76,7 @@ impl Console {
                         console.cpu.enable_interrupts = false;
                     }),
                 );
-                self.queue_next_instruction(self.tick_counter + 4);
+                Some(4)
             }
             ControlOps::DAA => todo!(),
             ControlOps::SCF => todo!(),
@@ -84,7 +85,7 @@ impl Console {
         }
     }
 
-    fn instruction_load16(&mut self, ld16: Ld16) {
+    fn instruction_load16(&mut self, ld16: Ld16) -> Option<u8> {
         match ld16 {
             Ld16::BCU16 => {}
             Ld16::DEU16 => todo!(),
