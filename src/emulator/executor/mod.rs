@@ -1,2 +1,4 @@
 mod execute_instruction;
-pub(crate) mod executor;
+mod instruction_cb;
+mod instruction_control;
+mod instruction_load16;
