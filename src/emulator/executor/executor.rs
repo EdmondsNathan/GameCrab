@@ -12,13 +12,13 @@ impl Console {
         self.execute(instruction);
     }
 
-    pub(super) fn command_read(&mut self, address: u16, register: Register8) {
+    pub(super) fn command_ram_to_register(&mut self, address: u16, register: Register8) {
         let value = self.ram.fetch(address);
 
         self.cpu.set_register(value, register);
     }
 
-    pub(super) fn command_write(&mut self, register: Register8, address: u16) {
+    pub(super) fn command_register_to_ram(&mut self, register: Register8, address: u16) {
         let value = self.cpu.get_register(register);
 
         self.ram.set(value, address);
