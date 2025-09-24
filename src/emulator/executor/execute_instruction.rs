@@ -1,5 +1,5 @@
 use crate::emulator::console::Console;
-use crate::emulator::decoder::{decode, decode_cb};
+use crate::emulator::decoder::decode_cb;
 use crate::emulator::execution_queue::Command;
 use crate::emulator::instruction::Instruction::*;
 use crate::emulator::instruction::*;
