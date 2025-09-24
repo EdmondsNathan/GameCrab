@@ -1,4 +1,5 @@
 use crate::emulator::console::Console;
+use crate::emulator::cpu::CPU;
 use crate::emulator::decoder::decode_cb;
 use crate::emulator::execution_queue::Command;
 use crate::emulator::instruction::Instruction::*;
@@ -25,8 +26,8 @@ impl Console {
                 );
                 None
             }
-            Load16(ld16) => todo!(),
             Control(control_op) => self.instruction_control(control_op),
+            Load16(ld16) => self.instruction_load16(ld16),
             Push(push_pop) => todo!(),
             Pop(push_pop) => todo!(),
             Load8(to, from) => todo!(),
@@ -146,24 +147,39 @@ impl Console {
             }
         }
 
-    fn instruction_load8(&mut self, ld8: Ld8) {
-        match ld8 {
-            Ld8::A => todo!(),
-            Ld8::B => todo!(),
-            Ld8::C => todo!(),
-            Ld8::D => todo!(),
-            Ld8::E => todo!(),
-            Ld8::H => todo!(),
-            Ld8::L => todo!(),
-            Ld8::HL => todo!(),
-            Ld8::HLPlus => todo!(),
-            Ld8::HLMinus => todo!(),
-            Ld8::BC => todo!(),
-            Ld8::DE => todo!(),
-            Ld8::U16 => todo!(),
-            Ld8::U8 => todo!(),
-            Ld8::FF00AddU8 => todo!(),
-            Ld8::FF00AddC => todo!(),
+        fn load_registers(
+            console: &mut Console,
+            register_high: Register8,
+            register_low: Register8,
+        ) {
+            console.execution_queue.push_command(
+                console.tick_counter + 5,
+                Command::ReadWrite(
+                    Console::command_ram_to_register,
+                    console.cpu.get_register_16(Register16::Pc) + 5,
+                    register_low,
+                ),
+            );
+
+            console.execution_queue.push_command(
+                console.tick_counter + 8,
+                Command::ReadWrite(
+                    Console::command_ram_to_register,
+                    console.cpu.get_register_16(Register16::Pc) + 8,
+                    register_high,
+                ),
+            );
+        }
+
+        fn pc_increments(console: &mut Console) {
+            console.execution_queue.push_command(
+                console.tick_counter + 4,
+                Command::Standard(Console::command_increment_pc),
+            );
+            console.execution_queue.push_command(
+                console.tick_counter + 7,
+                Command::Standard(Console::command_increment_pc),
+            );
         }
     }
 }
