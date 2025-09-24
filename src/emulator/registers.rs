@@ -26,6 +26,15 @@ pub(crate) enum Register8 {
     PcHigh,
 }
 
+pub(crate) enum Register16 {
+    Af,
+    Bc,
+    De,
+    Hl,
+    Sp,
+    Pc,
+}
+
 pub(crate) enum Flags {
     Z,
     N,

@@ -1,4 +1,4 @@
-use crate::emulator::registers::{Flags, Register8, Registers};
+use crate::emulator::registers::{Flags, Register16, Register8, Registers};
 
 pub(crate) struct CPU {
     pub(crate) registers: Registers,
@@ -51,6 +51,44 @@ impl CPU {
             }
             Register8::PcHigh => {
                 self.registers.pc = (self.registers.pc & 0x00FF) + ((value as u16) << 8);
+            }
+        }
+    }
+
+    pub(crate) fn get_register_16(&self, register: Register16) -> u16 {
+        match register {
+            Register16::Af => ((self.registers.a as u16) << 8) + (self.registers.f as u16),
+            Register16::Bc => ((self.registers.b as u16) << 8) + (self.registers.c as u16),
+            Register16::De => ((self.registers.d as u16) << 8) + (self.registers.e as u16),
+            Register16::Hl => ((self.registers.h as u16) << 8) + (self.registers.l as u16),
+            Register16::Sp => self.registers.sp,
+            Register16::Pc => self.registers.pc,
+        }
+    }
+
+    pub(crate) fn set_register_16(&mut self, value: u16, register: Register16) {
+        match register {
+            Register16::Af => {
+                self.registers.a = (value >> 8) as u8;
+                self.registers.f = value as u8;
+            }
+            Register16::Bc => {
+                self.registers.b = (value >> 8) as u8;
+                self.registers.c = value as u8;
+            }
+            Register16::De => {
+                self.registers.d = (value >> 8) as u8;
+                self.registers.e = value as u8;
+            }
+            Register16::Hl => {
+                self.registers.h = (value >> 8) as u8;
+                self.registers.l = value as u8;
+            }
+            Register16::Sp => {
+                self.registers.sp = value;
+            }
+            Register16::Pc => {
+                self.registers.pc = value;
             }
         }
     }
