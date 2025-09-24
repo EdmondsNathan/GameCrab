@@ -34,7 +34,7 @@ impl Console {
             Call(calls) => todo!(),
             BitOp(bit_ops) => todo!(),
         } {
-            self.queue_next_instruction(self.tick_counter + 4);
+            self.queue_next_instruction(self.tick_counter + next_instruction_offset);
         }
     }
 
