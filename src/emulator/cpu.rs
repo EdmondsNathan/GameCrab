@@ -1,7 +1,7 @@
 use crate::emulator::registers::{Flags, Register16, Register8, Registers};
 
 pub(crate) struct CPU {
-    pub(crate) registers: Registers,
+    registers: Registers,
     pub(crate) enable_interrupts: bool,
 }
 
