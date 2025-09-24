@@ -4,7 +4,7 @@ use crate::emulator::registers::{Register16, Register8};
 
 impl Console {
     pub(crate) fn fetch_decode_execute(&mut self) {
-        let instruction = match decode(self.ram.fetch(self.cpu.registers.pc)) {
+        let instruction = match decode(self.ram.fetch(self.cpu.get_register_16(Register16::Pc))) {
             Ok(value) => value,
             Err(error) => panic!("{error}"),
         };
