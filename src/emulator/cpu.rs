@@ -1,4 +1,4 @@
-use crate::emulator::registers::{Flags, Register, Registers};
+use crate::emulator::registers::{Flags, Register8, Registers};
 
 pub(crate) struct CPU {
     pub(crate) registers: Registers,
@@ -13,43 +13,43 @@ impl CPU {
         }
     }
 
-    pub(crate) fn get_register(&self, register: Register) -> u8 {
+    pub(crate) fn get_register(&self, register: Register8) -> u8 {
         match register {
-            Register::A => self.registers.a,
-            Register::B => self.registers.b,
-            Register::C => self.registers.c,
-            Register::D => self.registers.d,
-            Register::E => self.registers.e,
-            Register::F => self.registers.f,
-            Register::H => self.registers.h,
-            Register::L => self.registers.l,
-            Register::SpLow => self.registers.sp as u8,
-            Register::SpHigh => (self.registers.sp >> 8) as u8,
-            Register::PcLow => self.registers.pc as u8,
-            Register::PcHigh => (self.registers.pc >> 8) as u8,
+            Register8::A => self.registers.a,
+            Register8::B => self.registers.b,
+            Register8::C => self.registers.c,
+            Register8::D => self.registers.d,
+            Register8::E => self.registers.e,
+            Register8::F => self.registers.f,
+            Register8::H => self.registers.h,
+            Register8::L => self.registers.l,
+            Register8::SpLow => self.registers.sp as u8,
+            Register8::SpHigh => (self.registers.sp >> 8) as u8,
+            Register8::PcLow => self.registers.pc as u8,
+            Register8::PcHigh => (self.registers.pc >> 8) as u8,
         }
     }
 
-    pub(crate) fn set_register(&mut self, value: u8, register: Register) {
+    pub(crate) fn set_register(&mut self, value: u8, register: Register8) {
         match register {
-            Register::A => self.registers.a = value,
-            Register::B => self.registers.b = value,
-            Register::C => self.registers.c = value,
-            Register::D => self.registers.d = value,
-            Register::E => self.registers.e = value,
-            Register::F => self.registers.f = value,
-            Register::H => self.registers.h = value,
-            Register::L => self.registers.l = value,
-            Register::SpLow => {
+            Register8::A => self.registers.a = value,
+            Register8::B => self.registers.b = value,
+            Register8::C => self.registers.c = value,
+            Register8::D => self.registers.d = value,
+            Register8::E => self.registers.e = value,
+            Register8::F => self.registers.f = value,
+            Register8::H => self.registers.h = value,
+            Register8::L => self.registers.l = value,
+            Register8::SpLow => {
                 self.registers.sp = (self.registers.sp & 0xFF00) + (value as u16);
             }
-            Register::SpHigh => {
+            Register8::SpHigh => {
                 self.registers.sp = (self.registers.sp & 0x00FF) + ((value as u16) << 8);
             }
-            Register::PcLow => {
+            Register8::PcLow => {
                 self.registers.pc = (self.registers.pc & 0xFF00) + (value as u16);
             }
-            Register::PcHigh => {
+            Register8::PcHigh => {
                 self.registers.pc = (self.registers.pc & 0x00FF) + ((value as u16) << 8);
             }
         }

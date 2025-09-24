@@ -11,7 +11,7 @@ pub(crate) struct Registers {
     pub pc: u16,
 }
 
-pub(crate) enum Register {
+pub(crate) enum Register8 {
     A,
     B,
     C,
