@@ -1,4 +1,9 @@
-use crate::emulator::{cpu::CPU, execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM};
+use crate::emulator::{
+    cpu::CPU,
+    execution_queue::{Command, ExecutionQueue},
+    ram::RAM,
+    rom_loaders::rom::ROM,
+};
 
 pub struct Console {
     pub(crate) cpu: CPU,
@@ -25,7 +30,7 @@ impl Console {
         };
         new_console
             .execution_queue
-            .push_command(0, Console::fetch_decode_execute);
+            .push_command(0, Command::Standard(Console::fetch_decode_execute));
         new_console
     }
 
@@ -63,7 +68,10 @@ impl Console {
         let map_option = self.execution_queue.pop(&self.tick_counter);
         if let Some(queue) = map_option {
             for command in queue {
-                command(self);
+                match command {
+                    Command::Standard(cmd) => cmd(self),
+                    Command::ReadWrite(cmd, address, register) => cmd(self, address, register),
+                }
             }
         }
     }

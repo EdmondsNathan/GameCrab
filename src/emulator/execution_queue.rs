@@ -1,8 +1,13 @@
-use crate::emulator::console::Console;
+use crate::emulator::{console::Console, registers::Register8};
 use std::collections::{HashMap, VecDeque};
 
 pub(crate) struct ExecutionQueue {
-    map: HashMap<u64, VecDeque<fn(&mut Console)>>,
+    map: HashMap<u64, VecDeque<Command>>,
+}
+
+pub(crate) enum Command {
+    Standard(fn(&mut Console)),
+    ReadWrite(fn(&mut Console, u16, Register8), u16, Register8),
 }
 
 impl ExecutionQueue {
@@ -12,7 +17,7 @@ impl ExecutionQueue {
         }
     }
 
-    pub(crate) fn push_command(&mut self, tick: u64, command: fn(&mut Console)) {
+    pub(crate) fn push_command(&mut self, tick: u64, command: Command) {
         match self.map.get_mut(&tick) {
             Some(cmds) => {
                 cmds.push_back(command);
@@ -31,7 +36,7 @@ impl ExecutionQueue {
         }
     }
 
-    pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<fn(&mut Console)>> {
+    pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<Command>> {
         self.map.remove(tick)
     }
 }
