@@ -72,6 +72,9 @@ impl Console {
                     Command::SetRegister(cmd, value, register) => {
                         cmd(&mut self.cpu, value, register)
                     }
+                    Command::SetRegister16(cmd, value, register) => {
+                        cmd(&mut self.cpu, value, register)
+                    }
                 }
             }
         }
