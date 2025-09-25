@@ -6,18 +6,16 @@ use crate::emulator::instruction::*;
 use crate::emulator::registers::{Register16, Register8};
 
 impl Console {
+    pub(super) fn push_command(&mut self, tick_offset: u64, command: Command) {
+        self.execution_queue
+            .push_command_absolute(self.tick_counter + tick_offset, command);
+    }
     pub fn execute(&mut self, instruction: Instruction) {
-        self.execution_queue.push_command(
-            self.tick_counter + 1,
-            Command::Standard(Console::command_increment_pc),
-        );
+        self.push_command(1, Command::Standard(Console::command_increment_pc));
 
         if let Some(next_instruction_offset) = match instruction {
             CB => {
-                self.execution_queue.push_command(
-                    self.tick_counter + 4,
-                    Command::Standard(Console::instruction_cb),
-                );
+                self.push_command(4, Command::Standard(Console::instruction_cb));
                 None
             }
             Control(control_op) => self.instruction_control(control_op),
@@ -34,7 +32,7 @@ impl Console {
             Call(calls) => todo!(),
             BitOp(bit_ops) => todo!(),
         } {
-            self.queue_next_instruction(self.tick_counter + next_instruction_offset);
+            self.queue_next_instruction(next_instruction_offset);
         }
     }
 
@@ -48,8 +46,7 @@ impl Console {
     }
 
     pub(crate) fn queue_next_instruction(&mut self, tick: u64) {
-        self.execution_queue
-            .push_command(tick, Command::Standard(Console::fetch_decode_execute));
+        self.push_command(tick, Command::Standard(Console::fetch_decode_execute));
     }
 
     pub(super) fn command_ram_to_register(&mut self, address: u16, register: Register8) {

@@ -31,16 +31,16 @@ impl Console {
             }
             Ld16::U16SP => {
                 pc_increments(self);
-                self.execution_queue.push_command(
-                    self.tick_counter + 12,
+                self.push_command(
+                    12,
                     Command::ReadWrite(
                         Console::command_register_to_ram,
                         self.cpu.get_register_16(Register16::Pc) + 12,
                         Register8::SpLow,
                     ),
                 );
-                self.execution_queue.push_command(
-                    self.tick_counter + 16,
+                self.push_command(
+                    16,
                     Command::ReadWrite(
                         Console::command_register_to_ram,
                         self.cpu.get_register_16(Register16::Pc) + 16,
@@ -50,16 +50,16 @@ impl Console {
                 return Some(20);
             }
             Ld16::SPHL => {
-                self.execution_queue.push_command(
-                    self.tick_counter + 3,
+                self.push_command(
+                    3,
                     Command::SetRegister(
                         CPU::set_register,
                         self.cpu.get_register(Register8::H),
                         Register8::SpHigh,
                     ),
                 );
-                self.execution_queue.push_command(
-                    self.tick_counter + 3,
+                self.push_command(
+                    3,
                     Command::SetRegister(
                         CPU::set_register,
                         self.cpu.get_register(Register8::L),
@@ -75,8 +75,8 @@ impl Console {
             register_high: Register8,
             register_low: Register8,
         ) {
-            console.execution_queue.push_command(
-                console.tick_counter + 5,
+            console.push_command(
+                5,
                 Command::ReadWrite(
                     Console::command_ram_to_register,
                     console.cpu.get_register_16(Register16::Pc) + 5,
@@ -84,8 +84,8 @@ impl Console {
                 ),
             );
 
-            console.execution_queue.push_command(
-                console.tick_counter + 8,
+            console.push_command(
+                8,
                 Command::ReadWrite(
                     Console::command_ram_to_register,
                     console.cpu.get_register_16(Register16::Pc) + 8,
@@ -95,14 +95,8 @@ impl Console {
         }
 
         fn pc_increments(console: &mut Console) {
-            console.execution_queue.push_command(
-                console.tick_counter + 4,
-                Command::Standard(Console::command_increment_pc),
-            );
-            console.execution_queue.push_command(
-                console.tick_counter + 7,
-                Command::Standard(Console::command_increment_pc),
-            );
+            console.push_command(4, Command::Standard(Console::command_increment_pc));
+            console.push_command(7, Command::Standard(Console::command_increment_pc));
         }
     }
 }

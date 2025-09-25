@@ -7,8 +7,8 @@ impl Console {
             ControlOps::STOP => todo!(),
             ControlOps::HALT => todo!(),
             ControlOps::DI => {
-                self.execution_queue.push_command(
-                    self.tick_counter + 3,
+                self.push_command(
+                    3,
                     Command::Standard(|console: &mut Console| {
                         console.cpu.enable_interrupts = false;
                     }),
@@ -16,8 +16,8 @@ impl Console {
                 Some(4)
             }
             ControlOps::EI => {
-                self.execution_queue.push_command(
-                    self.tick_counter + 3,
+                self.push_command(
+                    3,
                     Command::Standard(|console: &mut Console| {
                         console.cpu.enable_interrupts = false;
                     }),

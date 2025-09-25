@@ -23,7 +23,7 @@ impl ExecutionQueue {
         }
     }
 
-    pub(crate) fn push_command(&mut self, tick: u64, command: Command) {
+    pub(crate) fn push_command_absolute(&mut self, tick: u64, command: Command) {
         match self.map.get_mut(&tick) {
             Some(cmds) => {
                 cmds.push_back(command);
