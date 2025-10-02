@@ -22,7 +22,7 @@ impl Console {
             Load16(ld16) => self.instruction_load16(ld16),
             Push(push_pop) => todo!(),
             Pop(push_pop) => todo!(),
-            Load8(to, from) => todo!(),
+            Load8(to, from) => self.instruction_load8(to, from),
             Arithmetic16(a16_ops) => todo!(),
             Arithmetic8(a8_ops) => todo!(),
             JumpRelative(jr) => todo!(),
