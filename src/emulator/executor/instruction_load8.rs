@@ -4,12 +4,12 @@ impl Console {
     pub(super) fn instruction_load8(&mut self, to: Ld8, from: Ld8) -> Option<u64> {
         let from = match from {
             Ld8::A => From::Register(Register8::A),
-            Ld8::B => From::Register(Register8::A),
-            Ld8::C => From::Register(Register8::A),
-            Ld8::D => From::Register(Register8::A),
-            Ld8::E => From::Register(Register8::A),
-            Ld8::H => From::Register(Register8::A),
-            Ld8::L => From::Register(Register8::A),
+            Ld8::B => From::Register(Register8::B),
+            Ld8::C => From::Register(Register8::C),
+            Ld8::D => From::Register(Register8::D),
+            Ld8::E => From::Register(Register8::E),
+            Ld8::H => From::Register(Register8::H),
+            Ld8::L => From::Register(Register8::L),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
@@ -46,6 +46,7 @@ impl Console {
 
 enum From {
     Register(Register8),
+    Address,
 }
 
 enum To {
