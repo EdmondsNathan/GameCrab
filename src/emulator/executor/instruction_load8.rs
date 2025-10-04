@@ -3,13 +3,13 @@ use crate::emulator::{console::Console, instruction::Ld8, registers::Register8};
 impl Console {
     pub(super) fn instruction_load8(&mut self, to: Ld8, from: Ld8) -> Option<u64> {
         let from = match from {
-            Ld8::A => todo!(),
-            Ld8::B => todo!(),
-            Ld8::C => todo!(),
-            Ld8::D => todo!(),
-            Ld8::E => todo!(),
-            Ld8::H => todo!(),
-            Ld8::L => todo!(),
+            Ld8::A => From::Register(Register8::A),
+            Ld8::B => From::Register(Register8::A),
+            Ld8::C => From::Register(Register8::A),
+            Ld8::D => From::Register(Register8::A),
+            Ld8::E => From::Register(Register8::A),
+            Ld8::H => From::Register(Register8::A),
+            Ld8::L => From::Register(Register8::A),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
@@ -22,13 +22,13 @@ impl Console {
         };
 
         let to = match to {
-            Ld8::A => todo!(),
-            Ld8::B => todo!(),
-            Ld8::C => todo!(),
-            Ld8::D => todo!(),
-            Ld8::E => todo!(),
-            Ld8::H => todo!(),
-            Ld8::L => todo!(),
+            Ld8::A => To::Register(Register8::A),
+            Ld8::B => To::Register(Register8::A),
+            Ld8::C => To::Register(Register8::A),
+            Ld8::D => To::Register(Register8::A),
+            Ld8::E => To::Register(Register8::A),
+            Ld8::H => To::Register(Register8::A),
+            Ld8::L => To::Register(Register8::A),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
@@ -40,14 +40,14 @@ impl Console {
             Ld8::FF00AddC => todo!(),
         };
 
-        todo!();
+        todo!()
     }
 }
 
 enum From {
-    Register8(Register8),
+    Register(Register8),
 }
 
 enum To {
-    Register8(Register8),
+    Register(Register8),
 }
