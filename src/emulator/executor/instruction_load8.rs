@@ -23,12 +23,12 @@ impl Console {
 
         let to = match to {
             Ld8::A => To::Register(Register8::A),
-            Ld8::B => To::Register(Register8::A),
-            Ld8::C => To::Register(Register8::A),
-            Ld8::D => To::Register(Register8::A),
-            Ld8::E => To::Register(Register8::A),
-            Ld8::H => To::Register(Register8::A),
-            Ld8::L => To::Register(Register8::A),
+            Ld8::B => To::Register(Register8::B),
+            Ld8::C => To::Register(Register8::C),
+            Ld8::D => To::Register(Register8::D),
+            Ld8::E => To::Register(Register8::E),
+            Ld8::H => To::Register(Register8::H),
+            Ld8::L => To::Register(Register8::L),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
