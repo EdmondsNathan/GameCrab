@@ -60,11 +60,6 @@ impl Console {
     }
 }
 
-enum From {
-    Register(Register8),
-    Address,
-}
-
 enum To {
     Register(Register8),
 }
