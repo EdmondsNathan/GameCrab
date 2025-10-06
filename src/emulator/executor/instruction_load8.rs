@@ -1,5 +1,9 @@
 use crate::emulator::{
-    console::Console, cpu::CPU, execution_queue::Command, instruction::Ld8, registers::Register8,
+    console::Console,
+    cpu::CPU,
+    execution_queue::Command,
+    instruction::Ld8,
+    registers::{Register16, Register8},
 };
 
 impl Console {
@@ -63,12 +67,26 @@ impl Console {
             Some(4)
         }
 
+        fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
+            console.push_command(
+                4,
+                Command::SetRegister(
+                    CPU::set_register,
+                    console.ram.fetch(console.cpu.get_register_16(to)),
+                    from,
+                ),
+            );
+            Some(8)
+        }
+
         match to {
             To::Register(register8) => to_register(self, register8, from),
+            To::Register16(register16) => to_register16(self, register16, from),
         }
     }
 }
 
 enum To {
     Register(Register8),
+    Register16(Register16),
 }
