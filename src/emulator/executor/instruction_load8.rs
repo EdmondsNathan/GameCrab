@@ -24,17 +24,28 @@ impl Console {
         };
 
         match from {
-            Ld8::A => self.register_from(to, Register8::A),
-            Ld8::B => self.register_from(to, Register8::B),
-            Ld8::C => self.register_from(to, Register8::C),
-            Ld8::D => self.register_from(to, Register8::D),
-            Ld8::E => self.register_from(to, Register8::E),
-            Ld8::H => self.register_from(to, Register8::H),
-            Ld8::L => self.register_from(to, Register8::L),
+            Ld8::A => self.go_from_register(to, Register8::A),
+            Ld8::B => self.go_from_register(to, Register8::B),
+            Ld8::C => self.go_from_register(to, Register8::C),
+            Ld8::D => self.go_from_register(to, Register8::D),
+            Ld8::E => self.go_from_register(to, Register8::E),
+            Ld8::H => self.go_from_register(to, Register8::H),
+            Ld8::L => self.go_from_register(to, Register8::L),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
-            Ld8::BC => todo!(),
+            Ld8::BC => {
+                //0A
+                self.push_command(
+                    4,
+                    Command::SetRegister(
+                        CPU::set_register,
+                        self.ram.fetch(self.cpu.get_register_16(Register16::Bc)),
+                        Register8::A,
+                    ),
+                );
+                Some(8)
+            }
             Ld8::DE => todo!(),
             Ld8::U16 => todo!(),
             Ld8::U8 => todo!(),
@@ -43,7 +54,7 @@ impl Console {
         }
     }
 
-    fn register_from(&mut self, to: To, from: Register8) -> Option<u64> {
+    fn go_from_register(&mut self, to: To, from: Register8) -> Option<u64> {
         fn to_register(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
             console.push_command(
                 3,
