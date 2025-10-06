@@ -28,13 +28,13 @@ impl Console {
         };
 
         match from {
-            Ld8::A => self.go_from_register(to, Register8::A),
-            Ld8::B => self.go_from_register(to, Register8::B),
-            Ld8::C => self.go_from_register(to, Register8::C),
-            Ld8::D => self.go_from_register(to, Register8::D),
-            Ld8::E => self.go_from_register(to, Register8::E),
-            Ld8::H => self.go_from_register(to, Register8::H),
-            Ld8::L => self.go_from_register(to, Register8::L),
+            Ld8::A => self.go_from_register8(to, Register8::A),
+            Ld8::B => self.go_from_register8(to, Register8::B),
+            Ld8::C => self.go_from_register8(to, Register8::C),
+            Ld8::D => self.go_from_register8(to, Register8::D),
+            Ld8::E => self.go_from_register8(to, Register8::E),
+            Ld8::H => self.go_from_register8(to, Register8::H),
+            Ld8::L => self.go_from_register8(to, Register8::L),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
@@ -58,7 +58,7 @@ impl Console {
         }
     }
 
-    fn go_from_register(&mut self, to: To, from: Register8) -> Option<u64> {
+    fn go_from_register8(&mut self, to: To, from: Register8) -> Option<u64> {
         fn to_register(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
             console.push_command(
                 3,
