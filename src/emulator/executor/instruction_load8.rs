@@ -59,7 +59,7 @@ impl Console {
     }
 
     fn go_from_register8(&mut self, to: To, from: Register8) -> Option<u64> {
-        fn to_register(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
+        fn to_register8(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
             console.push_command(
                 3,
                 Command::SetRegister(CPU::set_register, console.cpu.get_register(from), to),
@@ -80,7 +80,7 @@ impl Console {
         }
 
         match to {
-            To::Register8(register8) => to_register(self, register8, from),
+            To::Register8(register8) => to_register8(self, register8, from),
             To::Register16(register16) => to_register16(self, register16, from),
         }
     }
