@@ -9,13 +9,13 @@ use crate::emulator::{
 impl Console {
     pub(super) fn instruction_load8(&mut self, to: Ld8, from: Ld8) -> Option<u64> {
         let to = match to {
-            Ld8::A => To::Register(Register8::A),
-            Ld8::B => To::Register(Register8::B),
-            Ld8::C => To::Register(Register8::C),
-            Ld8::D => To::Register(Register8::D),
-            Ld8::E => To::Register(Register8::E),
-            Ld8::H => To::Register(Register8::H),
-            Ld8::L => To::Register(Register8::L),
+            Ld8::A => To::Register8(Register8::A),
+            Ld8::B => To::Register8(Register8::B),
+            Ld8::C => To::Register8(Register8::C),
+            Ld8::D => To::Register8(Register8::D),
+            Ld8::E => To::Register8(Register8::E),
+            Ld8::H => To::Register8(Register8::H),
+            Ld8::L => To::Register8(Register8::L),
             Ld8::HL => todo!(),
             Ld8::HLPlus => todo!(),
             Ld8::HLMinus => todo!(),
@@ -80,13 +80,13 @@ impl Console {
         }
 
         match to {
-            To::Register(register8) => to_register(self, register8, from),
+            To::Register8(register8) => to_register(self, register8, from),
             To::Register16(register16) => to_register16(self, register16, from),
         }
     }
 }
 
 enum To {
-    Register(Register8),
+    Register8(Register8),
     Register16(Register16),
 }
