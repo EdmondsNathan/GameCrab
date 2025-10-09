@@ -5,28 +5,28 @@ use crate::emulator::{
 };
 
 impl Console {
-    pub(super) fn go_from_hl(&mut self, to: To, from: Hl) -> Option<u64> {
-        fn to_register8(console: &mut Console, to: Register8, from: Hl) -> Option<u64> {
+    pub(super) fn go_from_u16(&mut self, to: To, from: u16) -> Option<u64> {
+        fn to_register8(console: &mut Console, to: Register8, from: u16) -> Option<u64> {
             todo!();
         }
 
-        fn to_register16(console: &mut Console, to: Register16, from: Hl) -> Option<u64> {
+        fn to_register16(console: &mut Console, to: Register16, from: u16) -> Option<u64> {
             todo!();
         }
 
-        fn to_hl(console: &mut Console, to: Hl, from: Hl) -> Option<u64> {
+        fn to_hl(console: &mut Console, to: Hl, from: u16) -> Option<u64> {
             todo!();
         }
 
-        fn to_u8(console: &mut Console, from: Hl) -> Option<u64> {
+        fn to_u8(console: &mut Console, from: u16) -> Option<u64> {
             todo!();
         }
 
-        fn to_u16(console: &mut Console, from: Hl) -> Option<u64> {
+        fn to_u16(console: &mut Console, from: u16) -> Option<u64> {
             todo!();
         }
 
-        fn to_Ff00(console: &mut Console, to: Ff00, from: Hl) -> Option<u64> {
+        fn to_Ff00(console: &mut Console, to: Ff00, from: u16) -> Option<u64> {
             todo!();
         }
 
