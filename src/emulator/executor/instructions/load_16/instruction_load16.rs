@@ -7,7 +7,7 @@ use crate::emulator::{
 };
 
 impl Console {
-    pub(super) fn instruction_load16(&mut self, ld16: Ld16) -> Option<u64> {
+    pub(in crate::emulator::executor) fn instruction_load16(&mut self, ld16: Ld16) -> Option<u64> {
         match ld16 {
             Ld16::BCU16 => {
                 pc_increments(self);

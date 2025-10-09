@@ -1,7 +1,10 @@
 use crate::emulator::{console::Console, execution_queue::Command, instruction::ControlOps};
 
 impl Console {
-    pub(super) fn instruction_control(&mut self, control_op: ControlOps) -> Option<u64> {
+    pub(in crate::emulator::executor) fn instruction_control(
+        &mut self,
+        control_op: ControlOps,
+    ) -> Option<u64> {
         match control_op {
             ControlOps::NOP => Some(4),
             ControlOps::STOP => todo!(),
