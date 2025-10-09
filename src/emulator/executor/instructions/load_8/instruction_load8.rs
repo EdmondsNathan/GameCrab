@@ -40,8 +40,8 @@ impl Console {
             Ld8::H => self.go_from_register8(to, Register8::H),
             Ld8::L => self.go_from_register8(to, Register8::L),
             Ld8::HL => self.go_from_register16(to, Register16::Hl),
-            Ld8::HLPlus => todo!(),
-            Ld8::HLMinus => todo!(),
+            Ld8::HLPlus => self.go_from_hl(to, Hl::Plus),
+            Ld8::HLMinus => self.go_from_hl(to, Hl::Minus),
             Ld8::BC => self.go_from_register16(to, Register16::Bc),
             /*0A
             self.push_command(
