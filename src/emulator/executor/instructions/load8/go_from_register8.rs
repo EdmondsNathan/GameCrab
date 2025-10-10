@@ -2,7 +2,7 @@ use crate::emulator::{
     console::Console,
     cpu::CPU,
     execution_queue::Command,
-    executor::instructions::load_8::instruction_load8::{Ff00, Hl, To},
+    executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
     registers::{Register16, Register8},
 };
 impl Console {
