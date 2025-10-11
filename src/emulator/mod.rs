@@ -1,3 +1,4 @@
+mod commands;
 pub mod console;
 mod cpu;
 mod decoder;

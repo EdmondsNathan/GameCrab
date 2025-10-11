@@ -1,4 +1,4 @@
-use crate::emulator::{console::Console, execution_queue::Command, instruction::ControlOps};
+use crate::emulator::{commands::command::Command, console::Console, instruction::ControlOps};
 
 impl Console {
     pub(in crate::emulator::executor) fn instruction_control(

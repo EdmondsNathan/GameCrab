@@ -1,7 +1,5 @@
 use crate::emulator::{
-    cpu::CPU,
-    execution_queue::{Command, ExecutionQueue},
-    ram::RAM,
+    commands::command::Command, cpu::CPU, execution_queue::ExecutionQueue, ram::RAM,
     rom_loaders::rom::ROM,
 };
 

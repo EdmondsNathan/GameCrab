@@ -1,9 +1,10 @@
-use crate::emulator::console::Console;
-use crate::emulator::decoder::decode;
-use crate::emulator::execution_queue::Command;
-use crate::emulator::instruction::Instruction::*;
-use crate::emulator::instruction::*;
-use crate::emulator::registers::{Register16, Register8};
+use crate::emulator::{
+    commands::command::Command,
+    console::Console,
+    decoder::decode,
+    instruction::{Instruction::*, *},
+    registers::{Register16, Register8},
+};
 
 impl Console {
     pub(super) fn push_command(&mut self, tick_offset: u64, command: Command) {

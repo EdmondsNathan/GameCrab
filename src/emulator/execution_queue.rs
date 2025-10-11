@@ -1,4 +1,5 @@
 use crate::emulator::{
+    commands::command::Command,
     console::Console,
     cpu::CPU,
     registers::{Register16, Register8},
@@ -7,13 +8,6 @@ use std::collections::{HashMap, VecDeque};
 
 pub(crate) struct ExecutionQueue {
     map: HashMap<u64, VecDeque<Command>>,
-}
-
-pub(crate) enum Command {
-    Standard(fn(&mut Console)),
-    ReadWrite(fn(&mut Console, u16, Register8), u16, Register8),
-    SetRegister(fn(&mut CPU, u8, Register8), u8, Register8),
-    SetRegister16(fn(&mut CPU, u16, Register16), u16, Register16),
 }
 
 impl ExecutionQueue {

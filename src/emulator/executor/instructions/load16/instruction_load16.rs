@@ -1,7 +1,7 @@
 use crate::emulator::{
+    commands::command::Command,
     console::Console,
     cpu::CPU,
-    execution_queue::Command,
     instruction::Ld16,
     registers::{Register16, Register8},
 };
