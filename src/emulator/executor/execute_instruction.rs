@@ -38,7 +38,7 @@ impl Console {
     }
 
     fn fetch_decode_execute(&mut self) {
-        let instruction = match decode(self.ram.fetch(self.cpu.get_register_16(Register16::Pc))) {
+        let instruction = match decode(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {
             Ok(value) => value,
             Err(error) => panic!("{error}"),
         };

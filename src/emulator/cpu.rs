@@ -13,7 +13,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn get_register(&self, register: Register8) -> u8 {
+    pub(crate) fn get_register(&self, register: &Register8) -> u8 {
         match register {
             Register8::A => self.registers.a,
             Register8::B => self.registers.b,
@@ -30,7 +30,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn set_register(&mut self, value: u8, register: Register8) {
+    pub(crate) fn set_register(&mut self, value: u8, register: &Register8) {
         match register {
             Register8::A => self.registers.a = value,
             Register8::B => self.registers.b = value,
@@ -55,7 +55,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn get_register_16(&self, register: Register16) -> u16 {
+    pub(crate) fn get_register_16(&self, register: &Register16) -> u16 {
         match register {
             Register16::Af => ((self.registers.a as u16) << 8) + (self.registers.f as u16),
             Register16::Bc => ((self.registers.b as u16) << 8) + (self.registers.c as u16),
@@ -66,7 +66,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn set_register_16(&mut self, value: u16, register: Register16) {
+    pub(crate) fn set_register_16(&mut self, value: u16, register: &Register16) {
         match register {
             Register16::Af => {
                 self.registers.a = (value >> 8) as u8;
@@ -93,7 +93,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn get_flag(&mut self, flag: Flags) -> bool {
+    pub(crate) fn get_flag(&mut self, flag: &Flags) -> bool {
         match flag {
             Flags::Z => ((self.registers.f >> 7) & 1) == 1,
             Flags::N => ((self.registers.f >> 6) & 1) == 1,
@@ -102,7 +102,7 @@ impl CPU {
         }
     }
 
-    pub(crate) fn set_flag(&mut self, value: bool, flag: Flags) {
+    pub(crate) fn set_flag(&mut self, value: bool, flag: &Flags) {
         match flag {
             Flags::Z => {
                 let z = (value as u8) << 7;

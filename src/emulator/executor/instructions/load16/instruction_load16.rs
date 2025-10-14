@@ -35,7 +35,7 @@ impl Console {
                     12,
                     Command::ReadWrite(
                         Console::command_register_to_ram,
-                        self.cpu.get_register_16(Register16::Pc) + 12,
+                        self.cpu.get_register_16(&Register16::Pc) + 12,
                         Register8::SpLow,
                     ),
                 );
@@ -43,7 +43,7 @@ impl Console {
                     16,
                     Command::ReadWrite(
                         Console::command_register_to_ram,
-                        self.cpu.get_register_16(Register16::Pc) + 16,
+                        self.cpu.get_register_16(&Register16::Pc) + 16,
                         Register8::SpHigh,
                     ),
                 );
@@ -54,7 +54,7 @@ impl Console {
                     3,
                     Command::SetRegister(
                         CPU::set_register,
-                        self.cpu.get_register(Register8::H),
+                        self.cpu.get_register(&Register8::H),
                         Register8::SpHigh,
                     ),
                 );
@@ -62,7 +62,7 @@ impl Console {
                     3,
                     Command::SetRegister(
                         CPU::set_register,
-                        self.cpu.get_register(Register8::L),
+                        self.cpu.get_register(&Register8::L),
                         Register8::SpLow,
                     ),
                 );
@@ -79,7 +79,7 @@ impl Console {
                 5,
                 Command::ReadWrite(
                     Console::command_ram_to_register,
-                    console.cpu.get_register_16(Register16::Pc) + 5,
+                    console.cpu.get_register_16(&Register16::Pc) + 5,
                     register_low,
                 ),
             );
@@ -88,7 +88,7 @@ impl Console {
                 8,
                 Command::ReadWrite(
                     Console::command_ram_to_register,
-                    console.cpu.get_register_16(Register16::Pc) + 8,
+                    console.cpu.get_register_16(&Register16::Pc) + 8,
                     register_high,
                 ),
             );

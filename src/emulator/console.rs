@@ -66,12 +66,12 @@ impl Console {
             for command in queue {
                 match command {
                     Command::Standard(cmd) => cmd(self),
-                    Command::ReadWrite(cmd, address, register) => cmd(self, address, register),
+                    Command::ReadWrite(cmd, address, register) => cmd(self, address, &register),
                     Command::SetRegister(cmd, value, register) => {
-                        cmd(&mut self.cpu, value, register)
+                        cmd(&mut self.cpu, value, &register)
                     }
                     Command::SetRegister16(cmd, value, register) => {
-                        cmd(&mut self.cpu, value, register)
+                        cmd(&mut self.cpu, value, &register)
                     }
                 }
             }
