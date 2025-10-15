@@ -10,7 +10,7 @@ impl Console {
         fn to_register8(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
             console.push_command(
                 3,
-                Command::SetRegister(CPU::set_register, console.cpu.get_register(from), to),
+                Command::SetRegister(CPU::set_register, console.cpu.get_register(&from), to),
             );
             Some(4)
         }
@@ -20,7 +20,7 @@ impl Console {
                 4,
                 Command::SetRegister(
                     CPU::set_register,
-                    console.ram.fetch(console.cpu.get_register_16(to)),
+                    console.ram.fetch(console.cpu.get_register_16(&to)),
                     from,
                 ),
             );
