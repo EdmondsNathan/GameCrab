@@ -10,5 +10,5 @@ The project is still in the very early stages. Right now I am working on impleme
 ## Contributing 🫂
 I am currently the only one working on this project, but that doesn't have to be the case! Shoot me an email at nathan.edmonds.business@gmail.com or submit a PR if you want to contribute 😸
 
-## Licensing 🪧
+## Licensing 🪪
 GameCrab is dedicated to the public domain and is licensed under the CC0 license. 
