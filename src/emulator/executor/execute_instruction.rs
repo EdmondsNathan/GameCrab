@@ -3,7 +3,7 @@ use crate::emulator::{
     console::Console,
     decoder::decode,
     instruction::{Instruction::*, *},
-    registers::{Register16, Register8},
+    registers::Register16,
 };
 
 impl Console {
@@ -12,13 +12,8 @@ impl Console {
             .push_command_absolute(self.tick_counter + tick_offset, command);
     }
     pub fn execute(&mut self, instruction: Instruction) {
-        self.push_command(1, Command::Standard(Console::command_increment_pc));
-
         if let Some(next_instruction_offset) = match instruction {
-            CB => {
-                self.push_command(4, Command::Standard(Console::instruction_cb));
-                None
-            }
+            CB => todo!(),
             Control(control_op) => self.instruction_control(control_op),
             Load16(ld16) => self.instruction_load16(ld16),
             Push(push_pop) => todo!(),
@@ -43,10 +38,12 @@ impl Console {
             Err(error) => panic!("{error}"),
         };
 
+        self.push_command(1, Command::Update(Self::command_increment_pc));
+
         self.execute(instruction);
     }
 
     pub(crate) fn queue_next_instruction(&mut self, tick: u64) {
-        self.push_command(tick, Command::Standard(Console::fetch_decode_execute));
+        self.push_command(tick, Command::Update(Console::fetch_decode_execute));
     }
 }

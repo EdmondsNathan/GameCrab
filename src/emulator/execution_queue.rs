@@ -1,9 +1,4 @@
-use crate::emulator::{
-    commands::command::Command,
-    console::Console,
-    cpu::CPU,
-    registers::{Register16, Register8},
-};
+use crate::emulator::commands::command::Command;
 use std::collections::{HashMap, VecDeque};
 
 pub(crate) struct ExecutionQueue {
