@@ -1,26 +1,26 @@
 use crate::emulator::{console::Console, registers::Register8};
 
-pub(crate) struct Command {
-    source: Source,
-    destination: Destination,
+pub(crate) enum Command {
+    Read(Source, Destination),
+    Update(fn(&mut Console)),
 }
 
 impl Command {
-    pub(crate) fn new(source: Source, destination: Destination) -> Command {
-        Command {
-            source,
-            destination,
+    pub(crate) fn execute_command(&self, console: &mut Console) {
+        match self {
+            Command::Read(source, destination) => Self::read(console, source, destination),
+            Command::Update(func) => func(console),
         }
     }
 
-    pub(crate) fn execute_command(&self, console: &mut Console) {
-        let value = match &self.source {
-            Source::Register(register) => console.cpu.get_register(&register),
+    fn read(console: &mut Console, source: &Source, destination: &Destination) {
+        let value = match source {
+            Source::Register(register) => console.cpu.get_register(register),
             Source::Ram(address) => console.ram.fetch(*address),
             Source::Value(value) => *value,
         };
 
-        match &self.destination {
+        match destination {
             Destination::Register(register) => console.cpu.set_register(value, register),
             Destination::Ram(address) => console.ram.set(value, *address),
         }
