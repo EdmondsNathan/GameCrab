@@ -9,6 +9,7 @@ pub(crate) struct Registers {
     pub l: u8,
     pub sp: u16,
     pub pc: u16,
+    pub y: u8,
 }
 
 pub(crate) enum Register8 {
@@ -24,6 +25,7 @@ pub(crate) enum Register8 {
     SpHigh,
     PcLow,
     PcHigh,
+    Y,
 }
 
 pub(crate) enum Register16 {
@@ -55,6 +57,7 @@ impl Registers {
             l: 0x03,
             sp: 0xFFFE,
             pc: 0x0100,
+            y: 0x0,
         }
     }
     pub fn get_af(&self) -> u16 {
