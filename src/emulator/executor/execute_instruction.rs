@@ -1,7 +1,7 @@
 use crate::emulator::{
     commands::command::Command,
     console::Console,
-    decoder::decode,
+    decoder::{decode, decode_cb},
     instruction::{Instruction::*, *},
     registers::Register16,
 };
@@ -13,7 +13,7 @@ impl Console {
     }
     pub fn execute(&mut self, instruction: Instruction) {
         if let Some(next_instruction_offset) = match instruction {
-            CB => todo!(),
+            CB => self.instruction_cb(),
             Control(control_op) => self.instruction_control(control_op),
             Load16(ld16) => self.instruction_load16(ld16),
             Push(push_pop) => todo!(),
@@ -33,10 +33,17 @@ impl Console {
     }
 
     fn fetch_decode_execute(&mut self) {
-        let instruction = match decode(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {
+        let decoder = match self.cb_flag {
+            true => decode,
+            false => decode_cb,
+        };
+
+        let instruction = match decoder(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {
             Ok(value) => value,
             Err(error) => panic!("{error}"),
         };
+
+        self.cb_flag = false;
 
         self.push_command(1, Command::Update(Self::command_increment_pc));
 
