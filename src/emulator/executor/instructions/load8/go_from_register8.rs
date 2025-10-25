@@ -3,6 +3,7 @@ use crate::emulator::{
     executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
     registers::{Register16, Register8},
 };
+
 impl Console {
     pub(super) fn go_from_register8(&mut self, to: To, from: Register8) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
