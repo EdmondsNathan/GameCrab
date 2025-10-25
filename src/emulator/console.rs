@@ -6,6 +6,7 @@ pub struct Console {
     pub(crate) ram: RAM,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
+    pub(crate) cb_flag: bool,
 }
 
 impl Default for Console {
@@ -22,6 +23,7 @@ impl Console {
             ram: RAM::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
+            cb_flag: false,
         };
         new_console.queue_next_instruction(0);
         new_console
