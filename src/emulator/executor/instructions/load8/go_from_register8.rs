@@ -1,4 +1,5 @@
 use crate::emulator::{
+    commands::command::{Command::*, Destination, Source},
     console::Console,
     executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
     registers::{Register16, Register8},
@@ -7,7 +8,8 @@ use crate::emulator::{
 impl Console {
     pub(super) fn go_from_register8(&mut self, to: To, from: Register8) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Register8) -> Option<u64> {
-            todo!();
+            console.push_command(3, Read(Source::Register(from), Destination::Register(to)));
+            Some(4)
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
