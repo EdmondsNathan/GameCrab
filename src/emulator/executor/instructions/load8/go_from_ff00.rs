@@ -26,7 +26,7 @@ impl Console {
             todo!();
         }
 
-        fn to_Ff00(console: &mut Console, to: Ff00, from: Ff00) -> Option<u64> {
+        fn to_ff00(console: &mut Console, to: Ff00, from: Ff00) -> Option<u64> {
             todo!();
         }
 
@@ -36,7 +36,7 @@ impl Console {
             To::Hl(hl) => to_hl(self, hl, from),
             To::U8 => to_u8(self, from),
             To::U16 => to_u16(self, from),
-            To::Ff00(ff00) => to_Ff00(self, ff00, from),
+            To::Ff00(ff00) => to_ff00(self, ff00, from),
         }
     }
 }
