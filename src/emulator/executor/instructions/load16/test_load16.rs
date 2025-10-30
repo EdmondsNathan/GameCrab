@@ -30,12 +30,6 @@ mod tests {
     fn de_u16() {
         let mut console = init(vec![(0x11, 0x100), (50, 0x101), (45, 0x102)]);
 
-        if decode(0x11).is_err() {
-            panic!("NOT OK!!!")
-        } else {
-            println!("OK!!!")
-        }
-
         for n in 0..12 {
             console.tick();
         }
