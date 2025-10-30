@@ -28,7 +28,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(RRCA)),
             _ => Err(log_error(byte)),
         },
-        0x1 => match low_nibble {
+        0x10 => match low_nibble {
             0x0 => Ok(Control(STOP)),
             0x1 => Ok(Load16(DEU16)),
             0x2 => Ok(Load8(Ld8::DE, Ld8::A)),
@@ -47,7 +47,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(RRA)),
             _ => Err(log_error(byte)),
         },
-        0x2 => match low_nibble {
+        0x20 => match low_nibble {
             0x0 => Ok(JumpRelative(JR::NZ)),
             0x1 => Ok(Load16(HLU16)),
             0x2 => Ok(Load8(Ld8::HLPlus, Ld8::A)),
@@ -66,7 +66,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Control(CPL)),
             _ => Err(log_error(byte)),
         },
-        0x3 => match low_nibble {
+        0x30 => match low_nibble {
             0x0 => Ok(JumpRelative(JR::NC)),
             0x1 => Ok(Load16(Ld16::SPU16)),
             0x2 => Ok(Load8(Ld8::HLMinus, Ld8::A)),
@@ -85,7 +85,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Control(CCF)),
             _ => Err(log_error(byte)),
         },
-        0x4 => match low_nibble {
+        0x40 => match low_nibble {
             0x0 => Ok(Load8(Ld8::B, Ld8::B)),
             0x1 => Ok(Load8(Ld8::B, Ld8::C)),
             0x2 => Ok(Load8(Ld8::B, Ld8::D)),
@@ -104,7 +104,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Load8(Ld8::C, Ld8::A)),
             _ => Err(log_error(byte)),
         },
-        0x5 => match low_nibble {
+        0x50 => match low_nibble {
             0x0 => Ok(Load8(Ld8::D, Ld8::B)),
             0x1 => Ok(Load8(Ld8::D, Ld8::C)),
             0x2 => Ok(Load8(Ld8::D, Ld8::D)),
@@ -123,7 +123,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Load8(Ld8::E, Ld8::A)),
             _ => Err(log_error(byte)),
         },
-        0x6 => match low_nibble {
+        0x60 => match low_nibble {
             0x0 => Ok(Load8(Ld8::H, Ld8::B)),
             0x1 => Ok(Load8(Ld8::H, Ld8::C)),
             0x2 => Ok(Load8(Ld8::H, Ld8::D)),
@@ -142,7 +142,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Load8(Ld8::L, Ld8::A)),
             _ => Err(log_error(byte)),
         },
-        0x7 => match low_nibble {
+        0x70 => match low_nibble {
             0x0 => Ok(Load8(Ld8::HL, Ld8::B)),
             0x1 => Ok(Load8(Ld8::HL, Ld8::C)),
             0x2 => Ok(Load8(Ld8::HL, Ld8::D)),
@@ -161,7 +161,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Load8(Ld8::A, Ld8::A)),
             _ => Err(log_error(byte)),
         },
-        0x8 => match low_nibble {
+        0x80 => match low_nibble {
             0x0 => Ok(Arithmetic8(A8Ops::Add(A8Args::B))),
             0x1 => Ok(Arithmetic8(A8Ops::Add(A8Args::C))),
             0x2 => Ok(Arithmetic8(A8Ops::Add(A8Args::D))),
@@ -180,7 +180,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Arithmetic8(A8Ops::AddCarry(A8Args::A))),
             _ => Err(log_error(byte)),
         },
-        0x9 => match low_nibble {
+        0x90 => match low_nibble {
             0x0 => Ok(Arithmetic8(A8Ops::Sub(A8Args::B))),
             0x1 => Ok(Arithmetic8(A8Ops::Sub(A8Args::C))),
             0x2 => Ok(Arithmetic8(A8Ops::Sub(A8Args::D))),
@@ -199,7 +199,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Arithmetic8(A8Ops::SubCarry(A8Args::A))),
             _ => Err(log_error(byte)),
         },
-        0xA => match low_nibble {
+        0xA0 => match low_nibble {
             0x0 => Ok(Arithmetic8(A8Ops::And(A8Args::B))),
             0x1 => Ok(Arithmetic8(A8Ops::And(A8Args::C))),
             0x2 => Ok(Arithmetic8(A8Ops::And(A8Args::D))),
@@ -218,7 +218,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Arithmetic8(A8Ops::Xor(A8Args::A))),
             _ => Err(log_error(byte)),
         },
-        0xB => match low_nibble {
+        0xB0 => match low_nibble {
             0x0 => Ok(Arithmetic8(A8Ops::Or(A8Args::B))),
             0x1 => Ok(Arithmetic8(A8Ops::Or(A8Args::C))),
             0x2 => Ok(Arithmetic8(A8Ops::Or(A8Args::D))),
@@ -237,7 +237,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Arithmetic8(A8Ops::Cmp(A8Args::A))),
             _ => Err(log_error(byte)),
         },
-        0xC => match low_nibble {
+        0xC0 => match low_nibble {
             0x0 => Ok(Return(Ret::NZ)),
             0x1 => Ok(Pop(PushPop::BC)),
             0x2 => Ok(Jump(JP::NZ)),
@@ -256,7 +256,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Restart(1)),
             _ => Err(log_error(byte)),
         },
-        0xD => match low_nibble {
+        0xD0 => match low_nibble {
             0x0 => Ok(Return(Ret::NC)),
             0x1 => Ok(Pop(PushPop::DE)),
             0x2 => Ok(Jump(JP::NC)),
@@ -275,7 +275,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Restart(3)),
             _ => Err(log_error(byte)),
         },
-        0xE => match low_nibble {
+        0xE0 => match low_nibble {
             0x0 => Ok(Load8(Ld8::FF00AddU8, Ld8::A)),
             0x1 => Ok(Pop(PushPop::HL)),
             0x2 => Ok(Load8(Ld8::FF00AddC, Ld8::A)),
@@ -294,7 +294,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(Restart(5)),
             _ => Err(log_error(byte)),
         },
-        0xF => match low_nibble {
+        0xF0 => match low_nibble {
             0x0 => Ok(Load8(Ld8::A, Ld8::FF00AddU8)),
             0x1 => Ok(Pop(PushPop::AF)),
             0x2 => Ok(Load8(Ld8::A, Ld8::FF00AddC)),
@@ -322,7 +322,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
     let low_nibble = byte & 0x0F;
 
     match high_nibble {
-        0x0 => match low_nibble {
+        0x00 => match low_nibble {
             0x0 => Ok(BitOp(RLC(BitArgs::B))),
             0x1 => Ok(BitOp(RLC(BitArgs::C))),
             0x2 => Ok(BitOp(RLC(BitArgs::D))),
@@ -341,7 +341,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(RRC(BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x1 => match low_nibble {
+        0x10 => match low_nibble {
             0x0 => Ok(BitOp(RL(BitArgs::B))),
             0x1 => Ok(BitOp(RL(BitArgs::C))),
             0x2 => Ok(BitOp(RL(BitArgs::D))),
@@ -360,7 +360,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(RR(BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x2 => match low_nibble {
+        0x20 => match low_nibble {
             0x0 => Ok(BitOp(SLA(BitArgs::B))),
             0x1 => Ok(BitOp(SLA(BitArgs::C))),
             0x2 => Ok(BitOp(SLA(BitArgs::D))),
@@ -379,7 +379,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(SRA(BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x3 => match low_nibble {
+        0x30 => match low_nibble {
             0x0 => Ok(BitOp(Swap(BitArgs::B))),
             0x1 => Ok(BitOp(Swap(BitArgs::C))),
             0x2 => Ok(BitOp(Swap(BitArgs::D))),
@@ -398,7 +398,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(SRL(BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x4 => match low_nibble {
+        0x40 => match low_nibble {
             0x0 => Ok(BitOp(Bit(0, BitArgs::B))),
             0x1 => Ok(BitOp(Bit(0, BitArgs::C))),
             0x2 => Ok(BitOp(Bit(0, BitArgs::D))),
@@ -417,7 +417,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Bit(1, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x5 => match low_nibble {
+        0x50 => match low_nibble {
             0x0 => Ok(BitOp(Bit(2, BitArgs::B))),
             0x1 => Ok(BitOp(Bit(2, BitArgs::C))),
             0x2 => Ok(BitOp(Bit(2, BitArgs::D))),
@@ -436,7 +436,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Bit(3, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x6 => match low_nibble {
+        0x60 => match low_nibble {
             0x0 => Ok(BitOp(Bit(4, BitArgs::B))),
             0x1 => Ok(BitOp(Bit(4, BitArgs::C))),
             0x2 => Ok(BitOp(Bit(4, BitArgs::D))),
@@ -455,7 +455,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Bit(5, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x7 => match low_nibble {
+        0x70 => match low_nibble {
             0x0 => Ok(BitOp(Bit(6, BitArgs::B))),
             0x1 => Ok(BitOp(Bit(6, BitArgs::C))),
             0x2 => Ok(BitOp(Bit(6, BitArgs::D))),
@@ -474,7 +474,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Bit(7, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x8 => match low_nibble {
+        0x80 => match low_nibble {
             0x0 => Ok(BitOp(Reset(0, BitArgs::B))),
             0x1 => Ok(BitOp(Reset(0, BitArgs::C))),
             0x2 => Ok(BitOp(Reset(0, BitArgs::D))),
@@ -493,7 +493,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Reset(1, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0x9 => match low_nibble {
+        0x90 => match low_nibble {
             0x0 => Ok(BitOp(Reset(2, BitArgs::B))),
             0x1 => Ok(BitOp(Reset(2, BitArgs::C))),
             0x2 => Ok(BitOp(Reset(2, BitArgs::D))),
@@ -512,7 +512,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Reset(3, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xA => match low_nibble {
+        0xA0 => match low_nibble {
             0x0 => Ok(BitOp(Reset(4, BitArgs::B))),
             0x1 => Ok(BitOp(Reset(4, BitArgs::C))),
             0x2 => Ok(BitOp(Reset(4, BitArgs::D))),
@@ -531,7 +531,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Reset(5, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xB => match low_nibble {
+        0xB0 => match low_nibble {
             0x0 => Ok(BitOp(Reset(6, BitArgs::B))),
             0x1 => Ok(BitOp(Reset(6, BitArgs::C))),
             0x2 => Ok(BitOp(Reset(6, BitArgs::D))),
@@ -550,7 +550,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Reset(7, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xC => match low_nibble {
+        0xC0 => match low_nibble {
             0x0 => Ok(BitOp(Set(0, BitArgs::B))),
             0x1 => Ok(BitOp(Set(0, BitArgs::C))),
             0x2 => Ok(BitOp(Set(0, BitArgs::D))),
@@ -569,7 +569,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Set(1, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xD => match low_nibble {
+        0xD0 => match low_nibble {
             0x0 => Ok(BitOp(Set(2, BitArgs::B))),
             0x1 => Ok(BitOp(Set(2, BitArgs::C))),
             0x2 => Ok(BitOp(Set(2, BitArgs::D))),
@@ -588,7 +588,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Set(3, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xE => match low_nibble {
+        0xE0 => match low_nibble {
             0x0 => Ok(BitOp(Set(4, BitArgs::B))),
             0x1 => Ok(BitOp(Set(4, BitArgs::C))),
             0x2 => Ok(BitOp(Set(4, BitArgs::D))),
@@ -607,7 +607,7 @@ pub fn decode_cb(byte: u8) -> Result<Instruction, String> {
             0xF => Ok(BitOp(Set(5, BitArgs::A))),
             _ => Err(log_error(byte)),
         },
-        0xF => match low_nibble {
+        0xF0 => match low_nibble {
             0x0 => Ok(BitOp(Set(6, BitArgs::B))),
             0x1 => Ok(BitOp(Set(6, BitArgs::C))),
             0x2 => Ok(BitOp(Set(6, BitArgs::D))),

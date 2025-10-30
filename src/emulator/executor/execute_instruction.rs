@@ -11,6 +11,7 @@ impl Console {
         self.execution_queue
             .push_command_absolute(self.tick_counter + tick_offset, command);
     }
+
     pub fn execute(&mut self, instruction: Instruction) {
         if let Some(next_instruction_offset) = match instruction {
             CB => self.instruction_cb(),
@@ -32,10 +33,10 @@ impl Console {
         }
     }
 
-    fn fetch_decode_execute(&mut self) {
+    pub(crate) fn fetch_decode_execute(&mut self) {
         let decoder = match self.cb_flag {
-            true => decode,
-            false => decode_cb,
+            true => decode_cb,
+            false => decode,
         };
 
         let instruction = match decoder(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {

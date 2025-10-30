@@ -17,16 +17,14 @@ impl Default for Console {
 
 impl Console {
     pub fn new() -> Console {
-        let mut new_console = Console {
+        Console {
             cpu: CPU::new(),
             rom: ROM::new(),
             ram: RAM::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
             cb_flag: false,
-        };
-        new_console.queue_next_instruction(0);
-        new_console
+        }
     }
 
     pub fn new_with_rom(path: String) -> Console {
@@ -55,6 +53,10 @@ impl Console {
     }
 
     pub fn tick(&mut self) {
+        if self.tick_counter == 0 {
+            self.fetch_decode_execute();
+        }
+
         let map_option = self.execution_queue.pop(&self.tick_counter);
         if let Some(queue) = map_option {
             for command in queue {
