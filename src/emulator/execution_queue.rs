@@ -26,4 +26,8 @@ impl ExecutionQueue {
     pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<Command>> {
         self.map.remove(tick)
     }
+
+    pub(crate) fn peek(&mut self, tick: &u64) -> Option<&VecDeque<Command>> {
+        self.map.get(tick)
+    }
 }
