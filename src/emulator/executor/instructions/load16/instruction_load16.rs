@@ -117,8 +117,8 @@ impl Console {
         self.push_command(
             12,
             Read(
-                Source::RamFromRegister(Register16::Xy),
-                Destination::Register(Register8::SpLow),
+                Source::Register(Register8::SpLow),
+                Destination::RamFromRegister(Register16::Bus),
             ),
         );
 
@@ -145,8 +145,8 @@ impl Console {
         self.push_command(
             16,
             Read(
-                Source::RamFromRegister(Register16::Xy),
-                Destination::Register(Register8::SpLow),
+                Source::Register(Register8::SpHigh),
+                Destination::RamFromRegister(Register16::Bus),
             ),
         );
 
