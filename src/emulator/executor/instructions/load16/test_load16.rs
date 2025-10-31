@@ -76,8 +76,7 @@ mod tests {
     fn u16_sp() {
         // (0x08, 0x100) is u16_sp at address 0x100
         // the other two are the values to assign to registers E(50) and D(45)
-        let mut console = init(vec![(0x08, 0x0), (0x08, 0x01), (0x20, 0x02)]);
-        console.cpu.set_register_16(0x0, &Register16::Pc);
+        let mut console = init(vec![(0x08, 0x100), (0x08, 0x101), (0x20, 0x102)]);
         console.cpu.set_register_16(0x0110, &Register16::Sp);
 
         for n in 0..20 {
@@ -88,6 +87,17 @@ mod tests {
             console.ram.fetch_16(0x2008),
             console.cpu.get_register_16(&Register16::Sp)
         );
-        // assert_eq!();
+    }
+
+    #[test]
+    fn sp_hl() {
+        let mut console = init(vec![(0xF9, 0x100)]);
+        console.cpu.set_register_16(0x0110, &Register16::Hl);
+
+        for n in 0..8 {
+            console.tick();
+        }
+
+        assert_eq!(console.cpu.get_register_16(&Register16::Sp), 0x0110);
     }
 }
