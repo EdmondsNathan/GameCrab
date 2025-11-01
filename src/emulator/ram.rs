@@ -20,7 +20,7 @@ impl RAM {
     pub fn fetch_16(&self, address: u16) -> u16 {
         let address = address as usize;
 
-        ((self.memory[address] as u16) << 8) + (self.memory[address] as u16)
+        ((self.memory[address + 1] as u16) << 8) + (self.memory[address] as u16)
     }
 
     pub fn set(&mut self, value: u8, address: u16) {

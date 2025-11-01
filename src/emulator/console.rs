@@ -1,7 +1,4 @@
-use crate::emulator::{
-    commands::command::Command, cpu::CPU, execution_queue::ExecutionQueue, ram::RAM,
-    rom_loaders::rom::ROM,
-};
+use crate::emulator::{cpu::CPU, execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM};
 
 pub struct Console {
     pub(crate) cpu: CPU,
@@ -9,6 +6,7 @@ pub struct Console {
     pub(crate) ram: RAM,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
+    pub(crate) cb_flag: bool,
 }
 
 impl Default for Console {
@@ -19,15 +17,14 @@ impl Default for Console {
 
 impl Console {
     pub fn new() -> Console {
-        let mut new_console = Console {
+        Console {
             cpu: CPU::new(),
             rom: ROM::new(),
             ram: RAM::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
-        };
-        new_console.queue_next_instruction(0);
-        new_console
+            cb_flag: false,
+        }
     }
 
     pub fn new_with_rom(path: String) -> Console {
@@ -56,25 +53,17 @@ impl Console {
     }
 
     pub fn tick(&mut self) {
-        self.run_commands();
-        self.tick_counter += 1;
-    }
+        if self.tick_counter == 0 {
+            self.fetch_decode_execute();
+        }
 
-    fn run_commands(&mut self) {
         let map_option = self.execution_queue.pop(&self.tick_counter);
         if let Some(queue) = map_option {
             for command in queue {
-                match command {
-                    Command::Standard(cmd) => cmd(self),
-                    Command::ReadWrite(cmd, address, register) => cmd(self, address, &register),
-                    Command::SetRegister(cmd, value, register) => {
-                        cmd(&mut self.cpu, value, &register)
-                    }
-                    Command::SetRegister16(cmd, value, register) => {
-                        cmd(&mut self.cpu, value, &register)
-                    }
-                }
+                command.execute_command(self);
             }
         }
+
+        self.tick_counter += 1;
     }
 }

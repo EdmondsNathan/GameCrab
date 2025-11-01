@@ -1,12 +1,50 @@
 use crate::emulator::{
     console::Console,
-    cpu::CPU,
     registers::{Register16, Register8},
 };
 
 pub(crate) enum Command {
-    Standard(fn(&mut Console)),
-    ReadWrite(fn(&mut Console, u16, &Register8), u16, Register8),
-    SetRegister(fn(&mut CPU, u8, &Register8), u8, Register8),
-    SetRegister16(fn(&mut CPU, u16, &Register16), u16, Register16),
+    Read(Source, Destination),
+    Update(fn(&mut Console)),
+}
+
+impl Command {
+    pub(crate) fn execute_command(&self, console: &mut Console) {
+        match self {
+            Command::Read(source, destination) => Self::read(console, source, destination),
+            Command::Update(func) => func(console),
+        }
+    }
+
+    fn read(console: &mut Console, source: &Source, destination: &Destination) {
+        let value = match source {
+            Source::Register(register) => console.cpu.get_register(register),
+            Source::Ram(address) => console.ram.fetch(*address),
+            Source::Value(value) => *value,
+            Source::RamFromRegister(register16) => {
+                console.ram.fetch(console.cpu.get_register_16(register16))
+            }
+        };
+
+        match destination {
+            Destination::Register(register) => console.cpu.set_register(value, register),
+            Destination::Ram(address) => console.ram.set(value, *address),
+            Destination::RamFromRegister(register16) => console
+                .ram
+                .set(value, console.cpu.get_register_16(register16)),
+        }
+    }
+}
+
+pub(crate) enum Source {
+    Register(Register8),
+    Ram(u16),
+    RamFromRegister(Register16),
+    Value(u8),
+}
+
+pub(crate) enum Destination {
+    Register(Register8),
+    Ram(u16),
+    RamFromRegister(Register16),
 }

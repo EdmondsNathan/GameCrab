@@ -1,9 +1,4 @@
-use crate::emulator::{
-    commands::command::Command,
-    console::Console,
-    cpu::CPU,
-    registers::{Register16, Register8},
-};
+use crate::emulator::commands::command::Command;
 use std::collections::{HashMap, VecDeque};
 
 pub(crate) struct ExecutionQueue {
@@ -30,5 +25,9 @@ impl ExecutionQueue {
 
     pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<Command>> {
         self.map.remove(tick)
+    }
+
+    pub(crate) fn peek(&mut self, tick: &u64) -> Option<&VecDeque<Command>> {
+        self.map.get(tick)
     }
 }

@@ -41,16 +41,6 @@ impl Console {
             Ld8::HLPlus => self.go_from_hl(to, Hl::Plus),
             Ld8::HLMinus => self.go_from_hl(to, Hl::Minus),
             Ld8::BC => self.go_from_register16(to, Register16::Bc),
-            /*0A
-            self.push_command(
-                4,
-                Command::SetRegister(
-                    CPU::set_register,
-                    self.ram.fetch(self.cpu.get_register_16(Register16::Bc)),
-                    Register8::A,
-                ),
-            );
-            Some(8)*/
             Ld8::DE => self.go_from_register16(to, Register16::De),
             Ld8::U16 => todo!(),
             Ld8::U8 => todo!(),
