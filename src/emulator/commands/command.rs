@@ -19,8 +19,6 @@ impl Command {
     fn read(console: &mut Console, source: &Source, destination: &Destination) {
         let value = match source {
             Source::Register(register) => console.cpu.get_register(register),
-            Source::Ram(address) => console.ram.fetch(*address),
-            Source::Value(value) => *value,
             Source::RamFromRegister(register16) => {
                 console.ram.fetch(console.cpu.get_register_16(register16))
             }
@@ -28,7 +26,6 @@ impl Command {
 
         match destination {
             Destination::Register(register) => console.cpu.set_register(value, register),
-            Destination::Ram(address) => console.ram.set(value, *address),
             Destination::RamFromRegister(register16) => console
                 .ram
                 .set(value, console.cpu.get_register_16(register16)),
@@ -38,13 +35,10 @@ impl Command {
 
 pub(crate) enum Source {
     Register(Register8),
-    Ram(u16),
     RamFromRegister(Register16),
-    Value(u8),
 }
 
 pub(crate) enum Destination {
     Register(Register8),
-    Ram(u16),
     RamFromRegister(Register16),
 }
