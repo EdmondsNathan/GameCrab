@@ -16,15 +16,15 @@ pub enum Instruction {
 }
 
 pub enum ControlOps {
-    NOP,  //00, 1-4
-    STOP, //10, 1-4
-    HALT, //76, 1-4
-    DI,   //F3, 1-4
-    EI,   //FB, 1-4
-    DAA,  //27, 1-4
-    SCF,  //37, 1-4
-    CPL,  //2F, 1-4
-    CCF,  //3F, 1-4
+    NOP,  //0x00
+    STOP, //0x10
+    HALT, //0x76
+    DI,   //0xF3
+    EI,   //0xFB
+    DAA,  //0x27
+    SCF,  //0x37
+    CPL,  //0x2F
+    CCF,  //0x3F
 }
 
 pub enum JR {
