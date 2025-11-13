@@ -1,9 +1,9 @@
 use crate::emulator::{
-    cpu::CPU,
+    cpu::Cpu,
     registers::{Flags, Register8},
 };
 
-impl CPU {
+impl Cpu {
     pub(crate) fn cpu_add(&mut self, value: u8, register: &Register8, flags: bool) {
         let original = self.get_register(register);
         let (new, overflow) = original.overflowing_add(value);

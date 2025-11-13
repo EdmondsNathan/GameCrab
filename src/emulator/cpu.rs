@@ -1,13 +1,13 @@
 use crate::emulator::registers::{Flags, Register16, Register8, Registers};
 
-pub(crate) struct CPU {
+pub(crate) struct Cpu {
     registers: Registers,
     pub(crate) enable_interrupts: bool,
 }
 
-impl CPU {
-    pub(crate) fn new() -> CPU {
-        CPU {
+impl Cpu {
+    pub(crate) fn new() -> Cpu {
+        Cpu {
             registers: Registers::new(),
             enable_interrupts: false,
         }

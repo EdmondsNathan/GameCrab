@@ -1,9 +1,9 @@
 use crate::emulator::{
-    cpu::CPU, executor::execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM,
+    cpu::Cpu, executor::execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM,
 };
 
 pub struct Console {
-    pub(crate) cpu: CPU,
+    pub(crate) cpu: Cpu,
     pub(crate) rom: ROM,
     pub(crate) ram: RAM,
     pub(crate) tick_counter: u64,
@@ -20,7 +20,7 @@ impl Default for Console {
 impl Console {
     pub fn new() -> Console {
         Console {
-            cpu: CPU::new(),
+            cpu: Cpu::new(),
             rom: ROM::new(),
             ram: RAM::new(),
             tick_counter: 0,
