@@ -8,12 +8,12 @@ use crate::emulator::{
 impl Console {
     pub(in crate::emulator::executor) fn instruction_load16(&mut self, ld16: Ld16) -> Option<u64> {
         match ld16 {
-            Ld16::BCU16 => self.u16_to_register(Register16::Bc),
-            Ld16::DEU16 => self.u16_to_register(Register16::De),
-            Ld16::HLU16 => self.u16_to_register(Register16::Hl),
-            Ld16::SPU16 => self.u16_to_register(Register16::Sp),
-            Ld16::U16SP => self.u16sp(),
-            Ld16::SPHL => self.sphl(),
+            Ld16::BcU16 => self.u16_to_register(Register16::Bc),
+            Ld16::DeU16 => self.u16_to_register(Register16::De),
+            Ld16::HlU16 => self.u16_to_register(Register16::Hl),
+            Ld16::SpU16 => self.u16_to_register(Register16::Sp),
+            Ld16::U16Sp => self.u16sp(),
+            Ld16::SpHl => self.sphl(),
         }
     }
 

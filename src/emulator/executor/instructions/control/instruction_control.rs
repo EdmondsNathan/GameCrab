@@ -6,15 +6,15 @@ impl Console {
         control_op: ControlOps,
     ) -> Option<u64> {
         match control_op {
-            ControlOps::NOP => Some(4),
-            ControlOps::STOP => todo!(),
-            ControlOps::HALT => todo!(),
-            ControlOps::DI => todo!(),
-            ControlOps::EI => todo!(),
-            ControlOps::DAA => todo!(),
-            ControlOps::SCF => todo!(),
-            ControlOps::CPL => todo!(),
-            ControlOps::CCF => todo!(),
+            ControlOps::Nop => Some(4),
+            ControlOps::Stop => todo!(),
+            ControlOps::Halt => todo!(),
+            ControlOps::Di => todo!(),
+            ControlOps::Ei => todo!(),
+            ControlOps::Daa => todo!(),
+            ControlOps::Scf => todo!(),
+            ControlOps::Cpl => todo!(),
+            ControlOps::Ccf => todo!(),
         }
     }
 }

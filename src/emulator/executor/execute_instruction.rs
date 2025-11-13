@@ -14,7 +14,7 @@ impl Console {
 
     pub fn execute(&mut self, instruction: Instruction) {
         if let Some(next_instruction_offset) = match instruction {
-            CB => self.instruction_cb(),
+            Cb => self.instruction_cb(),
             Control(control_op) => self.instruction_control(control_op),
             Load16(ld16) => self.instruction_load16(ld16),
             Push(push_pop) => todo!("push not implemented"),

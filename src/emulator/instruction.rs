@@ -1,5 +1,5 @@
 pub enum Instruction {
-    CB,
+    Cb,
     Control(ControlOps),
     Load16(Ld16),
     Push(PushPop),
@@ -16,21 +16,21 @@ pub enum Instruction {
 }
 
 pub enum ControlOps {
-    NOP,  //0x00
-    STOP, //0x10
-    HALT, //0x76
-    DI,   //0xF3
-    EI,   //0xFB
-    DAA,  //0x27
-    SCF,  //0x37
-    CPL,  //0x2F
-    CCF,  //0x3F
+    Nop,  //0x00
+    Stop, //0x10
+    Halt, //0x76
+    Di,   //0xF3
+    Ei,   //0xFB
+    Daa,  //0x27
+    Scf,  //0x37
+    Cpl,  //0x2F
+    Ccf,  //0x3F
 }
 
 pub enum JR {
     I8, //18, 2-12
-    NC, //20, 2-8/12
-    NZ, //30, 2-8/12
+    Nc, //20, 2-8/12
+    Nz, //30, 2-8/12
     Z,  //28, 2-8/12
     C,  //38, 2-8/12
 }
@@ -38,15 +38,15 @@ pub enum JR {
 pub enum JP {
     U16, //C2, 3-16
     HL,  //C2, 1-4
-    NZ,  //C2, 3-12/16
-    NC,  //C2, 3-12/16
+    Nz,  //C2, 3-12/16
+    Nc,  //C2, 3-12/16
     Z,   //C2, 3-12/16
     C,   //C2, 3-12/16
 }
 
 pub enum Ret {
-    NZ,   //C0, 1-8/20
-    NC,   //D0, 1-8/20
+    Nz,   //C0, 1-8/20
+    Nc,   //D0, 1-8/20
     Z,    //C8, 1-8/20
     C,    //D8, 1-8/20
     None, //C9, 1-16
@@ -54,27 +54,27 @@ pub enum Ret {
 }
 
 pub enum Calls {
-    NZ,  //C4, 3-12/24
-    NC,  //D4, 3-12/24
+    Nz,  //C4, 3-12/24
+    Nc,  //D4, 3-12/24
     Z,   //CC, 3-12/24
     C,   //DC, 3-12/24
     U16, //CD, 3-24
 }
 
 pub enum Ld16 {
-    BCU16, //01, 3-12
-    DEU16, //11, 3-12
-    HLU16, //21, 3-12
-    SPU16, //31, 3-12
-    U16SP, //08, 3-20
-    SPHL,  //F9, 1-8
+    BcU16, //01, 3-12
+    DeU16, //11, 3-12
+    HlU16, //21, 3-12
+    SpU16, //31, 3-12
+    U16Sp, //08, 3-20
+    SpHl,  //F9, 1-8
 }
 
 pub enum PushPop {
-    BC,
-    DE,
-    HL,
-    AF,
+    Bc,
+    De,
+    Hl,
+    Af,
 }
 
 pub enum A16Ops {
@@ -86,10 +86,10 @@ pub enum A16Ops {
 }
 
 pub enum A16Args {
-    BC,
-    DE,
-    HL,
-    SP,
+    Bc,
+    De,
+    Hl,
+    Sp,
 }
 
 pub enum Ld8 {
@@ -100,15 +100,15 @@ pub enum Ld8 {
     E,
     H,
     L,
-    HL,
-    HLPlus,
-    HLMinus,
-    BC,
-    DE,
+    Hl,
+    HlPlus,
+    HlMinus,
+    Bc,
+    De,
     U16,
     U8,
-    FF00AddU8,
-    FF00AddC,
+    Ff00AddU8,
+    Ff00AddC,
 }
 
 pub enum BitArgs {
