@@ -1,4 +1,6 @@
-use crate::emulator::{cpu::CPU, execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM};
+use crate::emulator::{
+    cpu::CPU, executor::execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM,
+};
 
 pub struct Console {
     pub(crate) cpu: CPU,
