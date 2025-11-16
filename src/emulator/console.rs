@@ -1,10 +1,10 @@
 use crate::emulator::{
-    cpu::Cpu, executor::execution_queue::ExecutionQueue, ram::Ram, rom_loaders::rom::ROM,
+    cpu::Cpu, executor::execution_queue::ExecutionQueue, ram::Ram, rom_loaders::rom::Rom,
 };
 
 pub struct Console {
     pub(crate) cpu: Cpu,
-    pub(crate) rom: ROM,
+    pub(crate) rom: Rom,
     pub(crate) ram: Ram,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
@@ -21,7 +21,7 @@ impl Console {
     pub fn new() -> Console {
         Console {
             cpu: Cpu::new(),
-            rom: ROM::new(),
+            rom: Rom::new(),
             ram: Ram::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
@@ -37,8 +37,8 @@ impl Console {
         console
     }
 
-    pub fn load_rom(path: String) -> ROM {
-        match ROM::try_new(&path) {
+    pub fn load_rom(path: String) -> Rom {
+        match Rom::try_new(&path) {
             Ok(rom) => rom,
             Err(error) => {
                 panic!("{error}");

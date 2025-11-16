@@ -1,18 +1,18 @@
 use std::fs;
 
-pub struct ROM {
+pub struct Rom {
     pub bytes: Vec<u8>,
 }
 
-impl ROM {
-    pub fn new() -> ROM {
-        ROM { bytes: vec![] }
+impl Rom {
+    pub fn new() -> Rom {
+        Rom { bytes: vec![] }
     }
 
-    pub fn try_new(path: &str) -> Result<ROM, String> {
+    pub fn try_new(path: &str) -> Result<Rom, String> {
         let rom_bytes = fs::read(path);
         match rom_bytes {
-            Ok(value) => Ok(ROM { bytes: value }),
+            Ok(value) => Ok(Rom { bytes: value }),
             Err(_) => Err("INVALID ROM PATH".to_string()),
         }
     }
