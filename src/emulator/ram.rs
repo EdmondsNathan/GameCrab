@@ -1,10 +1,10 @@
-pub struct RAM {
+pub struct Ram {
     memory: Box<[u8; 0xFFFF]>,
 }
 
-impl RAM {
-    pub fn new() -> RAM {
-        RAM {
+impl Ram {
+    pub fn new() -> Ram {
+        Ram {
             memory: Box::new([0; 0xFFFF]),
         }
     }

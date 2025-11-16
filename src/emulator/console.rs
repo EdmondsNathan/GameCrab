@@ -1,11 +1,11 @@
 use crate::emulator::{
-    cpu::Cpu, executor::execution_queue::ExecutionQueue, ram::RAM, rom_loaders::rom::ROM,
+    cpu::Cpu, executor::execution_queue::ExecutionQueue, ram::Ram, rom_loaders::rom::ROM,
 };
 
 pub struct Console {
     pub(crate) cpu: Cpu,
     pub(crate) rom: ROM,
-    pub(crate) ram: RAM,
+    pub(crate) ram: Ram,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
     pub(crate) cb_flag: bool,
@@ -22,7 +22,7 @@ impl Console {
         Console {
             cpu: Cpu::new(),
             rom: ROM::new(),
-            ram: RAM::new(),
+            ram: Ram::new(),
             tick_counter: 0,
             execution_queue: ExecutionQueue::new(),
             cb_flag: false,
