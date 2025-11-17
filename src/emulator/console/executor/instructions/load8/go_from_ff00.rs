@@ -1,32 +1,32 @@
-use crate::emulator::{
+use crate::emulator::console::{
+    components::registers::{Register16, Register8},
     console::Console,
     executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
-    registers::{Register16, Register8},
 };
 
 impl Console {
-    pub(super) fn go_from_hl(&mut self, to: To, from: Hl) -> Option<u64> {
-        fn to_register8(console: &mut Console, to: Register8, from: Hl) -> Option<u64> {
+    pub(super) fn go_from_ff00(&mut self, to: To, from: Ff00) -> Option<u64> {
+        fn to_register8(console: &mut Console, to: Register8, from: Ff00) -> Option<u64> {
             todo!();
         }
 
-        fn to_register16(console: &mut Console, to: Register16, from: Hl) -> Option<u64> {
+        fn to_register16(console: &mut Console, to: Register16, from: Ff00) -> Option<u64> {
             todo!();
         }
 
-        fn to_hl(console: &mut Console, to: Hl, from: Hl) -> Option<u64> {
+        fn to_hl(console: &mut Console, to: Hl, from: Ff00) -> Option<u64> {
             todo!();
         }
 
-        fn to_u8(console: &mut Console, from: Hl) -> Option<u64> {
+        fn to_u8(console: &mut Console, from: Ff00) -> Option<u64> {
             todo!();
         }
 
-        fn to_u16(console: &mut Console, from: Hl) -> Option<u64> {
+        fn to_u16(console: &mut Console, from: Ff00) -> Option<u64> {
             todo!();
         }
 
-        fn to_ff00(console: &mut Console, to: Ff00, from: Hl) -> Option<u64> {
+        fn to_ff00(console: &mut Console, to: Ff00, from: Ff00) -> Option<u64> {
             todo!();
         }
 

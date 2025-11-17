@@ -1,10 +1,22 @@
-use crate::emulator::{
-    commands::command::Command,
+use crate::emulator::commands::command::Command;
+use crate::emulator::console::executor::instructions::decoder::*;
+use crate::emulator::console::{
+    components::registers::Register16,
+    console,
     console::Console,
-    decoder::{decode, decode_cb},
-    instruction::{Instruction::*, *},
-    registers::Register16,
+    executor::instructions::{
+        cb::instruction_cb, control::instruction_control, instruction::Instruction,
+        instruction::Instruction::*, load16::instruction_load16, load8::instruction_load8,
+    },
 };
+
+// use crate::emulator::{
+//     commands::command::Command,
+//     console::decoder::{decode, decode_cb},
+//     console::Console,
+//     instruction::{Instruction::*, *},
+//     registers::Register16,
+// };
 
 impl Console {
     pub(super) fn push_command(&mut self, tick_offset: u64, command: Command) {

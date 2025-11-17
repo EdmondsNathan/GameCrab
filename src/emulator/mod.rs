@@ -1,9 +1,3 @@
-mod commands;
-pub mod console;
-mod cpu;
-mod decoder;
-mod executor;
-mod instruction;
-mod ram;
-mod registers;
-mod rom_loaders;
+pub(crate) mod commands;
+pub(crate) mod console;
+pub(crate) mod rom_loaders;

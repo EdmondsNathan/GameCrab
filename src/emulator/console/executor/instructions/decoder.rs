@@ -1,8 +1,7 @@
-use crate::emulator::instruction::BitOps::*;
-use crate::emulator::instruction::ControlOps::*;
-use crate::emulator::instruction::Instruction::*;
-use crate::emulator::instruction::Ld16::*;
-use crate::emulator::instruction::*;
+use crate::emulator::console::executor::instructions::instruction::*;
+use crate::emulator::console::executor::instructions::instruction::{
+    BitOps::*, ControlOps::*, Instruction::*, Ld16::*,
+};
 
 pub fn decode(byte: u8) -> Result<Instruction, String> {
     let high_nibble = byte & 0xF0;

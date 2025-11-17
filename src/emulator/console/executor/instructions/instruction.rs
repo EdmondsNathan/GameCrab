@@ -1,4 +1,4 @@
-pub enum Instruction {
+pub(crate) enum Instruction {
     Cb,
     Control(ControlOps),
     Load16(Ld16),
@@ -15,7 +15,7 @@ pub enum Instruction {
     BitOp(BitOps),
 }
 
-pub enum ControlOps {
+pub(crate) enum ControlOps {
     Nop,  //0x00
     Stop, //0x10
     Halt, //0x76

@@ -1,19 +1,19 @@
-use crate::emulator::registers::{Flags, Register16, Register8, Registers};
+use crate::emulator::console::components::registers::{Flags, Register16, Register8, Registers};
 
-pub(crate) struct Cpu {
+pub struct Cpu {
     registers: Registers,
-    pub(crate) enable_interrupts: bool,
+    pub enable_interrupts: bool,
 }
 
 impl Cpu {
-    pub(crate) fn new() -> Cpu {
+    pub fn new() -> Cpu {
         Cpu {
             registers: Registers::new(),
             enable_interrupts: false,
         }
     }
 
-    pub(crate) fn get_register(&self, register: &Register8) -> u8 {
+    pub fn get_register(&self, register: &Register8) -> u8 {
         match register {
             Register8::A => self.registers.a,
             Register8::B => self.registers.b,
@@ -32,7 +32,7 @@ impl Cpu {
         }
     }
 
-    pub(crate) fn set_register(&mut self, value: u8, register: &Register8) {
+    pub fn set_register(&mut self, value: u8, register: &Register8) {
         match register {
             Register8::A => self.registers.a = value,
             Register8::B => self.registers.b = value,
@@ -59,7 +59,7 @@ impl Cpu {
         }
     }
 
-    pub(crate) fn get_register_16(&self, register: &Register16) -> u16 {
+    pub fn get_register_16(&self, register: &Register16) -> u16 {
         match register {
             Register16::Af => ((self.registers.a as u16) << 8) + (self.registers.f as u16),
             Register16::Bc => ((self.registers.b as u16) << 8) + (self.registers.c as u16),
@@ -72,7 +72,7 @@ impl Cpu {
         }
     }
 
-    pub(crate) fn set_register_16(&mut self, value: u16, register: &Register16) {
+    pub fn set_register_16(&mut self, value: u16, register: &Register16) {
         match register {
             Register16::Af => {
                 self.registers.a = (value >> 8) as u8;
@@ -106,7 +106,7 @@ impl Cpu {
         }
     }
 
-    pub(crate) fn get_flag(&mut self, flag: &Flags) -> bool {
+    pub fn get_flag(&mut self, flag: &Flags) -> bool {
         match flag {
             Flags::Z => ((self.registers.f >> 7) & 1) == 1,
             Flags::N => ((self.registers.f >> 6) & 1) == 1,
@@ -115,7 +115,7 @@ impl Cpu {
         }
     }
 
-    pub(crate) fn set_flag(&mut self, value: bool, flag: &Flags) {
+    pub fn set_flag(&mut self, value: bool, flag: &Flags) {
         match flag {
             Flags::Z => {
                 let z = (value as u8) << 7;

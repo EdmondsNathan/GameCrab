@@ -1,8 +1,8 @@
-use crate::emulator::{
-    commands::command::{Command::*, Destination, Source},
+use crate::emulator::commands::command::{Command::*, Destination, Source};
+use crate::emulator::console::{
+    components::registers::{Register16, Register8},
     console::Console,
     executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
-    registers::{Register16, Register8},
 };
 
 impl Console {

@@ -1,15 +1,14 @@
-use crate::emulator::{
+use crate::emulator::console::{
+    components::registers::{Register16, Register8},
     console::Console,
-    instruction::Ld8,
-    registers::{Register16, Register8},
+    executor::instructions::instruction::Ld8,
+    executor::instructions::load8::{
+        go_from_ff00, go_from_hl, go_from_register16, go_from_register8, go_from_u16, go_from_u8,
+    },
 };
 
 impl Console {
-    pub(in crate::emulator::executor) fn instruction_load8(
-        &mut self,
-        to: Ld8,
-        from: Ld8,
-    ) -> Option<u64> {
+    pub(crate) fn instruction_load8(&mut self, to: Ld8, from: Ld8) -> Option<u64> {
         let to = match to {
             Ld8::A => To::Register8(Register8::A),
             Ld8::B => To::Register8(Register8::B),

@@ -1,9 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use crate::emulator::{
+    use crate::emulator::console::{
+        components::registers::{Register16, Register8},
         console::Console,
-        decoder::decode,
-        registers::{Register16, Register8},
     };
 
     fn init(memory_map: Vec<(u8, u16)>) -> Console {

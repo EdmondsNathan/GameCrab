@@ -1,3 +1,3 @@
 pub(crate) mod command;
-mod console_commands;
-mod cpu_commands;
+pub(crate) mod console_commands;
+pub(crate) mod cpu_commands;

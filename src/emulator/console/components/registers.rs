@@ -1,4 +1,4 @@
-pub(crate) struct Registers {
+pub struct Registers {
     pub a: u8,
     pub b: u8,
     pub c: u8,
@@ -14,7 +14,7 @@ pub(crate) struct Registers {
     pub y: u8,
 }
 
-pub(crate) enum Register8 {
+pub enum Register8 {
     A,
     B,
     C,
@@ -31,7 +31,7 @@ pub(crate) enum Register8 {
     Y,
 }
 
-pub(crate) enum Register16 {
+pub enum Register16 {
     Af,
     Bc,
     De,
@@ -42,7 +42,7 @@ pub(crate) enum Register16 {
     Xy,
 }
 
-pub(crate) enum Flags {
+pub enum Flags {
     Z,
     N,
     H,

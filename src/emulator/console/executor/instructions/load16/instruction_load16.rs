@@ -1,12 +1,10 @@
-use crate::emulator::{
-    commands::command::{Command::*, Destination, Source},
-    console::Console,
-    instruction::Ld16,
-    registers::{Register16, Register8},
+use crate::emulator::commands::command::{Command::*, Destination, Source};
+use crate::emulator::console::{
+    components::registers::*, console::Console, executor::instructions::instruction::*,
 };
 
 impl Console {
-    pub(in crate::emulator::executor) fn instruction_load16(&mut self, ld16: Ld16) -> Option<u64> {
+    pub(crate) fn instruction_load16(&mut self, ld16: Ld16) -> Option<u64> {
         match ld16 {
             Ld16::BcU16 => self.u16_to_register(Register16::Bc),
             Ld16::DeU16 => self.u16_to_register(Register16::De),

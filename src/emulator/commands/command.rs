@@ -1,6 +1,6 @@
-use crate::emulator::{
+use crate::emulator::console::{
+    components::registers::{Register16, Register8},
     console::Console,
-    registers::{Register16, Register8},
 };
 
 pub(crate) enum Command {

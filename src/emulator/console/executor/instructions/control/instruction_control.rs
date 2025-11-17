@@ -1,10 +1,10 @@
-use crate::emulator::{commands::command::Command, console::Console, instruction::ControlOps};
+use crate::emulator::{
+    commands::command::Command, console::console::Console,
+    console::executor::instructions::instruction::*,
+};
 
 impl Console {
-    pub(in crate::emulator::executor) fn instruction_control(
-        &mut self,
-        control_op: ControlOps,
-    ) -> Option<u64> {
+    pub(crate) fn instruction_control(&mut self, control_op: ControlOps) -> Option<u64> {
         match control_op {
             ControlOps::Nop => Some(4),
             ControlOps::Stop => todo!(),
