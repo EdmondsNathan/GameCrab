@@ -1,5 +1,5 @@
 use crate::emulator::commands::command::{Command::*, Destination, Source};
-use crate::emulator::console::{
+use crate::emulator::system::{
     components::registers::*, console::Console, executor::instructions::instruction::*,
 };
 

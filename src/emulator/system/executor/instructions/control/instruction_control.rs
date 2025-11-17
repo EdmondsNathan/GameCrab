@@ -1,6 +1,6 @@
 use crate::emulator::{
-    commands::command::Command, console::console::Console,
-    console::executor::instructions::instruction::*,
+    commands::command::Command, system::console::Console,
+    system::executor::instructions::instruction::*,
 };
 
 impl Console {

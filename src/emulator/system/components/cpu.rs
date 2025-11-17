@@ -1,4 +1,4 @@
-use crate::emulator::console::components::registers::{Flags, Register16, Register8, Registers};
+use crate::emulator::system::components::registers::{Flags, Register16, Register8, Registers};
 
 pub struct Cpu {
     registers: Registers,

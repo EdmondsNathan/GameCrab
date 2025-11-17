@@ -1,4 +1,4 @@
-use crate::emulator::console::components::{cpu::Cpu, registers::Flags, registers::Register8};
+use crate::emulator::system::components::{cpu::Cpu, registers::Flags, registers::Register8};
 
 impl Cpu {
     pub(crate) fn cpu_add(&mut self, value: u8, register: &Register8, flags: bool) {

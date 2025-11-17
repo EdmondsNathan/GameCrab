@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::emulator::console::{
+    use crate::emulator::system::{
         components::registers::{Register16, Register8},
         console::Console,
     };

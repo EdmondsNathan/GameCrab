@@ -1,6 +1,6 @@
 use crate::emulator::commands::command::Command;
-use crate::emulator::console::executor::instructions::decoder::*;
-use crate::emulator::console::{
+use crate::emulator::system::executor::instructions::decoder::*;
+use crate::emulator::system::{
     components::registers::Register16,
     console,
     console::Console,

@@ -1,4 +1,4 @@
-use crate::emulator::console::{
+use crate::emulator::system::{
     components::registers::Register16, console::Console, executor,
     executor::instructions::cb::instruction_cb,
 };

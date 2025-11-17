@@ -1,5 +1,5 @@
-use crate::emulator::console::executor::instructions::instruction::*;
-use crate::emulator::console::executor::instructions::instruction::{
+use crate::emulator::system::executor::instructions::instruction::*;
+use crate::emulator::system::executor::instructions::instruction::{
     BitOps::*, ControlOps::*, Instruction::*, Ld16::*,
 };
 
