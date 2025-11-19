@@ -34,7 +34,7 @@ mod tests {
     }
 
     #[test]
-    fn add_adc() {
+    fn adc() {
         let mut cpu = Cpu::new();
         cpu.set_register(253, &Register8::A);
 
