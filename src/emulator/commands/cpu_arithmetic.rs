@@ -59,10 +59,11 @@ impl Cpu {
 
     pub(crate) fn cpu_sbc(&mut self, value: u8, register: &Register8, flags: bool) {
         let original = self.get_register(register);
-        let (value_with_carry, overflow) = value.overflowing_add(match self.get_flag(&Flags::C) {
+        let carry = match self.get_flag(&Flags::C) {
             true => 1,
             false => 0,
-        });
+        };
+        let (value_with_carry, overflow) = value.overflowing_add(carry);
 
         let (new, overflow2) = original.overflowing_sub(value_with_carry);
         let overflow = overflow || overflow2;
@@ -74,7 +75,11 @@ impl Cpu {
 
         self.set_flag(self.get_register(register) == 0, &Flags::Z);
         self.set_flag(true, &Flags::N);
-        self.set_flag((original & 0xF) < (value_with_carry & 0xF), &Flags::H);
+        let (test_value, mut half_carry) = (original & 0xF).overflowing_sub(value & 0xF);
+        if !half_carry {
+            (_, half_carry) = (test_value & 0xF).overflowing_sub(carry & 0xF);
+        }
+        self.set_flag(half_carry, &Flags::H);
         self.set_flag(overflow, &Flags::C);
     }
 }
