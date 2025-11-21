@@ -107,7 +107,7 @@ mod tests {
 
         cpu.set_flag(true, &Flags::C);
         cpu.cpu_sbc(0, &Register8::A, true);
-        assert_eq!(255, cpu.get_register(&Register8::A));
+        assert_eq!(0b11111111, cpu.get_register(&Register8::A));
         assert!(!cpu.get_flag(&Flags::Z));
         assert!(cpu.get_flag(&Flags::N));
         assert!(cpu.get_flag(&Flags::H));
