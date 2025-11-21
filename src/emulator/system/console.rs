@@ -18,6 +18,7 @@ impl Default for Console {
 }
 
 impl Console {
+    /// Create a new console object with all components initalized to default values.
     pub fn new() -> Console {
         Console {
             cpu: Cpu::new(),
@@ -29,6 +30,7 @@ impl Console {
         }
     }
 
+    /// Create a new console object and load a rom from path.
     pub fn new_with_rom(path: String) -> Console {
         let mut console = Console::new();
         console.rom = Self::load_rom(path);
@@ -38,6 +40,7 @@ impl Console {
     }
 
     pub fn load_rom(path: String) -> Rom {
+    /// Load a Rom with rom at path or panic if none is found.
         match Rom::try_new(&path) {
             Ok(rom) => rom,
             Err(error) => {
@@ -46,6 +49,7 @@ impl Console {
         }
     }
 
+    /// load the contents of a Rom into the Ram.
     fn rom_into_ram(&mut self) {
         let mut i: u16 = 0x100;
         for byte in &self.rom.bytes {
@@ -54,6 +58,7 @@ impl Console {
         }
     }
 
+    /// Increment the console by one T tick.
     pub fn tick(&mut self) {
         if self.tick_counter == 0 {
             self.fetch_decode_execute();
