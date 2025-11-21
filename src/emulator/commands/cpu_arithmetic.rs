@@ -29,11 +29,15 @@ impl Cpu {
             true => 1,
             false => 0,
         };
-        let (value_with_carry, overflow) = value.overflowing_add(carry);
 
-        let (new, overflow2) = original.overflowing_add(value_with_carry);
-        let overflow = overflow || overflow2;
-        self.set_register(new, register);
+        // Check if there is an overflow when:
+        //      adding original + value, OR:
+        //      adding the result of the previous expression + carry_from_bit
+        let (original_plus_value, carry_from_value) = original.overflowing_add(value);
+        let (result, carry_from_bit) = original_plus_value.overflowing_add(carry);
+        let did_carry = carry_from_value || carry_from_bit;
+
+        self.set_register(result, register);
 
         if !flags {
             return;
@@ -42,11 +46,23 @@ impl Cpu {
         self.set_flag(self.get_register(register) == 0, &Flags::Z);
 
         self.set_flag(false, &Flags::N);
+
+        /* The half carry checks if the first nibble of each byte
+         * overflows into the second nibble.
+         * EXAMPLE:
+         *   0b00001111
+         *  +0b00000001
+         *  ___________
+         *   0b00010000
+         *        ^
+         *  This bit is carried from the first nibble into the second.
+         */
         self.set_flag(
             (original & 0xF) + (value & 0xF) + (carry & 0xF) > 0xF,
             &Flags::H,
         );
-        self.set_flag(overflow, &Flags::C);
+
+        self.set_flag(did_carry, &Flags::C);
     }
 
     /// Set register = register - value.
@@ -76,24 +92,34 @@ impl Cpu {
             true => 1,
             false => 0,
         };
-        let (value_with_carry, overflow) = value.overflowing_add(carry);
 
-        let (new, overflow2) = original.overflowing_sub(value_with_carry);
-        let overflow = overflow || overflow2;
-        self.set_register(new, register);
+        // result = original - (value - carry)
+        //                   + (-value + carry)
+        // subtract =        - (value + carry)
+        let subtract = value.wrapping_add(carry);
+        // result = original - subtract
+        let result = original.wrapping_sub(subtract);
+        // did_borrow = original < subtract
+        let did_borrow = original < subtract;
 
-        if !flags {
+        self.set_register(result, register);
+
+        if (!flags) {
             return;
         }
 
         self.set_flag(self.get_register(register) == 0, &Flags::Z);
 
         self.set_flag(true, &Flags::N);
-        let (test_value, mut half_carry) = (original & 0xF).overflowing_sub(value & 0xF);
-        if !half_carry {
-            (_, half_carry) = (test_value & 0xF).overflowing_sub(carry & 0xF);
-        }
-        self.set_flag(half_carry, &Flags::H);
-        self.set_flag(overflow, &Flags::C);
+
+        //H flag
+        // let (half_carry_value, mut half_carry) = (original & 0xF).overflowing_sub(value & 0xF);
+        // if !half_carry {
+        //     let (_, half_carry) = (half_carry_value & 0xF).overflowing_sub((carry) & 0xF);
+        // }
+        let did_half_carry = (original & 0xF) < ((value & 0xF) + (carry & 0xF));
+        self.set_flag(did_half_carry, &Flags::H);
+
+        self.set_flag(did_borrow, &Flags::C);
     }
 }
