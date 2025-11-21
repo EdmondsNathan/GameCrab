@@ -39,8 +39,8 @@ impl Console {
         console
     }
 
-    pub fn load_rom(path: String) -> Rom {
     /// Load a Rom with rom at path or panic if none is found.
+    fn load_rom(path: String) -> Rom {
         match Rom::try_new(&path) {
             Ok(rom) => rom,
             Err(error) => {
