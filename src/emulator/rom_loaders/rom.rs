@@ -5,10 +5,12 @@ pub struct Rom {
 }
 
 impl Rom {
+    /// Initalize an empty Rom object.
     pub fn new() -> Rom {
         Rom { bytes: vec![] }
     }
 
+    /// Try to initalize a Rom object with a rom file loaded from path.
     pub fn try_new(path: &str) -> Result<Rom, String> {
         let rom_bytes = fs::read(path);
         match rom_bytes {
