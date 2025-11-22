@@ -49,8 +49,8 @@ pub enum Flags {
     C,
 }
 
-impl Registers {
-    pub fn new() -> Registers {
+impl Default for Registers {
+    fn default() -> Self {
         Registers {
             a: 0x01,
             b: 0xFF,
@@ -66,5 +66,11 @@ impl Registers {
             y: 0x0,
             bus: 0x0100,
         }
+    }
+}
+
+impl Registers {
+    pub fn new() -> Registers {
+        Self::default()
     }
 }

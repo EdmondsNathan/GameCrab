@@ -1,5 +1,6 @@
 use crate::emulator::system::components::registers::{Flags, Register16, Register8, Registers};
 
+#[derive(Default)]
 pub struct Cpu {
     registers: Registers,
     pub enable_interrupts: bool,
@@ -7,10 +8,7 @@ pub struct Cpu {
 
 impl Cpu {
     pub fn new() -> Cpu {
-        Cpu {
-            registers: Registers::new(),
-            enable_interrupts: false,
-        }
+        Self::default()
     }
 
     pub fn get_register(&self, register: &Register8) -> u8 {

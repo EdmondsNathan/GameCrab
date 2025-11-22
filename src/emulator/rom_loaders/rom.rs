@@ -1,5 +1,6 @@
 use std::fs;
 
+#[derive(Default)]
 pub struct Rom {
     pub bytes: Vec<u8>,
 }
@@ -7,7 +8,7 @@ pub struct Rom {
 impl Rom {
     /// Initalize an empty Rom object.
     pub fn new() -> Rom {
-        Rom { bytes: vec![] }
+        Self::default()
     }
 
     /// Try to initalize a Rom object with a rom file loaded from path.

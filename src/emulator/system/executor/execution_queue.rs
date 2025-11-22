@@ -1,15 +1,14 @@
 use crate::emulator::commands::command::Command;
 use std::collections::{HashMap, VecDeque};
 
+#[derive(Default)]
 pub(crate) struct ExecutionQueue {
     map: HashMap<u64, VecDeque<Command>>,
 }
 
 impl ExecutionQueue {
     pub(crate) fn new() -> ExecutionQueue {
-        ExecutionQueue {
-            map: HashMap::new(),
-        }
+        Self::default()
     }
 
     pub(crate) fn push_command_absolute(&mut self, tick: u64, command: Command) {

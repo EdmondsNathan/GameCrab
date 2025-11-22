@@ -2,11 +2,17 @@ pub struct Ram {
     memory: Box<[u8; 0xFFFF]>,
 }
 
-impl Ram {
-    pub fn new() -> Ram {
+impl Default for Ram {
+    fn default() -> Self {
         Ram {
             memory: Box::new([0; 0xFFFF]),
         }
+    }
+}
+
+impl Ram {
+    pub fn new() -> Ram {
+        Self::default()
     }
 
     pub fn fetch(&self, address: u16) -> u8 {
