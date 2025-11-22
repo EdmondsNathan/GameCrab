@@ -7,10 +7,12 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    /// Create a new cpu object.
     pub fn new() -> Cpu {
         Self::default()
     }
 
+    /// Get the value of a register.
     pub fn get_register(&self, register: &Register8) -> u8 {
         match register {
             Register8::A => self.registers.a,
@@ -30,6 +32,7 @@ impl Cpu {
         }
     }
 
+    /// Set the value of a register.
     pub fn set_register(&mut self, value: u8, register: &Register8) {
         match register {
             Register8::A => self.registers.a = value,
@@ -57,6 +60,7 @@ impl Cpu {
         }
     }
 
+    /// Get the value of a register pair.
     pub fn get_register_16(&self, register: &Register16) -> u16 {
         match register {
             Register16::Af => ((self.registers.a as u16) << 8) + (self.registers.f as u16),
@@ -70,6 +74,7 @@ impl Cpu {
         }
     }
 
+    /// Set value of a register pair.
     pub fn set_register_16(&mut self, value: u16, register: &Register16) {
         match register {
             Register16::Af => {
@@ -104,6 +109,7 @@ impl Cpu {
         }
     }
 
+    /// Get the value of a flag.
     pub fn get_flag(&mut self, flag: &Flags) -> bool {
         match flag {
             Flags::Z => ((self.registers.f >> 7) & 1) == 1,
@@ -113,6 +119,7 @@ impl Cpu {
         }
     }
 
+    /// Set the value of a flag.
     pub fn set_flag(&mut self, value: bool, flag: &Flags) {
         match flag {
             Flags::Z => {
