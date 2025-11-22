@@ -13,7 +13,7 @@ pub struct Console {
 }
 
 impl Console {
-    /// Create a new console object with all components initalized to default values.
+    /// Create a new console object.
     pub fn new() -> Console {
         Self::default()
     }
@@ -27,7 +27,7 @@ impl Console {
         console
     }
 
-    /// Load a Rom with rom at path or panic if none is found.
+    /// Load a rom or panic if none is found.
     fn load_rom(path: String) -> Rom {
         match Rom::try_new(&path) {
             Ok(rom) => rom,
@@ -37,7 +37,7 @@ impl Console {
         }
     }
 
-    /// load the contents of a Rom into the Ram.
+    /// load the contents of a Rom into Ram.
     fn rom_into_ram(&mut self) {
         let mut i: u16 = 0x100;
         for byte in &self.rom.bytes {
@@ -46,7 +46,7 @@ impl Console {
         }
     }
 
-    /// Increment the console by one T tick.
+    /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
         if self.tick_counter == 0 {
             self.fetch_decode_execute();
