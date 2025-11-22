@@ -19,12 +19,15 @@ use crate::emulator::system::{
 // };
 
 impl Console {
+    /// Push a command onto the queue at the current tick + tick offset.
     pub(super) fn push_command(&mut self, tick_offset: u64, command: Command) {
         self.execution_queue
             .push_command_absolute(self.tick_counter + tick_offset, command);
     }
 
+    /// Queue an instruction.
     pub fn execute(&mut self, instruction: Instruction) {
+        /// Queue the next instruction at the tick offset if one is returned.
         if let Some(next_instruction_offset) = match instruction {
             Cb => self.instruction_cb(),
             Control(control_op) => self.instruction_control(control_op),
@@ -45,6 +48,8 @@ impl Console {
         }
     }
 
+    // todo: Split into separate functions to increase readability.
+    /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
         let decoder = match self.cb_flag {
             true => decode_cb,
@@ -63,6 +68,7 @@ impl Console {
         self.execute(instruction);
     }
 
+    /// Queue the next instruction at the specified tick.
     pub(crate) fn queue_next_instruction(&mut self, tick: u64) {
         self.push_command(tick, Command::Update(Console::fetch_decode_execute));
     }

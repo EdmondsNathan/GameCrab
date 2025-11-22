@@ -48,12 +48,14 @@ impl Console {
 
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
+        // Queue the first command.
         if self.tick_counter == 0 {
             self.fetch_decode_execute();
         }
 
-        let map_option = self.execution_queue.pop(&self.tick_counter);
-        if let Some(queue) = map_option {
+        // execute all commands at the current tick if any exist.
+        let map = self.execution_queue.pop(&self.tick_counter);
+        if let Some(queue) = map {
             for command in queue {
                 command.execute_command(self);
             }

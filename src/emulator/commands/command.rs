@@ -9,6 +9,7 @@ pub(crate) enum Command {
 }
 
 impl Command {
+    /// Execute a read or update command.
     pub(crate) fn execute_command(&self, console: &mut Console) {
         match self {
             Command::Read(source, destination) => Self::read(console, source, destination),
@@ -16,6 +17,7 @@ impl Command {
         }
     }
 
+    /// Execute a read command.
     fn read(console: &mut Console, source: &Source, destination: &Destination) {
         let value = match source {
             Source::Register(register) => console.cpu.get_register(register),

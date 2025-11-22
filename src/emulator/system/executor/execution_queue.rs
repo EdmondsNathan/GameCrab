@@ -7,7 +7,7 @@ pub(crate) struct ExecutionQueue {
 }
 
 impl ExecutionQueue {
-    /// Create a new execution queue object
+    /// Create a new execution queue object.
     pub(crate) fn new() -> ExecutionQueue {
         Self::default()
     }
@@ -24,12 +24,12 @@ impl ExecutionQueue {
         }
     }
 
-    /// Pop the queue from a specific tick.
+    /// Pop the queue at a specific tick.
     pub(crate) fn pop(&mut self, tick: &u64) -> Option<VecDeque<Command>> {
         self.map.remove(tick)
     }
 
-    /// Peek at the queue from a specific tick.
+    /// Peek at the queue of a specific tick.
     pub(crate) fn peek(&mut self, tick: &u64) -> Option<&VecDeque<Command>> {
         self.map.get(tick)
     }
