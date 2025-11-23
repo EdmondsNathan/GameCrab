@@ -7,6 +7,7 @@ use crate::emulator::system::{
 impl Console {
     pub(super) fn go_from_register16(&mut self, to: To, from: Register16) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Register16) -> Option<u64> {
+            // TODO
             todo!();
         }
 

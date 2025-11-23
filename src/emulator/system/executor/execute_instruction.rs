@@ -48,7 +48,7 @@ impl Console {
         }
     }
 
-    // todo: Split into separate functions to increase readability.
+    // TODO Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
         let decoder = match self.cb_flag {
