@@ -20,11 +20,10 @@ impl Console {
 
     /// Create a new console object and load a rom from path.
     pub fn new_with_rom(path: String) -> Console {
-        let mut console = Console::new();
-        console.rom = Self::load_rom(path);
-        console.rom_into_ram();
-
-        console
+        Console {
+            rom: Self::load_rom(path),
+            ..Default::default()
+        }
     }
 
     /// Load a rom or panic if none is found.
