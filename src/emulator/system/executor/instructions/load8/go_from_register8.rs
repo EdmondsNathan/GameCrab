@@ -13,7 +13,21 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
-            todo!();
+            console.push_command(
+                3,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Pc),
+                        &Register16::Bus,
+                    )
+                }),
+            );
+
+            console.push_command(
+                4,
+                Read(Source::Register(from), Destination::RamFromRegister(to)),
+            );
+            Some(8)
         }
 
         fn to_hl(console: &mut Console, to: Hl, from: Register8) -> Option<u64> {
