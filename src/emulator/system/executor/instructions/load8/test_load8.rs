@@ -42,4 +42,38 @@ mod go_from_register_8 {
 
         assert_eq!(console.ram.fetch(0x256), 0x10);
     }
+
+    #[test]
+    fn to_hl_ldd() {
+        let mut console = init(vec![(0x32, 0x100)]);
+        console.cpu.set_register(0x10, &Register8::A);
+        console.cpu.set_register_16(0x256, &Register16::Hl);
+
+        for n in 0..8 {
+            console.tick();
+        }
+
+        // Ensure the byte of ram at Hl's location is loaded with register a's value
+        assert_eq!(console.ram.fetch(0x256), 0x10);
+
+        // Ensure hl is decremented
+        assert_eq!(console.cpu.get_register_16(&Register16::Hl), 0x255);
+    }
+
+    #[test]
+    fn to_hl_ldi() {
+        let mut console = init(vec![(0x22, 0x100)]);
+        console.cpu.set_register(0x10, &Register8::A);
+        console.cpu.set_register_16(0x256, &Register16::Hl);
+
+        for n in 0..8 {
+            console.tick();
+        }
+
+        // Ensure the byte of ram at Hl's location is loaded with register a's value
+        assert_eq!(console.ram.fetch(0x256), 0x10);
+
+        // Ensure hl is incremented
+        assert_eq!(console.cpu.get_register_16(&Register16::Hl), 0x257);
+    }
 }
