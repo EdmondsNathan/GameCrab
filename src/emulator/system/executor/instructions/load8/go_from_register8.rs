@@ -71,7 +71,7 @@ impl Console {
                     5,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
-                            console.cpu.get_register_16(&Register16::Hl) + 1,
+                            console.cpu.get_register_16(&Register16::Hl) - 1,
                             &Register16::Hl,
                         );
                     }),
