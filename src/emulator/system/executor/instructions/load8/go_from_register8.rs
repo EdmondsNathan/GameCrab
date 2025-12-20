@@ -82,7 +82,7 @@ impl Console {
         }
 
         fn to_u8(console: &mut Console, from: Register8) -> Option<u64> {
-            todo!();
+            panic!("register 8 to u8 is an invalid instruction!");
         }
 
         fn to_u16(console: &mut Console, from: Register8) -> Option<u64> {
