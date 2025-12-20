@@ -13,11 +13,16 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
+            // store the value of to into xy so the closure doesn't capture a variable
+            console
+                .cpu
+                .set_register_16(console.cpu.get_register_16(&to), &Register16::Xy);
+
             console.push_command(
                 3,
                 Update(|console: &mut Console| {
                     console.cpu.set_register_16(
-                        console.cpu.get_register_16(&Register16::Pc),
+                        console.cpu.get_register_16(&Register16::Xy),
                         &Register16::Bus,
                     )
                 }),
@@ -25,13 +30,55 @@ impl Console {
 
             console.push_command(
                 4,
-                Read(Source::Register(from), Destination::RamFromRegister(to)),
+                Read(
+                    Source::Register(from),
+                    Destination::RamFromRegister(Register16::Bus),
+                ),
             );
+
             Some(8)
         }
 
         fn to_hl(console: &mut Console, to: Hl, from: Register8) -> Option<u64> {
-            todo!();
+            console.push_command(
+                3,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Hl),
+                        &Register16::Bus,
+                    )
+                }),
+            );
+
+            console.push_command(
+                4,
+                Read(
+                    Source::Register(from),
+                    Destination::RamFromRegister(Register16::Bus),
+                ),
+            );
+            match to {
+                Hl::Plus => console.push_command(
+                    5,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Hl) + 1,
+                            &Register16::Hl,
+                        );
+                    }),
+                ),
+                Hl::Minus => console.push_command(
+                    5,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Hl) + 1,
+                            &Register16::Hl,
+                        );
+                    }),
+                ),
+            }
+
+            Some(8)
         }
 
         fn to_u8(console: &mut Console, from: Register8) -> Option<u64> {
