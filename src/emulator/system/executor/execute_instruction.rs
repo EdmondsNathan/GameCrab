@@ -63,6 +63,8 @@ impl Console {
 
         self.cb_flag = false;
 
+        // Every instruction increments the pc after 1 tick
+        // This just makes it so we don't have to add this to every single instruction :)
         self.push_command(1, Command::Update(Self::command_increment_pc));
 
         self.execute(instruction);
