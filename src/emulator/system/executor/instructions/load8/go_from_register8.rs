@@ -86,7 +86,65 @@ impl Console {
         }
 
         fn to_u16(console: &mut Console, from: Register8) -> Option<u64> {
-            todo!();
+            console.push_command(
+                3,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Pc),
+                        &Register16::Bus,
+                    );
+                }),
+            );
+
+            console.push_command(4, Update(Console::command_increment_pc));
+
+            console.push_command(
+                5,
+                Read(
+                    Source::RamFromRegister(Register16::Bus),
+                    Destination::Register(Register8::Y),
+                ),
+            );
+
+            console.push_command(
+                6,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Pc),
+                        &Register16::Bus,
+                    );
+                }),
+            );
+
+            console.push_command(7, Update(Console::command_increment_pc));
+
+            console.push_command(
+                8,
+                Read(
+                    Source::RamFromRegister(Register16::Bus),
+                    Destination::Register(Register8::X),
+                ),
+            );
+
+            console.push_command(
+                9,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Xy),
+                        &Register16::Bus,
+                    );
+                }),
+            );
+
+            console.push_command(
+                12,
+                Read(
+                    Source::Register(Register8::A),
+                    Destination::RamFromRegister(Register16::Xy),
+                ),
+            );
+
+            Some(16)
         }
 
         fn to_ff00(console: &mut Console, to: Ff00, from: Register8) -> Option<u64> {
