@@ -76,4 +76,21 @@ mod go_from_register_8 {
         // Ensure hl is incremented
         assert_eq!(console.cpu.get_register_16(&Register16::Hl), 0x257);
     }
+
+    #[test]
+    fn to_u16() {
+        // EA is the A to u16 instruction
+        // the following 2 bytes are 0x01, 0x02
+        // Since it is little endian, this corresponds to address 0x0201
+        // This address will be set to the value of register A(0x05)
+        let mut console = init(vec![(0xEA, 0x100), (0x01, 0x101), (0x02, 0x102)]);
+        console.cpu.set_register(0x05, &Register8::A);
+
+        for n in 0..16 {
+            console.tick();
+        }
+
+        // Ensure the byte of ram at 0x0201 is loaded with register a's value
+        assert_eq!(console.ram.fetch(0x0201), 0x05);
+    }
 }
