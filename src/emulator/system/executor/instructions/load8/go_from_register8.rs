@@ -13,7 +13,7 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
-            // store the value of to into xy so the closure doesn't capture a variable
+            // store the value of To into xy so the closure doesn't capture a variable
             console
                 .cpu
                 .set_register_16(console.cpu.get_register_16(&to), &Register16::Xy);
