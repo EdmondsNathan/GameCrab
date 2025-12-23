@@ -1,4 +1,5 @@
 use crate::emulator::commands::command::{Command::*, Destination, Source};
+use crate::emulator::system::console;
 use crate::emulator::system::{
     components::registers::{Register16, Register8},
     console::Console,
@@ -57,6 +58,8 @@ impl Console {
                     Destination::RamFromRegister(Register16::Bus),
                 ),
             );
+
+            // Is it HL Plus or Minus
             match to {
                 Hl::Plus => console.push_command(
                     5,
@@ -148,7 +151,96 @@ impl Console {
         }
 
         fn to_ff00(console: &mut Console, to: Ff00, from: Register8) -> Option<u64> {
-            todo!();
+            match to {
+                Ff00::C => return plus_c(console, from),
+                Ff00::U8 => return plus_u8(console, from),
+            };
+
+            fn plus_c(console: &mut Console, from: Register8) -> Option<u64> {
+                console.push_command(
+                    3,
+                    Read(
+                        Source::Register(Register8::C),
+                        Destination::Register(Register8::Y),
+                    ),
+                );
+
+                console.push_command(
+                    4,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register(0xFF, &Register8::X);
+                    }),
+                );
+
+                console.push_command(
+                    5,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Xy),
+                            &Register16::Bus,
+                        );
+                    }),
+                );
+
+                console.push_command(
+                    6,
+                    Read(
+                        Source::Register(from),
+                        Destination::RamFromRegister(Register16::Xy),
+                    ),
+                );
+
+                Some(8)
+            }
+
+            fn plus_u8(console: &mut Console, from: Register8) -> Option<u64> {
+                console.push_command(
+                    3,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Pc),
+                            &Register16::Bus,
+                        );
+                    }),
+                );
+
+                console.push_command(4, Update(Console::command_increment_pc));
+
+                console.push_command(
+                    5,
+                    Read(
+                        Source::Register(Register8::Y),
+                        Destination::RamFromRegister(Register16::Bus),
+                    ),
+                );
+
+                console.push_command(
+                    6,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register(0xFF, &Register8::X);
+                    }),
+                );
+
+                console.push_command(
+                    7,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Xy),
+                            &Register16::Bus,
+                        );
+                    }),
+                );
+
+                console.push_command(
+                    8,
+                    Read(
+                        Source::Register(from),
+                        Destination::RamFromRegister(Register16::Xy),
+                    ),
+                );
+
+                Some(12)
+            }
         }
 
         match to {
