@@ -143,7 +143,7 @@ impl Console {
                 12,
                 Read(
                     Source::Register(Register8::A),
-                    Destination::RamFromRegister(Register16::Xy),
+                    Destination::RamFromRegister(Register16::Bus),
                 ),
             );
 
