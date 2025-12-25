@@ -84,10 +84,6 @@ impl Console {
             Some(8)
         }
 
-        fn to_u8(console: &mut Console, from: Register8) -> Option<u64> {
-            panic!("register 8 to u8 is an invalid instruction!");
-        }
-
         fn to_u16(console: &mut Console, from: Register8) -> Option<u64> {
             console.push_command(
                 3,
@@ -247,7 +243,7 @@ impl Console {
             To::Register8(register8) => to_register8(self, register8, from),
             To::Register16(register16) => to_register16(self, register16, from),
             To::Hl(hl) => to_hl(self, hl, from),
-            To::U8 => to_u8(self, from),
+            To::U8 => panic!("from register8 to u8 is an invalid instruction!"),
             To::U16 => to_u16(self, from),
             To::Ff00(ff00) => to_ff00(self, ff00, from),
         }
