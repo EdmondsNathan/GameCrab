@@ -243,7 +243,7 @@ impl Console {
             To::Register8(register8) => to_register8(self, register8, from),
             To::Register16(register16) => to_register16(self, register16, from),
             To::Hl(hl) => to_hl(self, hl, from),
-            To::U8 => panic!("from register8 to u8 is an invalid instruction!"),
+            To::U8 => panic!("Invalid instruction!"),
             To::U16 => to_u16(self, from),
             To::Ff00(ff00) => to_ff00(self, ff00, from),
         }
