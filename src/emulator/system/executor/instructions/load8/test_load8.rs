@@ -112,4 +112,21 @@ mod go_from_register_8 {
         // Is Ram 0xFF00 + C == A?
         assert_eq!(console.ram.fetch(0xFF05), 0x03);
     }
+
+    #[test]
+    fn to_ff00_u8() {
+        // Load the value of A into memory address 0xFF00 + u8
+
+        // 0xE2 LD (0xFF00 + u8), A
+        let mut console = init(vec![(0xE0, 0x100), (0x01, 0x101)]);
+        console.cpu.set_register(0x03, &Register8::A);
+
+        // 0xE0 is 12 ticks
+        for n in 0..12 {
+            console.tick();
+        }
+
+        // Is Ram 0xFF00 + u8 == A?
+        assert_eq!(console.ram.fetch(0xFF01), 0x03);
+    }
 }
