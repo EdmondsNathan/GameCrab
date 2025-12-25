@@ -209,8 +209,8 @@ impl Console {
                 console.push_command(
                     5,
                     Read(
-                        Source::Register(Register8::Y),
-                        Destination::RamFromRegister(Register16::Bus),
+                        Source::RamFromRegister(Register16::Bus),
+                        Destination::Register(Register8::Y),
                     ),
                 );
 
