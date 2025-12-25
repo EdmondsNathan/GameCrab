@@ -117,7 +117,7 @@ mod go_from_register_8 {
     fn to_ff00_u8() {
         // Load the value of A into memory address 0xFF00 + u8
 
-        // 0xE2 LD (0xFF00 + u8), A
+        // 0xE0 LD (0xFF00 + u8), A
         let mut console = init(vec![(0xE0, 0x100), (0x01, 0x101)]);
         console.cpu.set_register(0x03, &Register8::A);
 
