@@ -39,7 +39,58 @@ impl Console {
 
         //TAG_TODO
         fn to_register16(console: &mut Console, to: Register16) -> Option<u64> {
-            todo!();
+            console.push_command(
+                3,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Pc),
+                        &Register16::Bus,
+                    )
+                }),
+            );
+
+            console.push_command(4, Update(Console::command_increment_pc));
+
+            console.push_command(
+                5,
+                Read(
+                    Source::RamFromRegister(Register16::Bus),
+                    Destination::Register(Register8::Y),
+                ),
+            );
+
+            console.push_command(
+                6,
+                Read(
+                    Source::Register(Register8::L),
+                    Destination::Register(Register8::BusLow),
+                ),
+            );
+            console.push_command(
+                6,
+                Read(
+                    Source::Register(Register8::H),
+                    Destination::Register(Register8::BusHigh),
+                ),
+            );
+
+            console.push_command(
+                8,
+                Read(
+                    Source::Register(Register8::Y),
+                    Destination::RamFromRegister(Register16::Bus),
+                ),
+            );
+
+            console.push_command(
+                7,
+                Read(
+                    Source::Register(Register8::Y),
+                    Destination::RamFromRegister(Register16::Bus),
+                ),
+            );
+
+            Some(12)
         }
 
         match to {
