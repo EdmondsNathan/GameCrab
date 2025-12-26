@@ -1,2 +1,2 @@
 #[cfg(test)]
-mod go_from_u16 {}
+mod go_from_u8 {}
