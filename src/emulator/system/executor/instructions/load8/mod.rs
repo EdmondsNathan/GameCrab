@@ -8,3 +8,4 @@ pub(crate) mod instruction_load8;
 mod test_go_from_register16;
 mod test_go_from_register8;
 mod test_go_from_u16;
+mod test_go_from_u8;
