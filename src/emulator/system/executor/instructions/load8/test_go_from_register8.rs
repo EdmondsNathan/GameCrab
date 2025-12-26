@@ -15,7 +15,7 @@ mod go_from_register_8 {
     use crate::emulator::system::{
         components::registers::{Register16, Register8},
         console,
-        executor::instructions::load8::test_load8::init,
+        executor::instructions::load8::test_go_from_register8::init,
     };
 
     #[test]
