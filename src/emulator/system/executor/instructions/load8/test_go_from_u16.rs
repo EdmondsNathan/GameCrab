@@ -14,12 +14,23 @@ mod go_from_u16 {
 
     #[test]
     fn to_register_8() {
-        let mut console = init(vec![(0xFA, 0x100), (0x03, 0x101)]);
+        let mut console = init(vec![
+            (0xFA, 0x100),
+            (0x03, 0x101),
+            (0x01, 0x102),
+            (0x03, 0x103),
+        ]);
 
         for n in 0..16 {
             console.tick();
         }
 
-        // assert_eq!(console.cpu.get_register(&Register8::A), 0x03);
+        assert_eq!(console.cpu.get_register(&Register8::A), 0x03);
+    }
+
+    #[test]
+    fn two_in_a_row() {
+        // to_register_8();
+        // to_register_8();
     }
 }
