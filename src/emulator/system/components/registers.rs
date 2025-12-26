@@ -29,6 +29,8 @@ pub enum Register8 {
     PcHigh,
     X,
     Y,
+    BusLow,
+    BusHigh,
 }
 
 pub enum Register16 {

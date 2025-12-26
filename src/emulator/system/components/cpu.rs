@@ -29,6 +29,8 @@ impl Cpu {
             Register8::PcHigh => (self.registers.pc >> 8) as u8,
             Register8::X => self.registers.x,
             Register8::Y => self.registers.y,
+            Register8::BusLow => self.registers.bus as u8,
+            Register8::BusHigh => (self.registers.bus >> 8) as u8,
         }
     }
 
@@ -57,6 +59,12 @@ impl Cpu {
             }
             Register8::X => self.registers.x = value,
             Register8::Y => self.registers.y = value,
+            Register8::BusLow => {
+                self.registers.bus = (self.registers.bus & 0xFF00) + (value as u16);
+            }
+            Register8::BusHigh => {
+                self.registers.bus = (self.registers.bus & 0x00FF) + ((value as u16) << 8);
+            }
         }
     }
 
