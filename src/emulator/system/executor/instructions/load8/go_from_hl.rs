@@ -4,6 +4,7 @@ use crate::emulator::system::{
     executor::instructions::load8::instruction_load8::{Ff00, Hl, To},
 };
 
+//TAG_TODO
 impl Console {
     pub(super) fn go_from_hl(&mut self, to: To, from: Hl) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Hl) -> Option<u64> {
