@@ -27,10 +27,4 @@ mod go_from_u16 {
 
         assert_eq!(console.cpu.get_register(&Register8::A), 0x03);
     }
-
-    #[test]
-    fn two_in_a_row() {
-        // to_register_8();
-        // to_register_8();
-    }
 }
