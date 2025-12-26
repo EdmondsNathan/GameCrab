@@ -1,10 +1,8 @@
 use crate::emulator::system::{
     components::registers::{Register16, Register8},
     console::Console,
-    executor::instructions::instruction::Ld8,
-    executor::instructions::load8::{
-        go_from_ff00, go_from_hl, go_from_register16, go_from_register8, go_from_u16, go_from_u8,
-    },
+    executor::instructions::instruction::Ld8
+    ,
 };
 
 impl Console {
@@ -41,7 +39,7 @@ impl Console {
             Ld8::HlMinus => self.go_from_hl(to, Hl::Minus),
             Ld8::Bc => self.go_from_register16(to, Register16::Bc),
             Ld8::De => self.go_from_register16(to, Register16::De),
-            Ld8::U16 => todo!(),
+            Ld8::U16 => self.go_from_u16(to),
             Ld8::U8 => todo!(),
             Ld8::Ff00AddU8 => todo!(),
             Ld8::Ff00AddC => todo!(),
