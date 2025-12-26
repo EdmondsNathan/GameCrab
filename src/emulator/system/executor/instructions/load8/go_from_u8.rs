@@ -37,7 +37,6 @@ impl Console {
             Some(8)
         }
 
-        //TAG_TODO
         fn to_register16(console: &mut Console, to: Register16) -> Option<u64> {
             console.push_command(
                 3,
