@@ -8,7 +8,18 @@ use crate::emulator::system::{
 impl Console {
     pub(super) fn go_from_ff00(&mut self, to: To, from: Ff00) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Ff00) -> Option<u64> {
-            todo!();
+            match from {
+                Ff00::C => return plus_c(),
+                Ff00::U8 => return plus_u8(),
+            }
+
+            fn plus_c() -> Option<u64> {
+                Some(8)
+            }
+
+            fn plus_u8() -> Option<u64> {
+                Some(12)
+            }
         }
 
         match to {
