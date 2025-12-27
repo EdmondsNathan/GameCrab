@@ -40,8 +40,8 @@ impl Console {
             Ld8::De => self.go_from_register16(to, Register16::De),
             Ld8::U16 => self.go_from_u16(to),
             Ld8::U8 => self.go_from_u8(to),
-            Ld8::Ff00AddU8 => todo!(),
-            Ld8::Ff00AddC => todo!(),
+            Ld8::Ff00AddU8 => self.go_from_ff00(to, Ff00::U8),
+            Ld8::Ff00AddC => self.go_from_ff00(to, Ff00::C),
         }
     }
 }
