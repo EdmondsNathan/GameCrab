@@ -16,7 +16,7 @@ impl Console {
     }
 
     fn u16_to_register(&mut self, register: Register16) -> Option<u64> {
-        let (low, high) = register16_to_register8(register);
+        let (low, high) = register.register16_to_register8();
 
         self.push_command(
             3,
@@ -169,18 +169,5 @@ impl Console {
         );
 
         Some(8)
-    }
-}
-
-fn register16_to_register8(register: Register16) -> (Register8, Register8) {
-    match register {
-        Register16::Af => (Register8::A, Register8::F),
-        Register16::Bc => (Register8::B, Register8::C),
-        Register16::De => (Register8::D, Register8::E),
-        Register16::Hl => (Register8::H, Register8::L),
-        Register16::Sp => (Register8::SpLow, Register8::SpHigh),
-        Register16::Pc => (Register8::PcLow, Register8::PcHigh),
-        Register16::Bus => panic!("Bus cannot be split!"),
-        Register16::Xy => (Register8::X, Register8::Y),
     }
 }

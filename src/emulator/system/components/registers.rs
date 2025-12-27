@@ -76,3 +76,18 @@ impl Registers {
         Self::default()
     }
 }
+
+impl Register16 {
+    pub fn register16_to_register8(&self) -> (Register8, Register8) {
+        match self {
+            Register16::Af => (Register8::A, Register8::F),
+            Register16::Bc => (Register8::B, Register8::C),
+            Register16::De => (Register8::D, Register8::E),
+            Register16::Hl => (Register8::H, Register8::L),
+            Register16::Sp => (Register8::SpLow, Register8::SpHigh),
+            Register16::Pc => (Register8::PcLow, Register8::PcHigh),
+            Register16::Bus => (Register8::BusLow, Register8::BusHigh),
+            Register16::Xy => (Register8::X, Register8::Y),
+        }
+    }
+}
