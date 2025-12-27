@@ -38,6 +38,8 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16) -> Option<u64> {
+            let (low, high) = to.register16_to_register8();
+
             console.push_command(
                 3,
                 Update(|console: &mut Console| {
@@ -61,14 +63,14 @@ impl Console {
             console.push_command(
                 6,
                 Read(
-                    Source::Register(Register8::L),
+                    Source::Register(low),
                     Destination::Register(Register8::BusLow),
                 ),
             );
             console.push_command(
                 6,
                 Read(
-                    Source::Register(Register8::H),
+                    Source::Register(high),
                     Destination::Register(Register8::BusHigh),
                 ),
             );
