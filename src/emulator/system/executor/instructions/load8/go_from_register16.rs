@@ -13,19 +13,21 @@ use crate::emulator::{
 impl Console {
     pub(super) fn go_from_register16(&mut self, to: To, from: Register16) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Register16) -> Option<u64> {
-            // Push from value into xy so we can use the value inside of closure
-            console
-                .cpu
-                .set_register_16(console.cpu.get_register_16(&from), &Register16::Xy);
+            let (low, high) = from.register16_to_register8();
 
             console.push_command(
                 3,
-                Update(|console: &mut Console| {
-                    console.cpu.set_register_16(
-                        console.cpu.get_register_16(&Register16::Xy),
-                        &Register16::Bus,
-                    );
-                }),
+                Read(
+                    Source::Register(low),
+                    Destination::Register(Register8::BusHigh),
+                ),
+            );
+            console.push_command(
+                3,
+                Read(
+                    Source::Register(high),
+                    Destination::Register(Register8::BusLow),
+                ),
             );
 
             console.push_command(

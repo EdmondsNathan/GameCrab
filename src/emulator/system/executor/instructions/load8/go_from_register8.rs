@@ -14,19 +14,21 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
-            // store the value of To into xy so the closure doesn't capture a variable
-            console
-                .cpu
-                .set_register_16(console.cpu.get_register_16(&to), &Register16::Xy);
+            let (low, high) = to.register16_to_register8();
 
             console.push_command(
                 3,
-                Update(|console: &mut Console| {
-                    console.cpu.set_register_16(
-                        console.cpu.get_register_16(&Register16::Xy),
-                        &Register16::Bus,
-                    )
-                }),
+                Read(
+                    Source::Register(low),
+                    Destination::Register(Register8::BusHigh),
+                ),
+            );
+            console.push_command(
+                3,
+                Read(
+                    Source::Register(high),
+                    Destination::Register(Register8::BusLow),
+                ),
             );
 
             console.push_command(
