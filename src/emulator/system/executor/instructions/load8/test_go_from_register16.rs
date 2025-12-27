@@ -19,8 +19,8 @@ mod go_from_register_16 {
 
     #[test]
     fn to_register_8() {
-        let mut console = init(vec![(0x0A, 0x100), (0x03, 0x101)]);
-        console.cpu.set_register_16(0x101, &Register16::Bc);
+        let mut console = init(vec![(0x0A, 0x100), (0x03, 0x256)]);
+        console.cpu.set_register_16(0x256, &Register16::Bc);
 
         for n in 0..8 {
             console.tick();
