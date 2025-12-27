@@ -43,11 +43,7 @@ impl Console {
 
         match to {
             To::Register8(register8) => to_register8(self, register8, from),
-            To::Register16(register16) => panic!("Invalid instruction!"),
-            To::Hl(hl) => panic!("Invalid instruction!"),
-            To::U8 => panic!("Invalid instruction!"),
-            To::U16 => panic!("Invalid instruction!"),
-            To::Ff00(ff00) => panic!("Invalid instruction!"),
+            _ => panic!("Invalid instruction!"),
         }
     }
 }
