@@ -14,8 +14,8 @@ mod go_from_ff00 {
 
     #[test]
     fn plus_c() {
-        let mut console = init(vec![(0xF2, 0x100), (0x02, 0xFF01)]);
-        console.cpu.set_register(0x01, &Register8::C);
+        let mut console = init(vec![(0xF2, 0x100), (0x02, 0xFF03)]);
+        console.cpu.set_register(0x03, &Register8::C);
 
         for n in 0..8 {
             console.tick();
