@@ -10,7 +10,6 @@ use crate::emulator::{
     },
 };
 
-//TAG_TODO
 impl Console {
     pub(super) fn go_from_ff00(&mut self, to: To, from: Ff00) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Ff00) -> Option<u64> {
