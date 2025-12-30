@@ -13,6 +13,8 @@ impl Command {
     pub(crate) fn execute_command(&self, console: &mut Console) {
         match self {
             Command::Read(source, destination) => Self::read(console, source, destination),
+
+            // Update commands run a function
             Command::Update(func) => func(console),
         }
     }
