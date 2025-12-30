@@ -1,0 +1,14 @@
+pub(crate) mod instruction_bit;
+pub(crate) mod instruction_reset;
+pub(crate) mod instruction_rl;
+pub(crate) mod instruction_rla;
+pub(crate) mod instruction_rlc;
+pub(crate) mod instruction_rlca;
+pub(crate) mod instruction_rr;
+pub(crate) mod instruction_rra;
+pub(crate) mod instruction_rrca;
+pub(crate) mod instruction_set;
+pub(crate) mod instruction_sla;
+pub(crate) mod instruction_sra;
+pub(crate) mod instruction_srl;
+pub(crate) mod instruction_swap;

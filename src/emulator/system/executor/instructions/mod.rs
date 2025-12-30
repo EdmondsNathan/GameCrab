@@ -1,3 +1,4 @@
+pub(crate) mod bitops;
 pub(crate) mod cb;
 pub(crate) mod control;
 pub(crate) mod decoder;
