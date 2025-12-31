@@ -36,8 +36,10 @@ impl Console {
             ),
         );
 
+        // Run at tick 5, the bitop instructions
+        // can be scheduled for the next tick
         self.push_command(
-            6,
+            5,
             Update(|console: &mut Console| {
                 //TAG_TODO Run cb instruction
                 if let Ok(instruction) = decode_cb(console.cpu.get_register(&Register8::Y)) {
