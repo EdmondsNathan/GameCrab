@@ -1,3 +1,5 @@
+use crate::emulator::system::components::registers::Register8;
+
 pub(crate) enum Instruction {
     Cb,
     Control(ControlOps),
@@ -111,14 +113,9 @@ pub enum Ld8 {
     Ff00AddC,
 }
 
+// TAG_TODO TAG_REFACTOR make this correspond to register8
 pub enum BitArgs {
-    A,
-    B,
-    C,
-    D,
-    E,
-    H,
-    L,
+    Register(Register8),
     HL,
 }
 
