@@ -1,5 +1,5 @@
 pub(crate) mod bit;
-pub(crate) mod instruction_bitop;
+pub(crate) mod instruction_bit_op;
 pub(crate) mod reset;
 pub(crate) mod rl;
 pub(crate) mod rla;
