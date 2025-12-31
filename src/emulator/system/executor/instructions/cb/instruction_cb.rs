@@ -8,12 +8,13 @@ use crate::emulator::{
         console::Console,
         executor::{
             self,
-            instructions::{cb::instruction_cb, decoder::decode_cb},
+            instructions::{cb::instruction_cb, decoder::decode_cb, instruction::Instruction},
         },
     },
 };
 
-//TAG_TODO
+pub(crate) const CB_OFFSET: u64 = 5;
+
 impl Console {
     pub(crate) fn instruction_cb(&mut self) -> Option<u64> {
         self.push_command(
@@ -36,19 +37,22 @@ impl Console {
             ),
         );
 
-        // Run at tick 5, the bitop instructions
+        // Run at tick 5 so the bitop instructions
         // can be scheduled for the next tick
         self.push_command(
             5,
             Update(|console: &mut Console| {
-                //TAG_TODO Run cb instruction
-                if let Ok(instruction) = decode_cb(console.cpu.get_register(&Register8::Y)) {
-                    console.execute(instruction);
+                if let Ok(Instruction::BitOp(bit_op)) =
+                    decode_cb(console.cpu.get_register(&Register8::Y))
+                    && let Some(next_instruction_offset) = console.instruction_bit_op(bit_op)
+                {
+                    console.queue_next_instruction(next_instruction_offset);
                 }
             }),
         );
 
-        // The CB command returns Some(8), so the CB commands should all return None
-        Some(8)
+        // The next instruction is queued in the Update command above,
+        // so there is no need to queue it here
+        None
     }
 }
