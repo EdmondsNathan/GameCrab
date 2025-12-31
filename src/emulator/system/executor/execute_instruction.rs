@@ -10,14 +10,6 @@ use crate::emulator::system::{
     },
 };
 
-// use crate::emulator::{
-//     commands::command::Command,
-//     console::decoder::{decode, decode_cb},
-//     console::Console,
-//     instruction::{Instruction::*, *},
-//     registers::Register16,
-// };
-
 impl Console {
     /// Push a command onto the queue at the current tick + tick offset.
     pub(super) fn push_command(&mut self, tick_offset: u64, command: Command) {
@@ -42,7 +34,7 @@ impl Console {
             Restart(arg) => todo!("restart not implemented"),
             Return(ret) => todo!("return not implemented"),
             Call(calls) => todo!("call not implemented"),
-            BitOp(bit_ops) => todo!("bitOp not implemented"),
+            BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
         } {
             self.queue_next_instruction(next_instruction_offset);
         }
