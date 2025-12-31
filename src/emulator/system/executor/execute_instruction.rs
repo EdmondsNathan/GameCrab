@@ -19,7 +19,8 @@ impl Console {
 
     /// Queue an instruction.
     pub fn execute(&mut self, instruction: Instruction) {
-        /// Queue the next instruction at the tick offset if one is returned.
+        // Execute an instruction
+        // Queue the next instruction at the offset if one is returned
         if let Some(next_instruction_offset) = match instruction {
             Cb => self.instruction_cb(),
             Control(control_op) => self.instruction_control(control_op),
