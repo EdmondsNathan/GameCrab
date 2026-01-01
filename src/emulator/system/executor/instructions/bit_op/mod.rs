@@ -7,6 +7,7 @@ pub(crate) mod rlc;
 pub(crate) mod rlca;
 pub(crate) mod rr;
 pub(crate) mod rra;
+pub(crate) mod rrc;
 pub(crate) mod rrca;
 pub(crate) mod set;
 pub(crate) mod sla;

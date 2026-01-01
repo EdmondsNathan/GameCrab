@@ -8,7 +8,7 @@ impl Console {
             BitOps::Rrca => todo!(),
             BitOps::Rra => todo!(),
             BitOps::Rlc(bit_args) => self.rlc(bit_args),
-            BitOps::Rrc(bit_args) => todo!(),
+            BitOps::Rrc(bit_args) => self.rrc(bit_args),
             BitOps::Rl(bit_args) => todo!(),
             BitOps::Rr(bit_args) => todo!(),
             BitOps::Sla(bit_args) => todo!(),
