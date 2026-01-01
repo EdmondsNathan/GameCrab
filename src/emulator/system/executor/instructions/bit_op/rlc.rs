@@ -3,9 +3,7 @@ use crate::emulator::{
     system::{
         components::registers::{Flags, Register16, Register8},
         console::Console,
-        executor::instructions::{
-            cb::instruction_cb::CB_OFFSET, instruction::BitArgs,
-        },
+        executor::instructions::{cb::instruction_cb::CB_OFFSET, instruction::BitArgs},
     },
 };
 
