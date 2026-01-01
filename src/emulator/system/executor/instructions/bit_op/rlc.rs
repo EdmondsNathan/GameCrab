@@ -1,10 +1,10 @@
 use crate::emulator::{
     commands::command::Command::Update,
     system::{
-        components::registers::{Flags, Register8},
+        components::registers::{Flags, Register16, Register8},
         console::Console,
         executor::instructions::{
-            cb::instruction_cb::CB_OFFSET, decoder::decode_cb, instruction::BitArgs,
+            cb::instruction_cb::CB_OFFSET, instruction::BitArgs,
         },
     },
 };
@@ -12,6 +12,37 @@ use crate::emulator::{
 impl Console {
     pub(super) fn rlc(&mut self, bit_args: BitArgs) -> Option<u64> {
         fn to_hl(console: &mut Console) -> Option<u64> {
+            console.push_command(
+                3,
+                Update(|console: &mut Console| {
+                    console.cpu.set_register_16(
+                        console.cpu.get_register_16(&Register16::Hl),
+                        &Register16::Bus,
+                    );
+                }),
+            );
+
+            console.push_command(
+                7,
+                Update(|console: &mut Console| {
+                    let ram_value = console
+                        .ram
+                        .fetch(console.cpu.get_register_16(&Register16::Bus));
+
+                    let carry = ram_value >> 7;
+
+                    console.ram.set(
+                        (ram_value << 1) + carry,
+                        console.cpu.get_register_16(&Register16::Bus),
+                    );
+
+                    console.cpu.set_flag(ram_value == 0, &Flags::Z);
+                    console.cpu.set_flag(false, &Flags::N);
+                    console.cpu.set_flag(false, &Flags::H);
+                    console.cpu.set_flag(carry == 1, &Flags::C);
+                }),
+            );
+
             Some(16 - CB_OFFSET)
         }
 
@@ -57,7 +88,7 @@ impl Console {
 mod tests {
     use crate::emulator::system::{
         components::registers::{Register16, Register8},
-        console::{self, Console},
+        console::Console,
     };
 
     fn init(memory_map: Vec<(u8, u16)>) -> Console {
@@ -108,7 +139,30 @@ mod tests {
 
     #[test]
     fn to_hl() {
-        let mut console = init(vec![]);
+        let mut console = init(vec![
+            (0xCB, 0x100),
+            (0x06, 0x101),
+            (0b10000010, 0x200),
+            (0xCB, 0x102),
+            (0x06, 0x103),
+            (0b00000000, 0x201),
+        ]);
         console.cpu.set_register_16(0x200, &Register16::Hl);
+
+        for n in 0..16 {
+            console.tick();
+        }
+
+        assert_eq!(console.ram.fetch(0x200), 0b00000101);
+        assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
+
+        console.cpu.set_register_16(0x201, &Register16::Hl);
+
+        for n in 0..16 {
+            console.tick();
+        }
+
+        assert_eq!(console.ram.fetch(0x201), 0b00000000);
+        assert_eq!(console.cpu.get_register(&Register8::F), 0b10000000);
     }
 }
