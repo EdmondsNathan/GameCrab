@@ -28,10 +28,10 @@ impl Console {
                         .ram
                         .fetch(console.cpu.get_register_16(&Register16::Bus));
 
-                    let carry = ram_value >> 7;
+                    let carry = ram_value & 0b00000001;
 
                     console.ram.set(
-                        (ram_value << 1) + carry,
+                        (ram_value >> 1) + (carry << 7),
                         console.cpu.get_register_16(&Register16::Bus),
                     );
 
@@ -50,22 +50,22 @@ impl Console {
                 1,
                 Update(|console: &mut Console| {
                     let register = match console.cpu.get_register(&Register8::Y) & 0x0F {
-                        0x00 => Register8::B,
-                        0x01 => Register8::C,
-                        0x02 => Register8::D,
-                        0x03 => Register8::E,
-                        0x04 => Register8::H,
-                        0x05 => Register8::L,
-                        0x07 => Register8::A,
+                        0x08 => Register8::B,
+                        0x09 => Register8::C,
+                        0x0A => Register8::D,
+                        0x0B => Register8::E,
+                        0x0C => Register8::H,
+                        0x0D => Register8::L,
+                        0x0F => Register8::A,
                         _ => panic!("Impossible value"),
                     };
 
                     let register_value = console.cpu.get_register(&register);
-                    let carry = register_value >> 7;
+                    let carry = register_value & 0b00000001;
 
                     console
                         .cpu
-                        .set_register((register_value << 1) + carry, &register);
+                        .set_register((register_value >> 1) + (carry << 7), &register);
 
                     console.cpu.set_flag(register_value == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
@@ -104,21 +104,21 @@ mod tests {
     fn to_register8() {
         let mut console = init(vec![
             (0xCB, 0x100),
-            (0x00, 0x101),
+            (0x08, 0x101),
             (0xCB, 0x102),
-            (0x01, 0x103),
+            (0x09, 0x103),
             (0xCB, 0x104),
-            (0x02, 0x105),
+            (0x0A, 0x105),
         ]);
-        console.cpu.set_register(0b10000010, &Register8::B);
+        console.cpu.set_register(0b01000001, &Register8::B);
         console.cpu.set_register(0b00000000, &Register8::C);
-        console.cpu.set_register(0b01000000, &Register8::D);
+        console.cpu.set_register(0b00000010, &Register8::D);
 
         for n in 0..8 {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::B), 0b00000101);
+        assert_eq!(console.cpu.get_register(&Register8::B), 0b10100000);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         for n in 0..8 {
@@ -132,7 +132,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::D), 0b10000000);
+        assert_eq!(console.cpu.get_register(&Register8::D), 0b00000001);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00000000);
     }
 
@@ -140,8 +140,8 @@ mod tests {
     fn to_hl() {
         let mut console = init(vec![
             (0xCB, 0x100),
-            (0x06, 0x101),
-            (0b10000010, 0x200),
+            (0x0E, 0x101),
+            (0b00000011, 0x200),
             (0xCB, 0x102),
             (0x06, 0x103),
             (0b00000000, 0x201),
@@ -152,7 +152,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x200), 0b00000101);
+        assert_eq!(console.ram.fetch(0x200), 0b10000001);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         console.cpu.set_register_16(0x201, &Register16::Hl);

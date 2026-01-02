@@ -5,7 +5,7 @@ impl Console {
         match bit_op {
             BitOps::Rlca => self.rlca(),
             BitOps::Rla => todo!(),
-            BitOps::Rrca => todo!(),
+            BitOps::Rrca => self.rrca(),
             BitOps::Rra => todo!(),
             BitOps::Rlc(bit_args) => self.rlc(bit_args),
             BitOps::Rrc(bit_args) => self.rrc(bit_args),
