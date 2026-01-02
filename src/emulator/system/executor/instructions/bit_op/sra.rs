@@ -28,9 +28,10 @@ impl Console {
                         .fetch(console.cpu.get_register_16(&Register16::Bus));
 
                     let carry = ram_value & 0b00000001;
+                    let bit7 = ram_value & 0b10000000;
 
                     console.ram.set(
-                        (ram_value >> 1),
+                        (ram_value >> 1) + bit7,
                         console.cpu.get_register_16(&Register16::Bus),
                     );
 
@@ -61,8 +62,11 @@ impl Console {
 
                     let register_value = console.cpu.get_register(&register);
                     let carry = register_value & 0b00000001;
+                    let bit7 = register_value & 0b10000000;
 
-                    console.cpu.set_register((register_value >> 1), &register);
+                    console
+                        .cpu
+                        .set_register((register_value >> 1) + bit7, &register);
 
                     console.cpu.set_flag(register_value == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
@@ -109,7 +113,7 @@ mod tests {
         ]);
         console.cpu.set_register(0b01000001, &Register8::B);
         console.cpu.set_register(0b00000000, &Register8::C);
-        console.cpu.set_register(0b00000010, &Register8::D);
+        console.cpu.set_register(0b10000010, &Register8::D);
 
         for n in 0..8 {
             console.tick();
@@ -129,7 +133,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::D), 0b00000001);
+        assert_eq!(console.cpu.get_register(&Register8::D), 0b11000001);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00000000);
     }
 
@@ -138,7 +142,7 @@ mod tests {
         let mut console = init(vec![
             (0xCB, 0x100),
             (0x2E, 0x101),
-            (0b00000011, 0x200),
+            (0b10000011, 0x200),
             (0xCB, 0x102),
             (0x26, 0x103),
             (0b00000000, 0x201),
@@ -149,7 +153,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x200), 0b00000001);
+        assert_eq!(console.ram.fetch(0x200), 0b11000001);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         console.cpu.set_register_16(0x201, &Register16::Hl);
