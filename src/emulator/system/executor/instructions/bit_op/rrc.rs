@@ -7,7 +7,6 @@ use crate::emulator::{
     },
 };
 
-// TAG_TODO convert from rlc to rrc!
 impl Console {
     pub(super) fn rrc(&mut self, bit_args: BitArgs) -> Option<u64> {
         fn to_hl(console: &mut Console) -> Option<u64> {

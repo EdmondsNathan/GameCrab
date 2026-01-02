@@ -113,7 +113,6 @@ pub enum Ld8 {
     Ff00AddC,
 }
 
-// TAG_TODO TAG_REFACTOR make this correspond to register8
 pub enum BitArgs {
     Register(Register8),
     HL,
