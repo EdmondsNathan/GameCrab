@@ -13,7 +13,7 @@ impl Console {
             BitOps::Rr(bit_args) => self.rr(bit_args),
             BitOps::Sla(bit_args) => self.sla(bit_args),
             BitOps::Sra(bit_args) => self.sra(bit_args),
-            BitOps::Swap(bit_args) => todo!(),
+            BitOps::Swap(bit_args) => self.swap(bit_args),
             BitOps::Srl(bit_args) => todo!(),
             BitOps::Bit(_, bit_args) => todo!(),
             BitOps::Reset(_, bit_args) => todo!(),
