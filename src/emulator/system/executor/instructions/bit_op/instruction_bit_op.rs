@@ -4,7 +4,7 @@ impl Console {
     pub(crate) fn instruction_bit_op(&mut self, bit_op: BitOps) -> Option<u64> {
         match bit_op {
             BitOps::Rlca => self.rlca(),
-            BitOps::Rla => todo!(),
+            BitOps::Rla => self.rla(),
             BitOps::Rrca => self.rrca(),
             BitOps::Rra => todo!(),
             BitOps::Rlc(bit_args) => self.rlc(bit_args),
