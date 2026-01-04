@@ -31,11 +31,6 @@ impl Console {
                     let shift: u8 = (console.cpu.get_register(&Register8::Y) - 0x40) / 8;
                     // Shift the bit we're interested in into the 1's place and then mask it out
                     let bit = (ram_value >> shift) & 0b00000001;
-                    println!(
-                        "address: {:x}",
-                        console.cpu.get_register_16(&Register16::Hl)
-                    );
-                    println!("{:b} >> {} = {}, {}", ram_value, shift, bit, bit == 0);
 
                     // The Z bit is set to the OPPOSITE of the bit
                     console.cpu.set_flag(bit == 0, &Flags::Z);
@@ -168,21 +163,18 @@ mod tests {
             (0b01111111, 0x202),
         ]);
 
-        println!("200");
         console.cpu.set_register_16(0x200, &Register16::Hl);
         for n in 0..12 {
             console.tick();
         }
         assert!(console.cpu.get_flag(&Flags::Z));
 
-        println!("201");
         console.cpu.set_register_16(0x201, &Register16::Hl);
         for n in 0..12 {
             console.tick();
         }
         assert!(!console.cpu.get_flag(&Flags::Z));
 
-        println!("202");
         console.cpu.set_register_16(0x202, &Register16::Hl);
         for n in 0..12 {
             console.tick();
