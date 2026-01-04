@@ -6,7 +6,7 @@ impl Console {
             BitOps::Rlca => self.rlca(),
             BitOps::Rla => self.rla(),
             BitOps::Rrca => self.rrca(),
-            BitOps::Rra => todo!(),
+            BitOps::Rra => self.rra(),
             BitOps::Rlc(bit_args) => self.rlc(bit_args),
             BitOps::Rrc(bit_args) => self.rrc(bit_args),
             BitOps::Rl(bit_args) => self.rl(bit_args),
