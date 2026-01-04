@@ -17,7 +17,7 @@ impl Console {
             BitOps::Srl(bit_args) => self.srl(bit_args),
             BitOps::Bit(_, bit_args) => self.bit(bit_args),
             BitOps::Reset(_, bit_args) => self.reset(bit_args),
-            BitOps::Set(_, bit_args) => todo!(),
+            BitOps::Set(_, bit_args) => self.set(bit_args),
         }
     }
 }
