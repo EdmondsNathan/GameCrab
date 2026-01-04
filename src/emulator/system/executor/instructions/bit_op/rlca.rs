@@ -23,7 +23,7 @@ impl Console {
             }),
         );
 
-        Some(8)
+        Some(4)
     }
 }
 
