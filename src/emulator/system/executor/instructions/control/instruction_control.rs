@@ -13,7 +13,7 @@ impl Console {
             ControlOps::Ei => self.ei(),
             ControlOps::Daa => todo!(),
             ControlOps::Scf => self.scf(),
-            ControlOps::Cpl => todo!(),
+            ControlOps::Cpl => self.cpl(),
             ControlOps::Ccf => self.ccf(),
         }
     }
