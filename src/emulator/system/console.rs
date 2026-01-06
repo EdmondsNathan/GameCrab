@@ -47,6 +47,10 @@ impl Console {
 
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
+        if self.cpu.get_is_stopped() {
+            return;
+        }
+
         // Queue the first command.
         if self.tick_counter == 0 {
             self.fetch_decode_execute();

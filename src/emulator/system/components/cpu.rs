@@ -4,6 +4,7 @@ use crate::emulator::system::components::registers::{Flags, Register16, Register
 pub struct Cpu {
     registers: Registers,
     enable_interrupts: bool,
+    is_stopped: bool,
 }
 
 impl Cpu {
@@ -155,5 +156,13 @@ impl Cpu {
 
     pub fn set_interrupt(&mut self, state: bool) {
         self.enable_interrupts = state;
+    }
+
+    pub fn get_is_stopped(&self) -> bool {
+        self.is_stopped
+    }
+
+    pub fn set_is_stopped(&mut self, value: bool) {
+        self.is_stopped = value;
     }
 }
