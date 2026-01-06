@@ -12,9 +12,9 @@ impl Console {
             ControlOps::Di => self.di(),
             ControlOps::Ei => self.ei(),
             ControlOps::Daa => todo!(),
-            ControlOps::Scf => todo!(),
+            ControlOps::Scf => self.scf(),
             ControlOps::Cpl => todo!(),
-            ControlOps::Ccf => todo!(),
+            ControlOps::Ccf => self.ccf(),
         }
     }
 }
