@@ -7,7 +7,7 @@ impl Console {
     pub(crate) fn instruction_control(&mut self, control_op: ControlOps) -> Option<u64> {
         match control_op {
             ControlOps::Nop => Some(4),
-            ControlOps::Stop => todo!(),
+            ControlOps::Stop => self.stop(),
             ControlOps::Halt => todo!(),
             ControlOps::Di => self.di(),
             ControlOps::Ei => self.ei(),
