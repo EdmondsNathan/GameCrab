@@ -5,6 +5,7 @@ pub struct Cpu {
     registers: Registers,
     interrupt_master_enable: bool,
     is_stopped: bool,
+    is_halted: bool,
 }
 
 impl Cpu {
@@ -164,5 +165,13 @@ impl Cpu {
 
     pub fn set_is_stopped(&mut self, value: bool) {
         self.is_stopped = value;
+    }
+
+    pub fn get_halt(&self) -> bool {
+        self.is_halted
+    }
+
+    pub fn set_halt(&mut self, state: bool) {
+        self.is_halted = state;
     }
 }
