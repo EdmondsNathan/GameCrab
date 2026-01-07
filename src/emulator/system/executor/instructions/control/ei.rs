@@ -5,7 +5,7 @@ impl Console {
         self.push_command(
             3,
             Update(|console: &mut Console| {
-                console.cpu.set_interrupt(true);
+                console.cpu.set_ime(true);
             }),
         );
         Some(4)
@@ -30,12 +30,12 @@ mod tests {
     fn ei() {
         let mut console = init(vec![(0xFB, 0x100)]);
 
-        assert!(!console.cpu.get_interrupt());
+        assert!(!console.cpu.get_ime());
 
         for n in 0..4 {
             console.tick();
         }
 
-        assert!(console.cpu.get_interrupt());
+        assert!(console.cpu.get_ime());
     }
 }

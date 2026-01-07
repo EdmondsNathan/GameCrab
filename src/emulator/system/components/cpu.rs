@@ -3,7 +3,7 @@ use crate::emulator::system::components::registers::{Flags, Register16, Register
 #[derive(Default)]
 pub struct Cpu {
     registers: Registers,
-    enable_interrupts: bool,
+    interrupt_master_enable: bool,
     is_stopped: bool,
 }
 
@@ -150,12 +150,12 @@ impl Cpu {
         }
     }
 
-    pub fn get_interrupt(&self) -> bool {
-        self.enable_interrupts
+    pub fn get_ime(&self) -> bool {
+        self.interrupt_master_enable
     }
 
-    pub fn set_interrupt(&mut self, state: bool) {
-        self.enable_interrupts = state;
+    pub fn set_ime(&mut self, state: bool) {
+        self.interrupt_master_enable = state;
     }
 
     pub fn get_is_stopped(&self) -> bool {
