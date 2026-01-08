@@ -5,7 +5,7 @@ impl Console {
         self.push_command(
             3,
             Update(|console: &mut Console| {
-                console.cpu.set_ime(true);
+                console.cpu.set_ime_pending(true);
             }),
         );
         Some(4)
@@ -28,7 +28,7 @@ mod tests {
 
     #[test]
     fn ei() {
-        let mut console = init(vec![(0xFB, 0x100)]);
+        let mut console = init(vec![(0xFB, 0x100), (0x00, 0x101)]);
 
         assert!(!console.cpu.get_ime());
 
@@ -36,6 +36,21 @@ mod tests {
             console.tick();
         }
 
+        // IME isn't enabled until after the NEXT instruction!
+        assert!(!console.cpu.get_ime());
+
+        for n in 0..1 {
+            console.tick();
+        }
+
+        //It shouldn't be enabled until the END of the next instruction
+        assert!(!console.cpu.get_ime());
+
+        for n in 1..4 {
+            console.tick();
+        }
+
+        // IME is enabled at the end of the next instruction and before the following intsruction
         assert!(console.cpu.get_ime());
     }
 }

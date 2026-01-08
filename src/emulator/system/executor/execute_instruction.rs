@@ -1,4 +1,4 @@
-use crate::emulator::commands::command::Command;
+use crate::emulator::commands::command::{Command, Command::Update};
 use crate::emulator::system::executor::instructions::decoder::*;
 use crate::emulator::system::{
     components::registers::Register16,
@@ -19,6 +19,8 @@ impl Console {
 
     /// Queue an instruction.
     pub fn execute(&mut self, instruction: Instruction) {
+        let ime_pending = self.cpu.get_ime_pending();
+
         // Execute an instruction
         // Queue the next instruction at the offset if one is returned
         if let Some(next_instruction_offset) = match instruction {
@@ -37,6 +39,14 @@ impl Console {
             Call(calls) => todo!("call not implemented"),
             BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
         } {
+            if ime_pending {
+                self.push_command(
+                    next_instruction_offset - 1,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_ime(true);
+                    }),
+                );
+            }
             self.queue_next_instruction(next_instruction_offset);
         }
     }
