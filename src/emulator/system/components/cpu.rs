@@ -7,6 +7,7 @@ pub struct Cpu {
     ime: bool,
     is_stopped: bool,
     is_halted: bool,
+    halt_bug: bool,
 }
 
 impl Cpu {
@@ -182,5 +183,13 @@ impl Cpu {
 
     pub fn set_ime_pending(&mut self, value: bool) {
         self.ime_pending = value;
+    }
+
+    pub fn get_halt_bug(&self) -> bool {
+        self.halt_bug
+    }
+
+    pub fn set_halt_bug(&mut self, value: bool) {
+        self.halt_bug = value;
     }
 }
