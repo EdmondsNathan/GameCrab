@@ -67,8 +67,12 @@ impl Console {
         self.cb_flag = false;
 
         // Every instruction increments the pc after 1 tick
-        // This just makes it so we don't have to add this to every single instruction :)
-        self.push_command(1, Command::Update(Self::command_increment_pc));
+        // unless the halt bug has occured, in which case it is skipped.
+        if !self.cpu.get_halt_bug() {
+            self.push_command(1, Command::Update(Self::command_increment_pc));
+        } else {
+            self.cpu.set_halt_bug(false);
+        }
 
         self.execute(instruction);
     }
