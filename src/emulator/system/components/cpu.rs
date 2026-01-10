@@ -122,7 +122,7 @@ impl Cpu {
     }
 
     /// Get the value of a flag.
-    pub fn get_flag(&mut self, flag: &Flags) -> bool {
+    pub fn get_flag(&self, flag: &Flags) -> bool {
         match flag {
             Flags::Z => ((self.registers.f >> 7) & 1) == 1,
             Flags::N => ((self.registers.f >> 6) & 1) == 1,
