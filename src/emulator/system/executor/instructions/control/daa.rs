@@ -40,30 +40,6 @@ impl Console {
                 console.cpu.set_flag(result == 0, &Flags::Z);
                 console.cpu.set_flag(false, &Flags::H);
                 console.cpu.set_flag(should_carry, &Flags::C);
-
-                // let mut offset: u8 = 0;
-                // let (output, carried): (u8, bool) = match sub {
-                //     true => {
-                //         todo!();
-                //     }
-                //     false => {
-                //         if register & 0x0F > 0x09 || half_carry {
-                //             offset += 0x06;
-                //         }
-                //
-                //         if register > 0x99 || carry {
-                //             offset += 0x60;
-                //         }
-                //
-                //         register.overflowing_add(offset)
-                //     }
-                // };
-                //
-                // console.cpu.set_register(output, &Register8::A);
-                //
-                // console.cpu.set_flag(output == 0, &Flags::Z);
-                // console.cpu.set_flag(false, &Flags::H);
-                // console.cpu.set_flag(carried || carry, &Flags::C);
             }),
         );
         Some(4)
