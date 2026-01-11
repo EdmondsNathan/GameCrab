@@ -11,7 +11,7 @@ impl Console {
             ControlOps::Halt => todo!(),
             ControlOps::Di => self.di(),
             ControlOps::Ei => self.ei(),
-            ControlOps::Daa => todo!(),
+            ControlOps::Daa => self.daa(),
             ControlOps::Scf => self.scf(),
             ControlOps::Cpl => self.cpl(),
             ControlOps::Ccf => self.ccf(),
