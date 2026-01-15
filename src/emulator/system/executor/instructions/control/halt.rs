@@ -7,7 +7,7 @@ impl Console {
             Update(|console: &mut Console| {
                 let interrupt_enable = console.ram.fetch(0xFFFF);
                 let interrupt_flag = console.ram.fetch(0xFF0F);
-                let halt_bug = console.cpu.get_ime() && ((interrupt_enable & interrupt_flag) != 0);
+                let halt_bug = !console.cpu.get_ime() && ((interrupt_enable & interrupt_flag) != 0);
 
                 console.cpu.set_halt(true);
                 console.cpu.set_halt_bug(halt_bug);
@@ -74,14 +74,21 @@ mod tests {
         assert_eq!(console.cpu.get_register(&Register8::B), 0x45);
     }
 
+    #[test]
     fn halt_bug() {
         let mut console = setup(false, 0b0000001, 0b00000001);
         // LD B, C
         console.ram.set(0x41, 0x101);
         console.cpu.set_register(0x45, &Register8::C);
 
+        for n in 0..4 {
+            console.tick();
+        }
+
+        assert!(console.cpu.get_halt_bug());
+
         // Halt bug, so next command should run immediately
-        for n in 0..8 {
+        for n in 0..4 {
             console.tick();
         }
 
@@ -96,6 +103,7 @@ mod tests {
         assert_eq!(console.cpu.get_register(&Register8::B), 0x40);
     }
 
+    // #[test]
     fn halt_ime() {
         //TAG_TODO
         todo!()
