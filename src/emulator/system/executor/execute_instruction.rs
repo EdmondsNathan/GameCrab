@@ -66,18 +66,17 @@ impl Console {
 
         self.cb_flag = false;
 
+        // TAG_REFACTOR remove the halt bug check and handle it elsewhere
         // Every instruction increments the pc after 1 tick
         // unless the halt bug has occured, in which case it is skipped.
         if !self.cpu.get_halt_bug() {
             self.push_command(1, Command::Update(Self::command_increment_pc));
-        } else {
-            self.cpu.set_halt_bug(false);
         }
 
         self.execute(instruction);
     }
 
-    /// Queue the next instruction at the specified tick.
+    /// Queue the next instruction at the specified tick offset.
     pub(crate) fn queue_next_instruction(&mut self, tick: u64) {
         self.push_command(tick, Command::Update(Console::fetch_decode_execute));
     }

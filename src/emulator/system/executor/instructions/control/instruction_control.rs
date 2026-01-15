@@ -8,7 +8,7 @@ impl Console {
         match control_op {
             ControlOps::Nop => Some(4),
             ControlOps::Stop => self.stop(),
-            ControlOps::Halt => todo!(),
+            ControlOps::Halt => self.halt(),
             ControlOps::Di => self.di(),
             ControlOps::Ei => self.ei(),
             ControlOps::Daa => self.daa(),
