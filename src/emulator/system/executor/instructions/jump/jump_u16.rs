@@ -11,7 +11,6 @@ use crate::emulator::{
 
 impl Console {
     pub(super) fn u16(&mut self) -> Option<u64> {
-        //TAG_TODO
         self.push_command(
             3,
             Update(|console: &mut Console| {

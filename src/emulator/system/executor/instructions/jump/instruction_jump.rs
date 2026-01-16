@@ -5,7 +5,7 @@ impl Console {
         match jump {
             JP::U16 => self.u16(),
             JP::HL => self.hl(),
-            JP::Nz => todo!(),
+            JP::Nz => self.nz(),
             JP::Nc => todo!(),
             JP::Z => todo!(),
             JP::C => todo!(),

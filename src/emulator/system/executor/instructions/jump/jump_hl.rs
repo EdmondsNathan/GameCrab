@@ -5,7 +5,6 @@ use crate::emulator::{
 
 impl Console {
     pub(super) fn hl(&mut self) -> Option<u64> {
-        //TAG_TODO
         self.push_command(
             3,
             Update(|console: &mut Console| {
