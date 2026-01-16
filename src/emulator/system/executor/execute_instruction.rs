@@ -33,7 +33,7 @@ impl Console {
             Arithmetic16(a16_ops) => todo!("arith16 not implemented"),
             Arithmetic8(a8_ops) => todo!("arith8 not implemented"),
             JumpRelative(jr) => todo!("jumpRelative not implemented"),
-            Jump(jp) => todo!("jump not implemented"),
+            Jump(jp) => self.instruction_jump(jp),
             Restart(arg) => todo!("restart not implemented"),
             Return(ret) => todo!("return not implemented"),
             Call(calls) => todo!("call not implemented"),
