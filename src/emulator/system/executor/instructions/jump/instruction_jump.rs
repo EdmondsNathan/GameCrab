@@ -7,8 +7,8 @@ impl Console {
             JP::HL => self.hl(),
             JP::Nz => self.nz(),
             JP::Nc => self.nc(),
-            JP::Z => todo!(),
-            JP::C => todo!(),
+            JP::Z => self.z(),
+            JP::C => self.c(),
         }
     }
 }
