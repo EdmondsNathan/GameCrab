@@ -6,7 +6,7 @@ impl Console {
             JP::U16 => self.u16(),
             JP::HL => self.hl(),
             JP::Nz => self.nz(),
-            JP::Nc => todo!(),
+            JP::Nc => self.nc(),
             JP::Z => todo!(),
             JP::C => todo!(),
         }
