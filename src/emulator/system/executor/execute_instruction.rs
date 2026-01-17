@@ -66,6 +66,9 @@ impl Console {
 
         self.cb_flag = false;
 
+        self.cpu
+            .set_register_16(self.cpu.get_register_16(&Register16::Pc), &Register16::Bus);
+
         // TAG_REFACTOR remove the halt bug check and handle it elsewhere
         // Every instruction increments the pc after 1 tick
         // unless the halt bug has occured, in which case it is skipped.
