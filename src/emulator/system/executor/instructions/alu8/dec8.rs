@@ -86,7 +86,7 @@ impl Console {
     }
 }
 
-fn lookup_register(console: &mut Console) -> Register8 {
+fn lookup_register(console: &Console) -> Register8 {
     match console
         .ram
         .fetch(console.cpu.get_register_16(&Register16::Bus))
