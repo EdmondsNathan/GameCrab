@@ -58,7 +58,6 @@ impl Console {
                         console.cpu.set_flag(result == 0, &Flags::Z);
                         console.cpu.set_flag(false, &Flags::N);
                         console.cpu.set_flag(result & 0x0F == 0, &Flags::H);
-                        console.cpu.set_flag(result == 0, &Flags::C);
                     }),
                 );
 
@@ -70,7 +69,7 @@ impl Console {
                 self.push_command(
                     3,
                     Update(|console: &mut Console| {
-                        let register = console.lookup_register();
+                        let register = lookup_register(console);
                         let original_value = console.cpu.get_register(&register);
                         let result = original_value.wrapping_add(1);
 
@@ -81,25 +80,27 @@ impl Console {
                         console
                             .cpu
                             .set_flag(original_value & 0x0F == 0x0F, &Flags::H);
-                        console.cpu.set_flag(original_value == 0xFF, &Flags::C);
                     }),
                 );
                 Some(4)
             }
         }
     }
+}
 
-    fn lookup_register(&self) -> Register8 {
-        match self.ram.fetch(self.cpu.get_register_16(&Register16::Bus)) {
-            0x04 => Register8::B,
-            0x0C => Register8::C,
-            0x14 => Register8::D,
-            0x1C => Register8::E,
-            0x24 => Register8::H,
-            0x2C => Register8::L,
-            0x3C => Register8::A,
-            _ => panic!("Invalid state!"),
-        }
+fn lookup_register(console: &mut Console) -> Register8 {
+    match console
+        .ram
+        .fetch(console.cpu.get_register_16(&Register16::Bus))
+    {
+        0x04 => Register8::B,
+        0x0C => Register8::C,
+        0x14 => Register8::D,
+        0x1C => Register8::E,
+        0x24 => Register8::H,
+        0x2C => Register8::L,
+        0x3C => Register8::A,
+        _ => panic!("Invalid state!"),
     }
 }
 
@@ -138,7 +139,6 @@ mod tests {
         assert!(!console.cpu.get_flag(&Flags::Z));
         assert!(!console.cpu.get_flag(&Flags::N));
         assert!(!console.cpu.get_flag(&Flags::H));
-        assert!(!console.cpu.get_flag(&Flags::C));
 
         console.cpu.set_register_16(0x201, &Register16::Hl);
         for n in 0..12 {
@@ -149,7 +149,6 @@ mod tests {
         assert!(console.cpu.get_flag(&Flags::Z));
         assert!(!console.cpu.get_flag(&Flags::N));
         assert!(console.cpu.get_flag(&Flags::H));
-        assert!(console.cpu.get_flag(&Flags::C));
     }
 
     #[test]
@@ -166,7 +165,6 @@ mod tests {
         assert!(!console.cpu.get_flag(&Flags::Z));
         assert!(!console.cpu.get_flag(&Flags::N));
         assert!(!console.cpu.get_flag(&Flags::H));
-        assert!(!console.cpu.get_flag(&Flags::C));
 
         for n in 0..4 {
             console.tick();
@@ -176,6 +174,5 @@ mod tests {
         assert!(console.cpu.get_flag(&Flags::Z));
         assert!(!console.cpu.get_flag(&Flags::N));
         assert!(console.cpu.get_flag(&Flags::H));
-        assert!(console.cpu.get_flag(&Flags::C));
     }
 }
