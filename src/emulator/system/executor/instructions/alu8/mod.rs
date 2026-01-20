@@ -1,3 +1,4 @@
+mod adc8;
 mod add8;
 mod dec8;
 mod inc8;
