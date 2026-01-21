@@ -7,7 +7,7 @@ impl Console {
             A8Ops::Dec(a8_args) => self.dec8(a8_args),
             A8Ops::Add(a8_args) => self.add8(a8_args),
             A8Ops::AddCarry(a8_args) => self.adc8(a8_args),
-            A8Ops::Sub(a8_args) => todo!(),
+            A8Ops::Sub(a8_args) => self.sub8(a8_args),
             A8Ops::SubCarry(a8_args) => todo!(),
             A8Ops::And(a8_args) => todo!(),
             A8Ops::Or(a8_args) => todo!(),
