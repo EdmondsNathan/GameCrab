@@ -37,7 +37,7 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16) -> Option<u64> {
-            let (low, high) = to.register16_to_register8();
+            let (high, low) = to.register16_to_register8();
 
             console.push_command(
                 3,

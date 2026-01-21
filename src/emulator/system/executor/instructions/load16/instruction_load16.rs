@@ -16,7 +16,7 @@ impl Console {
     }
 
     fn u16_to_register(&mut self, register: Register16) -> Option<u64> {
-        let (low, high) = register.register16_to_register8();
+        let (high, low) = register.register16_to_register8();
 
         self.push_command(
             3,
@@ -34,7 +34,7 @@ impl Console {
             5,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(high),
+                Destination::Register(low),
             ),
         );
 
@@ -54,7 +54,7 @@ impl Console {
             8,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(low),
+                Destination::Register(high),
             ),
         );
 
@@ -234,21 +234,21 @@ mod tests {
     #[test]
     fn sp_u16() {
         // (0x31, 0x100) is sp_u16 at address 0x100
-        // the other two are the values to assign to registers E(50) and D(45)
+        // the other two are the values to assign to registers SpHigh(50) and SpLow(45)
         let mut console = init(vec![(0x31, 0x100), (50, 0x101), (45, 0x102)]);
 
         for n in 0..12 {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::SpLow), 45);
-        assert_eq!(console.cpu.get_register(&Register8::SpHigh), 50);
+        assert_eq!(console.cpu.get_register(&Register8::SpLow), 50);
+        assert_eq!(console.cpu.get_register(&Register8::SpHigh), 45);
     }
 
     #[test]
     fn u16_sp() {
         // (0x08, 0x100) is u16_sp at address 0x100
-        // the other two are the values to assign to registers E(50) and D(45)
+        // the other two are the values to assign to registers SpHigh(08) and SpLow(20)
         let mut console = init(vec![(0x08, 0x100), (0x08, 0x101), (0x20, 0x102)]);
         console.cpu.set_register_16(0x0110, &Register16::Sp);
 

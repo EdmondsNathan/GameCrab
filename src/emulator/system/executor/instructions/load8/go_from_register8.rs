@@ -14,19 +14,19 @@ impl Console {
         }
 
         fn to_register16(console: &mut Console, to: Register16, from: Register8) -> Option<u64> {
-            let (low, high) = to.register16_to_register8();
+            let (high, low) = to.register16_to_register8();
 
             console.push_command(
                 3,
                 Read(
-                    Source::Register(low),
+                    Source::Register(high),
                     Destination::Register(Register8::BusHigh),
                 ),
             );
             console.push_command(
                 3,
                 Read(
-                    Source::Register(high),
+                    Source::Register(low),
                     Destination::Register(Register8::BusLow),
                 ),
             );

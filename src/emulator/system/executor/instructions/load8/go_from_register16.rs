@@ -13,19 +13,19 @@ use crate::emulator::{
 impl Console {
     pub(super) fn go_from_register16(&mut self, to: To, from: Register16) -> Option<u64> {
         fn to_register8(console: &mut Console, to: Register8, from: Register16) -> Option<u64> {
-            let (low, high) = from.register16_to_register8();
+            let (high, low) = from.register16_to_register8();
 
             console.push_command(
                 3,
                 Read(
-                    Source::Register(low),
+                    Source::Register(high),
                     Destination::Register(Register8::BusHigh),
                 ),
             );
             console.push_command(
                 3,
                 Read(
-                    Source::Register(high),
+                    Source::Register(low),
                     Destination::Register(Register8::BusLow),
                 ),
             );
