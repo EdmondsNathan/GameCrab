@@ -98,7 +98,6 @@ impl Console {
                         let register = lookup_register(console);
                         let add_register = console.cpu.get_register(&register);
                         let a_register = console.cpu.get_register(&Register8::A);
-                        // let result = a_register.wrapping_add(add_register);
                         let (result, carry) = a_register.overflowing_add(add_register);
                         let half_carry = (a_register & 0x0F) + (add_register & 0xF) >= 0x10;
 
