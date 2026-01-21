@@ -1,3 +1,4 @@
+pub(crate) mod alu16;
 pub(crate) mod alu8;
 pub(crate) mod bit_op;
 pub(crate) mod cb;
