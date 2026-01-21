@@ -11,7 +11,7 @@ impl Console {
             A8Ops::SubCarry(a8_args) => self.sbc8(a8_args),
             A8Ops::And(a8_args) => self.and8(a8_args),
             A8Ops::Or(a8_args) => self.or8(a8_args),
-            A8Ops::Xor(a8_args) => todo!(),
+            A8Ops::Xor(a8_args) => self.xor8(a8_args),
             A8Ops::Cmp(a8_args) => todo!(),
         }
     }

@@ -7,3 +7,4 @@ mod instruction_alu8;
 mod or8;
 mod sbc8;
 mod sub8;
+mod xor8;
