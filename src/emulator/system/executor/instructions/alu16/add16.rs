@@ -14,9 +14,7 @@ impl Console {
                 let (_, low) = lookup_register(console).register16_to_register8();
                 let add_register = console.cpu.get_register(&low);
                 let l_register = console.cpu.get_register(&Register8::L);
-                // let result = l_register.wrapping_add(add_register);
                 let (result, half_carry) = l_register.overflowing_add(add_register);
-                // console.cpu.set_register(half_carry.into(), &Register8::X);
 
                 console.cpu.set_register(result, &Register8::L);
 
@@ -38,7 +36,6 @@ impl Console {
                 console.cpu.set_register(result, &Register8::H);
 
                 console.cpu.set_flag(false, &Flags::N);
-                // console.cpu.set_flag(half_carry, &Flags::H);
                 console.cpu.set_flag(carry, &Flags::C);
             }),
         );
