@@ -7,12 +7,12 @@ use crate::emulator::{
 };
 
 impl Console {
-    pub(super) fn inc16(&mut self) -> Option<u64> {
+    pub(super) fn dec16(&mut self) -> Option<u64> {
         self.push_command(
             3,
             Update(|console: &mut Console| {
                 let (_, low) = lookup_register(console).register16_to_register8();
-                let value = console.cpu.get_register(&low).wrapping_add(1);
+                let value = console.cpu.get_register(&low).wrapping_sub(1);
 
                 console.cpu.set_register(value, &low);
             }),
@@ -22,8 +22,8 @@ impl Console {
             4,
             Update(|console: &mut Console| {
                 let (high, low) = lookup_register(console).register16_to_register8();
-                let carry = (console.cpu.get_register(&low) == 0) as u8;
-                let value = console.cpu.get_register(&high).wrapping_add(carry);
+                let carry = (console.cpu.get_register(&low) == 0xFF) as u8;
+                let value = console.cpu.get_register(&high).wrapping_sub(carry);
 
                 console.cpu.set_register(value, &high);
             }),
@@ -38,10 +38,10 @@ fn lookup_register(console: &Console) -> Register16 {
         .ram
         .fetch(console.cpu.get_register_16(&Register16::Bus))
     {
-        0x03 => Register16::Bc,
-        0x13 => Register16::De,
-        0x23 => Register16::Hl,
-        0x33 => Register16::Sp,
+        0x0B => Register16::Bc,
+        0x1B => Register16::De,
+        0x2B => Register16::Hl,
+        0x3B => Register16::Sp,
         _ => panic!("Invalid state!"),
     }
 }
@@ -64,21 +64,21 @@ mod tests {
     }
 
     #[test]
-    fn inc16() {
-        let mut console = init(vec![(0x03, 0x100), (0x33, 0x101)]);
-        console.cpu.set_register_16(0xFFFF, &Register16::Bc);
-        console.cpu.set_register_16(0x00FF, &Register16::Sp);
+    fn dec16() {
+        let mut console = init(vec![(0x0B, 0x100), (0x3B, 0x101)]);
+        console.cpu.set_register_16(0x0000, &Register16::Bc);
+        console.cpu.set_register_16(0x0100, &Register16::Sp);
 
         for n in 0..8 {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register_16(&Register16::Bc), 0x0000);
+        assert_eq!(console.cpu.get_register_16(&Register16::Bc), 0xFFFF);
 
         for n in 0..8 {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register_16(&Register16::Sp), 0x0100);
+        assert_eq!(console.cpu.get_register_16(&Register16::Sp), 0x00FF);
     }
 }
