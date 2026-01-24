@@ -56,7 +56,6 @@ impl Console {
         self.push_command(
             8,
             Update(|console: &mut Console| {
-                // TAG_TODO
                 let sp = console.cpu.get_register_16(&Register16::Sp);
                 let offset = console.cpu.get_register(&Register8::Y) as i8 as i16;
                 let result = (sp as i16).wrapping_add(offset) as u16;
