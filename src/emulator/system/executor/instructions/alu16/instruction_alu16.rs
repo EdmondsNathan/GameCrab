@@ -7,7 +7,7 @@ impl Console {
             A16Ops::Dec(a16_args) => self.dec16(),
             A16Ops::Add(a16_args) => self.add16(),
             A16Ops::AddI8 => self.add_i8(),
-            A16Ops::LdI8 => todo!(),
+            A16Ops::LdI8 => self.ld_i8(),
         }
     }
 }
