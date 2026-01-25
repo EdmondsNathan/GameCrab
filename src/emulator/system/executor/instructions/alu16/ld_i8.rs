@@ -109,8 +109,6 @@ mod tests {
             console.tick();
         }
 
-        println!("SP: {:x}", sp);
-        println!("HL: {:x}", console.cpu.get_register_16(&Register16::Hl));
         assert!(console.cpu.get_register_16(&Register16::Hl) == output);
         assert_eq!(console.cpu.get_flag(&Flags::H), h_flag);
         assert_eq!(console.cpu.get_flag(&Flags::C), c_flag);
