@@ -8,3 +8,4 @@ pub(crate) mod instruction;
 pub(crate) mod jump;
 pub(crate) mod load16;
 pub(crate) mod load8;
+pub(crate) mod push16;

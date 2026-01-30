@@ -27,7 +27,7 @@ impl Console {
             Cb => self.instruction_cb(),
             Control(control_op) => self.instruction_control(control_op),
             Load16(ld16) => self.instruction_load16(ld16),
-            Push(push_pop) => todo!("push not implemented"),
+            Push(push_pop) => self.stack_push16(push_pop),
             Pop(push_pop) => todo!("pop not implemented"),
             Load8(to, from) => self.instruction_load8(to, from),
             Arithmetic16(a16_ops) => self.instruction_alu16(a16_ops),
