@@ -82,7 +82,10 @@ impl Console {
 
 #[cfg(test)]
 mod tests {
-    use crate::emulator::system::{components::registers::Register16, console::Console};
+    use crate::emulator::system::{
+        components::registers::{Register16, Register8},
+        console::Console,
+    };
 
     fn init(memory_map: Vec<(u8, u16)>) -> Console {
         let mut console = Console::new();
@@ -104,7 +107,13 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x200), 0x67);
-        assert_eq!(console.ram.fetch(0x201), 0x45);
+        assert_eq!(
+            console.ram.fetch(0x200),
+            console.cpu.get_register(&Register8::C)
+        );
+        assert_eq!(
+            console.ram.fetch(0x201),
+            console.cpu.get_register(&Register8::B)
+        );
     }
 }
