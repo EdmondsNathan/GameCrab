@@ -33,7 +33,7 @@ impl Console {
         self.push_command(
             9,
             Read(
-                Source::Register(low),
+                Source::Register(high),
                 Destination::RamFromRegister(Register16::Bus),
             ),
         );
@@ -61,7 +61,7 @@ impl Console {
         self.push_command(
             13,
             Read(
-                Source::Register(high),
+                Source::Register(low),
                 Destination::RamFromRegister(Register16::Bus),
             ),
         );
@@ -104,7 +104,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x200), 0x45);
-        assert_eq!(console.ram.fetch(0x201), 0x67);
+        assert_eq!(console.ram.fetch(0x200), 0x67);
+        assert_eq!(console.ram.fetch(0x201), 0x45);
     }
 }
