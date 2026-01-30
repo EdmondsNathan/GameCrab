@@ -5,7 +5,7 @@ impl Console {
         if let JR::I8 = jr {
             self.jr_i8()
         } else {
-            self.jr_flag(jr)
+            self.jr_flag()
         }
     }
 }
