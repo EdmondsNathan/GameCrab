@@ -5,6 +5,7 @@ pub(crate) mod cb;
 pub(crate) mod control;
 pub(crate) mod decoder;
 pub(crate) mod instruction;
+pub(crate) mod jr;
 pub(crate) mod jump;
 pub(crate) mod load16;
 pub(crate) mod load8;
