@@ -34,7 +34,7 @@ impl Console {
             Arithmetic8(a8_ops) => self.instruction_alu8(a8_ops),
             JumpRelative(jr) => self.instruction_jr(jr),
             Jump(jp) => self.instruction_jump(jp),
-            Restart(arg) => todo!("restart not implemented"),
+            Restart(arg) => self.instruction_restart(),
             Return(ret) => todo!("return not implemented"),
             Call(calls) => todo!("call not implemented"),
             BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
