@@ -1,5 +1,5 @@
 pub struct Ram {
-    memory: Box<[u8; 0x10000]>,
+    memory: [u8; 0x10000],
 }
 
 pub enum Interrupts {
@@ -13,8 +13,7 @@ pub enum Interrupts {
 impl Default for Ram {
     fn default() -> Self {
         Ram {
-            // memory: Box::new([0; 0xFFFF]),
-            memory: Box::new([0; 0x10000]),
+            memory: [0; 0x10000],
         }
     }
 }
