@@ -1,6 +1,7 @@
 pub(crate) mod alu16;
 pub(crate) mod alu8;
 pub(crate) mod bit_op;
+pub(crate) mod call;
 pub(crate) mod cb;
 pub(crate) mod control;
 pub(crate) mod decoder;

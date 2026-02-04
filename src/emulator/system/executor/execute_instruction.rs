@@ -36,7 +36,7 @@ impl Console {
             Jump(jp) => self.instruction_jump(jp),
             Restart(arg) => self.instruction_restart(),
             Return(ret) => self.instruction_ret(ret),
-            Call(calls) => todo!("call not implemented"),
+            Call(calls) => self.instruction_call(),
             BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
         } {
             if ime_pending {
