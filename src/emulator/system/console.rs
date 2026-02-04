@@ -22,7 +22,7 @@ impl Console {
     }
 
     /// Create a new console object and load a rom from path.
-    pub fn new_with_rom(path: String) -> Console {
+    pub fn new_with_rom(path: &str) -> Console {
         Console {
             rom: Self::load_rom(path),
             ..Default::default()
@@ -30,8 +30,8 @@ impl Console {
     }
 
     /// Load a rom or panic if none is found.
-    fn load_rom(path: String) -> Rom {
-        match Rom::try_new(&path) {
+    fn load_rom(path: &str) -> Rom {
+        match Rom::try_new(path) {
             Ok(rom) => rom,
             Err(error) => {
                 panic!("{error}");
