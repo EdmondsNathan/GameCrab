@@ -66,48 +66,7 @@ impl Console {
         // halt is only checked at the last T cycle of each M cycle
         if self.cpu.get_halt() && self.tick_counter % 4 == 3 && self.is_interrupt_pending() {
             if self.cpu.get_ime() {
-                // TAG_TODO Perform jumps
-                // TAG_TODO Convert to queued commands
-                // https://gbdev.io/pandocs/Interrupts.html
-                self.cpu.set_halt(false);
-
-                let interrupt_mask = self.ram.fetch(0xFFFF) & self.ram.fetch(0xFF0F);
-                let interrupt_index = interrupt_mask.trailing_zeros() as u16;
-                let interrupt_flag = self.ram.fetch(0xFF0F);
-                self.ram
-                    .set(interrupt_flag & !(1 << interrupt_index), 0xFF0F);
-
-                self.cpu.set_ime(false);
-
-                self.cpu
-                    .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
-
-                self.cpu.set_register_16(
-                    self.cpu.get_register_16(&Register16::Sp) - 1,
-                    &Register16::Sp,
-                );
-
-                self.ram.set(
-                    self.cpu.get_register(&Register8::PcHigh),
-                    self.cpu.get_register_16(&Register16::Bus),
-                );
-
-                self.cpu
-                    .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
-
-                self.cpu.set_register_16(
-                    self.cpu.get_register_16(&Register16::Sp) - 1,
-                    &Register16::Sp,
-                );
-
-                self.ram.set(
-                    self.cpu.get_register(&Register8::PcLow),
-                    self.cpu.get_register_16(&Register16::Bus),
-                );
-
-                self.cpu
-                    .set_register_16(0x0040 + interrupt_index * 8, &Register16::Pc);
-                self.queue_next_instruction(19);
+                self.end_halt();
             } else {
                 // Do not jump for the interrupt, continue on normally
                 self.queue_next_instruction(1);
@@ -128,6 +87,51 @@ impl Console {
         }
 
         self.tick_counter += 1;
+    }
+
+    fn end_halt(&mut self) {
+        // TAG_TODO Perform jumps
+        // TAG_TODO Convert to queued commands
+        // https://gbdev.io/pandocs/Interrupts.html
+        self.cpu.set_halt(false);
+
+        let interrupt_mask = self.ram.fetch(0xFFFF) & self.ram.fetch(0xFF0F);
+        let interrupt_index = interrupt_mask.trailing_zeros() as u16;
+        let interrupt_flag = self.ram.fetch(0xFF0F);
+        self.ram
+            .set(interrupt_flag & !(1 << interrupt_index), 0xFF0F);
+
+        self.cpu.set_ime(false);
+
+        self.cpu
+            .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
+
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp) - 1,
+            &Register16::Sp,
+        );
+
+        self.ram.set(
+            self.cpu.get_register(&Register8::PcHigh),
+            self.cpu.get_register_16(&Register16::Bus),
+        );
+
+        self.cpu
+            .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
+
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp) - 1,
+            &Register16::Sp,
+        );
+
+        self.ram.set(
+            self.cpu.get_register(&Register8::PcLow),
+            self.cpu.get_register_16(&Register16::Bus),
+        );
+
+        self.cpu
+            .set_register_16(0x0040 + interrupt_index * 8, &Register16::Pc);
+        self.queue_next_instruction(19);
     }
 
     pub fn is_interrupt_pending(&self) -> bool {
