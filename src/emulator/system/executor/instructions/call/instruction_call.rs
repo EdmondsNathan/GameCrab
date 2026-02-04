@@ -159,18 +159,18 @@ mod tests {
 
     #[test]
     fn call() {
-        let mut console = init(vec![(0xC4, 0x100)]);
+        let mut console = init(vec![(0xC4, 0x100), (0xCC, 0x103), (0xCD, 0x106)]);
         console.cpu.set_flag(true, &Flags::Z);
         console.cpu.set_register_16(0x201, &Register16::Sp);
 
-        for n in 0..24 {
+        for n in 0..12 {
             console.tick();
         }
 
         assert_ne!(console.ram.fetch(0x201), 0x03);
         assert_ne!(console.ram.fetch(0x200), 0x01);
 
-        let mut console = init(vec![(0xCC, 0x100)]);
+        // let mut console = init(vec![(0xCC, 0x100)]);
         console.cpu.set_flag(true, &Flags::Z);
         console.cpu.set_register_16(0x201, &Register16::Sp);
 
@@ -178,10 +178,10 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x201), 0x03);
+        assert_eq!(console.ram.fetch(0x201), 0x06);
         assert_eq!(console.ram.fetch(0x200), 0x01);
 
-        let mut console = init(vec![(0xCD, 0x100)]);
+        // let mut console = init(vec![(0xCD, 0x100)]);
         console.cpu.set_flag(true, &Flags::Z);
         console.cpu.set_register_16(0x201, &Register16::Sp);
 
@@ -189,6 +189,6 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x201), 0x03);
+        assert_eq!(console.ram.fetch(0x201), 0x09);
     }
 }
