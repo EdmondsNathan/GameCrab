@@ -1,7 +1,11 @@
 #![allow(unused)]
 pub mod emulator;
 
+use std::time::Instant;
+
 use macroquad::prelude::*;
+
+use crate::emulator::system::console::Console;
 
 const RESOLUTION: Vec2 = vec2(160f32, 144f32);
 const SCALE_FACTOR: f32 = 4f32;
@@ -23,19 +27,26 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    let mut bytes: Box<[u8]> = Box::new([128u8; RESOLUTION.x as usize * RESOLUTION.y as usize * 4]);
-
-    let texture: Texture2D = Texture2D::from_rgba8(160, 144, &bytes);
+    // let mut console = Console::new_with_rom("roms/Tetris.gb");
+    let mut console = Console::new();
+    let mut n: u64 = 0;
 
     loop {
         clear_background(BLACK);
-
-        update_texture(&texture, &mut bytes);
-
-        render_texture(&texture);
-
-        draw_fps();
-
+        let start = Instant::now();
+        for n in 0..70224 {
+            //4_194_304 {
+            console.tick();
+            // println!(
+            //     "PC: {:x}, RAM: {:x}",
+            //     console.cpu.get_register_16(&Register16::Pc),
+            //     console
+            //         .ram
+            //         .fetch(console.cpu.get_register_16(&Register16::Pc))
+            // );
+            draw_fps();
+        }
+        println!("Frame took: {:?}", start.elapsed());
         next_frame().await
     }
 }
