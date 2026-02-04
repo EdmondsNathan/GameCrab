@@ -12,3 +12,4 @@ pub(crate) mod load8;
 pub(crate) mod pop16;
 pub(crate) mod push16;
 pub(crate) mod restart;
+pub(crate) mod ret;

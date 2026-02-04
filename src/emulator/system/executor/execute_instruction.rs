@@ -35,7 +35,7 @@ impl Console {
             JumpRelative(jr) => self.instruction_jr(jr),
             Jump(jp) => self.instruction_jump(jp),
             Restart(arg) => self.instruction_restart(),
-            Return(ret) => todo!("return not implemented"),
+            Return(ret) => self.instruction_ret(ret),
             Call(calls) => todo!("call not implemented"),
             BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
         } {
