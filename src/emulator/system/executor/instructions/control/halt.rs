@@ -18,11 +18,13 @@ impl Console {
     }
 }
 
-#[cfg(test)]
 mod tests {
     use crate::emulator::system::{
-        components::registers::{Flags, Register8},
-        console::Console,
+        components::{
+            ram::Interrupts,
+            registers::{Flags, Register16, Register8},
+        },
+        console::{self, Console},
     };
 
     fn init(memory_map: Vec<(u8, u16)>) -> Console {
@@ -103,9 +105,27 @@ mod tests {
         assert_eq!(console.cpu.get_register(&Register8::B), 0x40);
     }
 
-    // #[test]
+    #[test]
     fn halt_ime() {
         //TAG_TODO
-        todo!()
+        let mut console = setup(true, 0b00000000, 0b00000011);
+        // LD B, C
+        console.ram.set(0x41, 0x101);
+        console.cpu.set_register(0x45, &Register8::C);
+
+        for n in 0..8 {
+            console.tick();
+        }
+
+        assert_ne!(console.cpu.get_register(&Register8::B), 0x45);
+
+        console.ram.set_ie(true, Interrupts::Lcd);
+
+        for n in 0..20 {
+            console.tick();
+        }
+
+        assert_eq!(console.cpu.get_register_16(&Register16::Pc), 0x048);
+        assert_eq!(console.ram.fetch(0xFF0F), 0b00000001);
     }
 }

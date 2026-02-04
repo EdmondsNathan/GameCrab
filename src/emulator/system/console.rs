@@ -1,5 +1,8 @@
 use crate::emulator::rom_loaders::rom::Rom;
+use crate::emulator::system::components::ram::Interrupts;
+use crate::emulator::system::components::registers::{Register16, Register8};
 use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
+use crate::emulator::system::console;
 use crate::emulator::system::executor::{execute_instruction, execution_queue::ExecutionQueue};
 
 #[derive(Default)]
@@ -63,8 +66,48 @@ impl Console {
         // halt is only checked at the last T cycle of each M cycle
         if self.cpu.get_halt() && self.tick_counter % 4 == 3 && self.is_interrupt_pending() {
             if self.cpu.get_ime() {
-                //TAG_TODO Perform jumps
-                todo!()
+                // TAG_TODO Perform jumps
+                // TAG_TODO Convert to queued commands
+                // https://gbdev.io/pandocs/Interrupts.html
+                self.cpu.set_halt(false);
+
+                let interrupt_mask = self.ram.fetch(0xFFFF) & self.ram.fetch(0xFF0F);
+                let interrupt_index = interrupt_mask.trailing_zeros() as u16;
+                let interrupt_flag = self.ram.fetch(0xFF0F);
+                self.ram
+                    .set(interrupt_flag & !(1 << interrupt_index), 0xFF0F);
+
+                self.cpu.set_ime(false);
+
+                self.cpu
+                    .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
+
+                self.cpu.set_register_16(
+                    self.cpu.get_register_16(&Register16::Sp) - 1,
+                    &Register16::Sp,
+                );
+
+                self.ram.set(
+                    self.cpu.get_register(&Register8::PcHigh),
+                    self.cpu.get_register_16(&Register16::Bus),
+                );
+
+                self.cpu
+                    .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
+
+                self.cpu.set_register_16(
+                    self.cpu.get_register_16(&Register16::Sp) - 1,
+                    &Register16::Sp,
+                );
+
+                self.ram.set(
+                    self.cpu.get_register(&Register8::PcLow),
+                    self.cpu.get_register_16(&Register16::Bus),
+                );
+
+                self.cpu
+                    .set_register_16(0x0040 + interrupt_index * 8, &Register16::Pc);
+                self.queue_next_instruction(19);
             } else {
                 // Do not jump for the interrupt, continue on normally
                 self.queue_next_instruction(1);
