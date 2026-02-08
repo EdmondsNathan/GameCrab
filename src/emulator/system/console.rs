@@ -1,6 +1,6 @@
-use crate::emulator::rom_loaders::rom::Rom;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
+use crate::emulator::system::components::rom::Rom;
 use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
 use crate::emulator::system::console;
 use crate::emulator::system::executor::{execute_instruction, execution_queue::ExecutionQueue};
