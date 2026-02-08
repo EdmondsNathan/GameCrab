@@ -1,11 +1,11 @@
 use crate::emulator::system::components::registers::{Register16, Register8};
 
-pub struct MicroOp {
+pub(crate) struct MicroOp {
     offset: u8,
     micro_op: Operations,
 }
 
-pub enum Operations {
+pub(crate) enum Operations {
     FetchOpcode,
     Read(Register8),
     Write(u16),
