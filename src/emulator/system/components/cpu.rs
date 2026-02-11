@@ -1,7 +1,7 @@
 use crate::emulator::system::components::registers::{Flags, Register16, Register8, Registers};
 
 #[derive(Default)]
-pub struct Cpu {
+pub(crate) struct Cpu {
     registers: Registers,
     ime_pending: bool,
     ime: bool,
@@ -12,12 +12,12 @@ pub struct Cpu {
 
 impl Cpu {
     /// Create a new cpu object.
-    pub fn new() -> Cpu {
+    pub(crate) fn new() -> Cpu {
         Self::default()
     }
 
     /// Get the value of a register.
-    pub fn get_register(&self, register: &Register8) -> u8 {
+    pub(crate) fn get_register(&self, register: &Register8) -> u8 {
         match register {
             Register8::A => self.registers.a,
             Register8::B => self.registers.b,
@@ -39,7 +39,7 @@ impl Cpu {
     }
 
     /// Set the value of a register.
-    pub fn set_register(&mut self, value: u8, register: &Register8) {
+    pub(crate) fn set_register(&mut self, value: u8, register: &Register8) {
         match register {
             Register8::A => self.registers.a = value,
             Register8::B => self.registers.b = value,
@@ -73,7 +73,7 @@ impl Cpu {
     }
 
     /// Get the value of a register pair.
-    pub fn get_register_16(&self, register: &Register16) -> u16 {
+    pub(crate) fn get_register_16(&self, register: &Register16) -> u16 {
         match register {
             Register16::Af => ((self.registers.a as u16) << 8) + (self.registers.f as u16),
             Register16::Bc => ((self.registers.b as u16) << 8) + (self.registers.c as u16),
@@ -87,7 +87,7 @@ impl Cpu {
     }
 
     /// Set value of a register pair.
-    pub fn set_register_16(&mut self, value: u16, register: &Register16) {
+    pub(crate) fn set_register_16(&mut self, value: u16, register: &Register16) {
         match register {
             Register16::Af => {
                 self.registers.a = (value >> 8) as u8;
@@ -122,7 +122,7 @@ impl Cpu {
     }
 
     /// Get the value of a flag.
-    pub fn get_flag(&self, flag: &Flags) -> bool {
+    pub(crate) fn get_flag(&self, flag: &Flags) -> bool {
         match flag {
             Flags::Z => ((self.registers.f >> 7) & 1) == 1,
             Flags::N => ((self.registers.f >> 6) & 1) == 1,
@@ -132,7 +132,7 @@ impl Cpu {
     }
 
     /// Set the value of a flag.
-    pub fn set_flag(&mut self, value: bool, flag: &Flags) {
+    pub(crate) fn set_flag(&mut self, value: bool, flag: &Flags) {
         match flag {
             Flags::Z => {
                 let z = (value as u8) << 7;
@@ -153,43 +153,43 @@ impl Cpu {
         }
     }
 
-    pub fn get_ime(&self) -> bool {
+    pub(crate) fn get_ime(&self) -> bool {
         self.ime
     }
 
-    pub fn set_ime(&mut self, value: bool) {
+    pub(crate) fn set_ime(&mut self, value: bool) {
         self.ime = value;
     }
 
-    pub fn get_is_stopped(&self) -> bool {
+    pub(crate) fn get_is_stopped(&self) -> bool {
         self.is_stopped
     }
 
-    pub fn set_is_stopped(&mut self, value: bool) {
+    pub(crate) fn set_is_stopped(&mut self, value: bool) {
         self.is_stopped = value;
     }
 
-    pub fn get_halt(&self) -> bool {
+    pub(crate) fn get_halt(&self) -> bool {
         self.is_halted
     }
 
-    pub fn set_halt(&mut self, state: bool) {
+    pub(crate) fn set_halt(&mut self, state: bool) {
         self.is_halted = state;
     }
 
-    pub fn get_ime_pending(&self) -> bool {
+    pub(crate) fn get_ime_pending(&self) -> bool {
         self.ime_pending
     }
 
-    pub fn set_ime_pending(&mut self, value: bool) {
+    pub(crate) fn set_ime_pending(&mut self, value: bool) {
         self.ime_pending = value;
     }
 
-    pub fn get_halt_bug(&self) -> bool {
+    pub(crate) fn get_halt_bug(&self) -> bool {
         self.halt_bug
     }
 
-    pub fn set_halt_bug(&mut self, value: bool) {
+    pub(crate) fn set_halt_bug(&mut self, value: bool) {
         self.halt_bug = value;
     }
 }
