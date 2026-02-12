@@ -58,11 +58,6 @@ impl Console {
     }
 
     fn test_flag(&self) -> bool {
-        print!(
-            "ram value: {}",
-            self.ram
-                .fetch(self.cpu.get_register_16(&Register16::Bus) - 1)
-        );
         match self
             .ram
             .fetch(self.cpu.get_register_16(&Register16::Bus) - 1)
