@@ -40,11 +40,9 @@ impl Console {
     }
 
     /// load the contents of a Rom into Ram.
-    fn rom_into_ram(&mut self) {
-        let mut i: u16 = 0x100;
-        for byte in &self.rom.bytes {
+    pub(crate) fn rom_into_ram(&mut self) {
+        for (i, byte) in (0_u16..).zip(self.rom.bytes.iter()) {
             self.ram.set(*byte, i);
-            i += 1;
         }
     }
 
