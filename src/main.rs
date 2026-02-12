@@ -5,7 +5,10 @@ use std::time::Instant;
 
 use macroquad::prelude::*;
 
-use crate::emulator::system::console::Console;
+use crate::emulator::system::{
+    components::registers::{Flags, Register16},
+    console::Console,
+};
 
 const RESOLUTION: Vec2 = vec2(160f32, 144f32);
 const SCALE_FACTOR: f32 = 4f32;
@@ -27,26 +30,34 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    // let mut console = Console::new_with_rom("roms/Tetris.gb");
-    let mut console = Console::new();
+    let mut console = Console::new_with_rom("roms/Tetris.gb");
+    // let mut console = Console::new();
+    console.rom_into_ram();
     let mut n: u64 = 0;
 
     loop {
         clear_background(BLACK);
-        let start = Instant::now();
+        // let start = Instant::now();
         for n in 0..70224 {
-            //4_194_304 {
-            console.tick();
             // println!(
-            //     "PC: {:x}, RAM: {:x}",
+            //     "Tick Counter: {} PC: {:x}, RAM: {:x}",
+            //     console.tick_counter,
             //     console.cpu.get_register_16(&Register16::Pc),
             //     console
             //         .ram
             //         .fetch(console.cpu.get_register_16(&Register16::Pc))
             // );
-            draw_fps();
+            // println!(
+            //     "Z:{} N:{} H:{} C:{}",
+            //     console.cpu.get_flag(&Flags::Z),
+            //     console.cpu.get_flag(&Flags::N),
+            //     console.cpu.get_flag(&Flags::H),
+            //     console.cpu.get_flag(&Flags::C)
+            // );
+            console.tick();
         }
-        println!("Frame took: {:?}", start.elapsed());
+        draw_fps();
+        // println!("Frame took: {:?}", start.elapsed());
         next_frame().await
     }
 }
