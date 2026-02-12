@@ -1,0 +1,6 @@
+* Implement PPU
+* Implement input
+* Refactor CPU to use micro ops rather than function pointers. This should make it far more readable
+* Refactor fetch, decode, execute loop. Remove Instruction enums completely and have the decoder directly call the instruction queueing functions
+* Implement some debugging tools such as pausing, step, and better logging
+* Implement audio
