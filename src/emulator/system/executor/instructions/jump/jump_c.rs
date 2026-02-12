@@ -70,11 +70,16 @@ impl Console {
                             Destination::Register(Register8::PcLow),
                         ),
                     );
+
+                    console.queue_next_instruction(16 - 9);
+                } else {
+                    console.queue_next_instruction(12 - 9);
                 }
             }),
         );
 
-        Some(16)
+        // Some(16)
+        None
     }
 }
 
