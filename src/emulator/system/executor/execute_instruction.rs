@@ -54,6 +54,11 @@ impl Console {
     // TAG_REFACTOR Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
+        // println!(
+        //     "fetching PC: {:x} RAM: {:x}",
+        //     self.cpu.get_register_16(&Register16::Pc),
+        //     self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))
+        // );
         let decoder = match self.cb_flag {
             true => decode_cb,
             false => decode,
