@@ -40,7 +40,7 @@ impl Console {
                         1,
                         Update(|console: &mut Console| {
                             let pc = console.cpu.get_register_16(&Register16::Pc);
-                            let x = console.cpu.get_register(&Register8::X) as u16;
+                            let x = console.cpu.get_register(&Register8::X) as i8 as i16 as u16;
                             let result = pc.wrapping_add(x);
 
                             console.cpu.set_register_16(result, &Register16::Pc);
