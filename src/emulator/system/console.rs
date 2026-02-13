@@ -46,6 +46,7 @@ impl Console {
         }
     }
 
+    // TAG_TODO Move CPU into its own tick function
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
         if self.cpu.get_is_stopped() {
