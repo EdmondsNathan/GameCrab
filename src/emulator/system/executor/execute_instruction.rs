@@ -1,5 +1,7 @@
 use crate::emulator::commands::command::{Command, Command::Update};
+use crate::emulator::system::components::registers::Register8;
 use crate::emulator::system::executor::instructions::decoder::*;
+use crate::emulator::system::executor::instructions::decoder_names::{decode_cb_name, decode_name};
 use crate::emulator::system::{
     components::registers::Register16,
     console,
@@ -54,11 +56,24 @@ impl Console {
     // TAG_REFACTOR Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
-        // println!(
-        //     "fetching PC: {:x} RAM: {:x}",
-        //     self.cpu.get_register_16(&Register16::Pc),
-        //     self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))
-        // );
+        let name_decoder = match self.cb_flag {
+            true => decode_cb_name,
+            false => decode_name,
+        };
+        let name = match name_decoder(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {
+            Ok(value) => value,
+            Err(error) => error,
+        };
+        println!(
+            "Tick Counter: {:X}, PC: 0x{:X}, {} RAM: 0x{:X}, IE: {:X}, IF: {:X}",
+            self.tick_counter,
+            self.cpu.get_register_16(&Register16::Pc),
+            name,
+            self.ram.fetch(self.cpu.get_register_16(&Register16::Pc)),
+            self.ram.fetch(0xFFFF),
+            self.ram.fetch(0xFF0F),
+        );
+
         let decoder = match self.cb_flag {
             true => decode_cb,
             false => decode,

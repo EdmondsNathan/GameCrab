@@ -5,6 +5,7 @@ pub(crate) mod call;
 pub(crate) mod cb;
 pub(crate) mod control;
 pub(crate) mod decoder;
+pub(crate) mod decoder_names;
 pub(crate) mod instruction;
 pub(crate) mod jr;
 pub(crate) mod jump;

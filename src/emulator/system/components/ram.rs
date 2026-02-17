@@ -26,6 +26,7 @@ impl Ram {
 
     /// Fetch the value of an address.
     pub fn fetch(&self, address: u16) -> u8 {
+        // println!("RAM {:X}, {:X}", address, self.memory[address as usize]);
         self.memory[address as usize]
     }
 

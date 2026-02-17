@@ -70,7 +70,7 @@ impl Console {
                         0x0D => Register8::L,
                         0x0F => Register8::A,
                         _ => panic!(
-                            "Impossible value {:X}",
+                            "Impossible value {:2X}",
                             console.cpu.get_register(&Register8::Y) & 0x0F
                         ),
                     };
