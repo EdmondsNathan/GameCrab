@@ -69,7 +69,10 @@ impl Console {
                         0x0C => Register8::H,
                         0x0D => Register8::L,
                         0x0F => Register8::A,
-                        _ => panic!("Impossible value"),
+                        _ => panic!(
+                            "Impossible value {:X}",
+                            console.cpu.get_register(&Register8::Y) & 0x0F
+                        ),
                     };
 
                     let register_value = console.cpu.get_register(&register);
