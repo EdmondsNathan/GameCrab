@@ -1,3 +1,4 @@
+use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
 use crate::emulator::system::components::rom::Rom;
@@ -10,6 +11,7 @@ pub struct Console {
     pub(crate) cpu: Cpu,
     pub(crate) rom: Rom,
     pub(crate) ram: Ram,
+    pub(crate) ppu: Ppu,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
     pub(crate) cb_flag: bool,
@@ -49,6 +51,16 @@ impl Console {
     // TAG_TODO Move CPU into its own tick function
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
+        self.tick_ppu();
+
+        self.check_interrupts();
+
+        self.tick_cpu();
+
+        self.tick_counter += 1;
+    }
+
+    fn tick_cpu(&mut self) {
         if self.cpu.get_is_stopped() {
             return;
         }
@@ -83,8 +95,72 @@ impl Console {
                 command.execute_command(self);
             }
         }
+    }
 
-        self.tick_counter += 1;
+    fn check_interrupts(&mut self) {
+        if !self.cpu.get_ime() {
+            return;
+        }
+
+        let if_flag = self.ram.fetch(0xFF0F);
+        let ie_flag = self.ram.fetch(0xFFFF);
+
+        let triggered = if_flag & ie_flag & 0x1F;
+
+        if triggered == 0 {
+            return;
+        }
+
+        // Interrupts are handled according to priority
+        // VBlank
+        if triggered & 0x01 != 0 {
+            self.handle_interrupt(0x0040, 0x01);
+        // LCD Stat
+        } else if triggered & 0x02 != 0 {
+            self.handle_interrupt(0x0048, 0x02);
+        // Timer
+        } else if triggered & 0x04 != 0 {
+            self.handle_interrupt(0x0050, 0x04);
+        // Serial
+        } else if triggered & 0x08 != 0 {
+            self.handle_interrupt(0x0058, 0x08);
+        // Joypad
+        } else if triggered & 0x10 != 0 {
+            self.handle_interrupt(0x0060, 0x10);
+        }
+    }
+
+    fn handle_interrupt(&mut self, address: u16, bit: u8) {
+        // Clear
+        self.cpu.set_ime(false);
+        self.cpu.set_ime_pending(false);
+
+        // Clear the IF bit for this interrupt
+        self.ram.set(self.ram.fetch(0xFF0F) & !bit, 0xFF0F);
+
+        // Push the current PC onto the stack
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+            &Register16::Sp,
+        );
+
+        self.ram.set(
+            (self.cpu.get_register_16(&Register16::Pc) >> 8) as u8,
+            self.cpu.get_register_16(&Register16::Sp),
+        );
+
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+            &Register16::Sp,
+        );
+
+        self.ram.set(
+            (self.cpu.get_register_16(&Register16::Pc) & 0xFF) as u8,
+            self.cpu.get_register_16(&Register16::Sp),
+        );
+
+        // Jump PC to handle the interrupt
+        self.cpu.set_register_16(address, &Register16::Pc);
     }
 
     fn end_halt(&mut self) {
