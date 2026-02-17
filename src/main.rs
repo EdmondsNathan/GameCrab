@@ -62,6 +62,10 @@ async fn main() {
     }
 }
 
+fn framebuffer_to_texture(texture: &Texture2D, framebuffer: [u8; 160 * 144]) {
+    todo!();
+}
+
 fn update_texture(texture: &Texture2D, bytes: &mut Box<[u8]>) {
     for y in 0..RESOLUTION.y as usize {
         for x in 0..RESOLUTION.x as usize {
