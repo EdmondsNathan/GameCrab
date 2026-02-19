@@ -111,7 +111,12 @@ fn lookup_restart(console: &Console) -> u8 {
         0xEF => 0x28,
         0xF7 => 0x30,
         0xFF => 0x38,
-        _ => panic!("Impossible value!"),
+        _ => panic!(
+            "Impossible value 0x{:X}",
+            console
+                .ram
+                .fetch(console.cpu.get_register_16(&Register16::Xy))
+        ),
     }
 }
 
