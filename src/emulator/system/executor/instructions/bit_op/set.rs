@@ -10,7 +10,6 @@ use crate::emulator::{
 fn mask(value: u8, bit: u8) -> u8 {
     let mut result: u8 = 0;
     for n in 0..8 {
-        println!("{}, {}", n, bit);
         result += (if (n == bit) {
             1
         } else {
@@ -80,7 +79,6 @@ impl Console {
                     // Map the instruction range 0x40-0x7F into 8 sections, 0-7
                     let shift: u8 = (console.cpu.get_register(&Register8::Y) - 0xC0) / 8;
                     let result = mask(register_value, shift);
-                    println!("{:b}", result);
 
                     console.cpu.set_register(result, &register);
                 }),

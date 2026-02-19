@@ -1,4 +1,5 @@
 use crate::emulator::commands::command::{Command, Command::Update};
+use crate::emulator::print_logs::{log_cpu_registers, log_flags, log_pc, log_tick_counter};
 use crate::emulator::system::components::registers::Register8;
 use crate::emulator::system::executor::instructions::decoder::*;
 use crate::emulator::system::executor::instructions::decoder_names::{decode_cb_name, decode_name};
@@ -56,24 +57,6 @@ impl Console {
     // TAG_REFACTOR Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
-        let name_decoder = match self.cb_flag {
-            true => decode_cb_name,
-            false => decode_name,
-        };
-        let name = match name_decoder(self.ram.fetch(self.cpu.get_register_16(&Register16::Pc))) {
-            Ok(value) => value,
-            Err(error) => error,
-        };
-        println!(
-            "Tick Counter: {:X}, PC: 0x{:X}, {} RAM: 0x{:X}, IE: {:X}, IF: {:X}",
-            self.tick_counter,
-            self.cpu.get_register_16(&Register16::Pc),
-            name,
-            self.ram.fetch(self.cpu.get_register_16(&Register16::Pc)),
-            self.ram.fetch(0xFFFF),
-            self.ram.fetch(0xFF0F),
-        );
-
         let decoder = match self.cb_flag {
             true => decode_cb,
             false => decode,
@@ -89,12 +72,15 @@ impl Console {
         self.cpu
             .set_register_16(self.cpu.get_register_16(&Register16::Pc), &Register16::Bus);
 
-        // TAG_REFACTOR remove the halt bug check and handle it elsewhere
         // Every instruction increments the pc after 1 tick
         // unless the halt bug has occured, in which case it is skipped.
         if !self.cpu.get_halt_bug() {
             self.push_command(1, Command::Update(Self::command_increment_pc));
         }
+
+        println!("{}", log_tick_counter(self));
+        println!("Executing {}", log_pc(self));
+        println!("{}\n{}\n", log_cpu_registers(self), log_flags(self));
 
         self.execute(instruction);
     }

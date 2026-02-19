@@ -15,8 +15,6 @@ impl Console {
                 let carry = register_value >> 7;
                 let carry_flag = console.cpu.get_flag(&Flags::C) as u8;
 
-                println!("{}", console.tick_counter);
-
                 console
                     .cpu
                     .set_register((register_value << 1) + carry_flag, &Register8::A);
