@@ -5,9 +5,12 @@ use std::time::Instant;
 
 use macroquad::prelude::*;
 
-use crate::emulator::system::{
-    components::registers::{Flags, Register16},
-    console::Console,
+use crate::emulator::{
+    print_logs::{log_dump_ram, log_dump_ram_nonzero},
+    system::{
+        components::registers::{Flags, Register16},
+        console::Console,
+    },
 };
 
 const RESOLUTION: Vec2 = vec2(160f32, 144f32);
@@ -30,40 +33,34 @@ fn conf() -> Conf {
 
 #[macroquad::main(conf)]
 async fn main() {
-    let mut console = Console::new_with_rom("roms/Tetris.gb");
-    // let mut console = Console::new();
+    let mut console =
+        // Console::new();
+        // Console::new_with_rom("roms/Tetris.gb");
+        // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
+        // Console::new_with_rom("roms/gb-test-roms-master/halt_bug.gb");
+        Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/06-ld r,r.gb");
     console.rom_into_ram();
-    let mut n: u64 = 0;
+
+    let texture = Texture2D::from_rgba8(160, 144, &[0; 160 * 144 * 4]);
+
+    // print!("{}", log_dump_ram_nonzero(&console));
+    // return;
 
     loop {
         clear_background(BLACK);
-        // let start = Instant::now();
         for n in 0..70224 {
-            // println!(
-            //     "Tick Counter: {} PC: {:x}, RAM: {:x}",
-            //     console.tick_counter,
-            //     console.cpu.get_register_16(&Register16::Pc),
-            //     console
-            //         .ram
-            //         .fetch(console.cpu.get_register_16(&Register16::Pc))
-            // );
-            // println!(
-            //     "Z:{} N:{} H:{} C:{}",
-            //     console.cpu.get_flag(&Flags::Z),
-            //     console.cpu.get_flag(&Flags::N),
-            //     console.cpu.get_flag(&Flags::H),
-            //     console.cpu.get_flag(&Flags::C)
-            // );
             console.tick();
         }
-        draw_fps();
-        // println!("Frame took: {:?}", start.elapsed());
+
+        framebuffer_to_texture(&texture, console.get_framebuffer());
+        render_texture(&texture);
+        // draw_fps();
         next_frame().await
     }
 }
 
-fn framebuffer_to_texture(texture: &Texture2D, framebuffer: [u8; 160 * 144]) {
-    todo!();
+fn framebuffer_to_texture(texture: &Texture2D, framebuffer: [u8; 160 * 144 * 4]) {
+    texture.update_from_bytes(160, 144, &framebuffer);
 }
 
 fn update_texture(texture: &Texture2D, bytes: &mut Box<[u8]>) {
