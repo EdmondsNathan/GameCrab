@@ -83,5 +83,3 @@ pub(crate) fn log_dump_ram(console: &Console) -> String {
 
     ram
 }
-
-pub(crate) fn log_unique_instructions(console: &Console, unique_instructions: &Vec<String>) {}
