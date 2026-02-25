@@ -44,6 +44,14 @@ impl Ram {
     /// Set the value of an address.
     pub fn set(&mut self, value: u8, address: u16) {
         self.memory[address as usize] = value;
+
+        // if self.fetch(0xFF01) != 0 {
+        //     println!("{:02X}", self.fetch(0xFF01));
+        // }
+        // // Serial transfer, print byte at SB
+        // if address == 0xFF02 {
+        //     println!("{:02X}", self.fetch(0xFF01));
+        // }
     }
 
     /// Set the value of two consecutive addresses. The high byte is the first address and the low byte is the following.

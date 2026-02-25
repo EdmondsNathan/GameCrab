@@ -49,6 +49,16 @@ impl Console {
         //     self.ram.get_ie(Interrupts::VBlank),
         // );
 
+        // Check if LCD is enabled (bit 7 of LCDC)
+        if self.get_lcd_control() & 0x80 == 0 {
+            // LCD is off - reset PPU state and show white screen
+            self.ppu.dots = 0;
+            self.set_lcd_y(0);
+            // Fill framebuffer with white
+            self.ppu.framebuffer.fill(255);
+            return;
+        }
+
         if self.ppu.dots == 0 {
             self.ppu.oam_sprites.clear();
         }
@@ -113,7 +123,7 @@ impl Console {
 
         let index = ((self.ppu.dots / 2) as u8) - 1;
         // Sprites start at FFE0 and are 4 bytes each
-        let address = 0xFFE0 + (index as u16) * 4;
+        let address = 0xFE00 + (index as u16) * 4;
 
         let sprite_height = if self.get_lcd_control() & 0x04 != 0 {
             16
@@ -178,12 +188,16 @@ impl Console {
         let color_bit_1 = (byte2 >> bit_position) & 1;
         let color_id = (color_bit_1 << 1) | color_bit_0;
 
-        // TAG_TODO bg palettes
-        let shade = match color_id {
-            0 => 255,
-            1 => 192,
-            2 => 96,
-            3 => 0,
+        // Get the palette value from BGP register
+        let palette = self.get_bg_palette();
+        let palette_color = (palette >> (color_id * 2)) & 0x03;
+
+        // Map palette color to grayscale shade (0=white, 3=black)
+        let shade = match palette_color {
+            0 => 255, // White
+            1 => 192, // Light gray
+            2 => 96,  // Dark gray
+            3 => 0,   // Black
             _ => 0,
         };
 
