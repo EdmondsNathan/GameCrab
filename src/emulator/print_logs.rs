@@ -1,24 +1,10 @@
 use crate::emulator::system::{
     components::registers::{Flags, Register16, Register8},
     console::Console,
-    executor::instructions::decoder_names::{decode_cb_name, decode_name},
 };
 
-// pub(crate) fn log_all_logs(console: &Console) -> String {
-//     todo!()
-// }
-
 pub(crate) fn log_pc(console: &Console) -> String {
-    let pc = console
-        .cpu
-        .get_register_16(&super::system::components::registers::Register16::Pc);
-    let ram = console.ram.fetch(pc);
-    let decoder = match console.cb_flag {
-        true => decode_cb_name,
-        false => decode_name,
-    };
-    let name = decoder(ram).unwrap();
-    format!("PC: {:04X}, RAM: {:04X}, {}", pc, ram, name)
+    todo!()
 }
 
 pub(crate) fn log_flags(console: &Console) -> String {
@@ -83,5 +69,3 @@ pub(crate) fn log_dump_ram(console: &Console) -> String {
 
     ram
 }
-
-pub(crate) fn log_unique_instructions(console: &Console, unique_instructions: &Vec<String>) {}
