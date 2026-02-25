@@ -34,12 +34,13 @@ fn conf() -> Conf {
 #[macroquad::main(conf)]
 async fn main() {
     let mut console =
-        // Console::new();
-        // Console::new_with_rom("roms/Tetris.gb");
-        // Console::new_with_rom("roms/DrMario.gb");
-        // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
-        // Console::new_with_rom("roms/gb-test-roms-master/halt_bug.gb");
-    Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/06-ld r,r.gb");
+    // Console::new();
+    // Console::new_with_rom("roms/Tetris.gb");
+    // Console::new_with_rom("roms/DrMario.gb");
+    // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
+        Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
+    // Console::new_with_rom("roms/gb-test-roms-master/halt_bug.gb");
+    // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/06-ld r,r.gb");
     console.rom_into_ram();
 
     let texture = Texture2D::from_rgba8(160, 144, &[0; 160 * 144 * 4]);

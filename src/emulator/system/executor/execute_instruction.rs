@@ -1,5 +1,7 @@
 use crate::emulator::commands::command::{Command, Command::Update};
-use crate::emulator::print_logs::{log_cpu_registers, log_flags, log_pc, log_tick_counter};
+use crate::emulator::print_logs::{
+    log_cpu_registers, log_flags, log_gameboy_doctor, log_pc, log_tick_counter,
+};
 use crate::emulator::system::components::registers::Register8;
 use crate::emulator::system::executor::instructions::decoder::*;
 use crate::emulator::system::executor::instructions::decoder_names::{decode_cb_name, decode_name};
@@ -57,6 +59,9 @@ impl Console {
     // TAG_REFACTOR Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
+        // if self.tick_counter != 0 {
+        println!("{}", log_gameboy_doctor(self));
+        // }
         let decoder = match self.cb_flag {
             true => decode_cb,
             false => decode,
@@ -78,9 +83,9 @@ impl Console {
             self.push_command(1, Command::Update(Self::command_increment_pc));
         }
 
-        println!("{}", log_tick_counter(self));
-        println!("Executing {}", log_pc(self));
-        println!("{}\n{}\n", log_cpu_registers(self), log_flags(self));
+        // println!("{}", log_tick_counter(self));
+        // println!("Executing {}", log_pc(self));
+        // println!("{}\n{}\n", log_cpu_registers(self), log_flags(self));
 
         self.execute(instruction);
     }
