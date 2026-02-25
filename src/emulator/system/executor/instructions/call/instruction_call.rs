@@ -118,6 +118,23 @@ impl Console {
                     ),
                 );
 
+                // Guessing here, this part wasn't in the docs
+                console.push_command(
+                    23 - tick_offset,
+                    Read(
+                        Source::Register(Register8::Y),
+                        Destination::Register(Register8::PcLow),
+                    ),
+                );
+
+                console.push_command(
+                    23 - tick_offset,
+                    Read(
+                        Source::Register(Register8::X),
+                        Destination::Register(Register8::PcHigh),
+                    ),
+                );
+
                 console.queue_next_instruction(24 - tick_offset);
             }),
         );
