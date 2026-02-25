@@ -18,7 +18,7 @@ pub(crate) fn log_pc(console: &Console) -> String {
         false => decode_name,
     };
     let name = decoder(ram).unwrap();
-    format!("PC: {:04X}, RAM: {:04X}, {}", pc, ram, name)
+    format!("PC: {:04X}, RAM: {:02X}, {}", pc, ram, name)
 }
 
 pub(crate) fn log_flags(console: &Console) -> String {
@@ -82,4 +82,39 @@ pub(crate) fn log_dump_ram(console: &Console) -> String {
     }
 
     ram
+}
+
+pub(crate) fn log_gameboy_doctor(console: &Console) -> String {
+    let a = console.cpu.get_register(&Register8::A);
+    let f = console.cpu.get_register(&Register8::F);
+    let b = console.cpu.get_register(&Register8::B);
+    let c = console.cpu.get_register(&Register8::C);
+    let d = console.cpu.get_register(&Register8::D);
+    let e = console.cpu.get_register(&Register8::E);
+    let h = console.cpu.get_register(&Register8::H);
+    let l = console.cpu.get_register(&Register8::L);
+    let sp = console.cpu.get_register_16(&Register16::Sp);
+    let pc = console.cpu.get_register_16(&Register16::Pc);
+    let pc_mem = [
+        console.ram.fetch(pc),
+        console.ram.fetch(pc + 1),
+        console.ram.fetch(pc + 2),
+        console.ram.fetch(pc + 3),
+    ];
+
+    format!("A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} H:{:02X} L:{:02X} SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
+        a,
+        f,
+        b,
+        c,
+        d,
+        e,
+        h,
+        l,
+        sp,
+        pc,
+        pc_mem[0],
+        pc_mem[1],
+        pc_mem[2],
+        pc_mem[3],)
 }
