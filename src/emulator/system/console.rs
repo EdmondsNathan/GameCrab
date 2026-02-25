@@ -1,10 +1,7 @@
 use crate::emulator::system::components::display::ppu::Ppu;
-use crate::emulator::system::components::ram::Interrupts;
-use crate::emulator::system::components::registers::{Register16, Register8};
+use crate::emulator::system::components::executor::cpu::Cpu;
+use crate::emulator::system::components::ram::Ram;
 use crate::emulator::system::components::rom::Rom;
-use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
-use crate::emulator::system::console;
-
 #[derive(Default)]
 pub struct Console {
     pub(crate) cpu: Cpu,
