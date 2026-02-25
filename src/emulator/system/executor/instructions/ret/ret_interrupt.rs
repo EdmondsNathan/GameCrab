@@ -72,7 +72,7 @@ impl Console {
         self.push_command(
             9,
             Read(
-                Source::Register(Register8::X),
+                Source::Register(Register8::Y),
                 Destination::Register(Register8::PcHigh),
             ),
         );
@@ -80,7 +80,7 @@ impl Console {
         self.push_command(
             10,
             Read(
-                Source::Register(Register8::Y),
+                Source::Register(Register8::X),
                 Destination::Register(Register8::PcLow),
             ),
         );
