@@ -6,7 +6,6 @@ use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
 use crate::emulator::system::console;
 use crate::emulator::system::executor::{execute_instruction, execution_queue::ExecutionQueue};
 
-#[derive(Default)]
 pub struct Console {
     pub(crate) cpu: Cpu,
     pub(crate) rom: Rom,
@@ -15,6 +14,24 @@ pub struct Console {
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
     pub(crate) cb_flag: bool,
+}
+
+impl Default for Console {
+    fn default() -> Self {
+        let mut console = Self {
+            cpu: Default::default(),
+            rom: Default::default(),
+            ram: Default::default(),
+            ppu: Default::default(),
+            tick_counter: Default::default(),
+            execution_queue: Default::default(),
+            cb_flag: Default::default(),
+        };
+
+        console.queue_next_instruction(0);
+
+        console
+    }
 }
 
 impl Console {
@@ -82,11 +99,6 @@ impl Console {
                 self.queue_next_instruction(1);
             }
         }
-
-        // // Queue the first command.
-        // if self.tick_counter == 0 {
-        //     self.fetch_decode_execute();
-        // }
 
         // execute all commands at the current tick if any exist.
         let map = self.execution_queue.pop(&self.tick_counter);
