@@ -51,7 +51,7 @@ impl Console {
     // TAG_TODO Move CPU into its own tick function
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
-        self.tick_ppu();
+        // self.tick_ppu();
 
         self.check_interrupts();
 
@@ -181,7 +181,7 @@ impl Console {
             .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
 
         self.cpu.set_register_16(
-            self.cpu.get_register_16(&Register16::Sp) - 1,
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
             &Register16::Sp,
         );
 
