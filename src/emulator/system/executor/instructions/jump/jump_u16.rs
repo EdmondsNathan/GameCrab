@@ -92,9 +92,9 @@ mod tests {
     fn jump_u16() {
         let mut console = init(vec![
             (0xC3, 0x100),
-            (0x00, 0x101),
-            (0x02, 0x102),
-            (0x41, 0x200),
+            (0x50, 0x101),
+            (0x01, 0x102),
+            (0x41, 0x150),
         ]);
         console.cpu.set_register(0x45, &Register8::C);
 

@@ -180,5 +180,16 @@ mod tests {
         }
 
         assert_eq!(console.cpu.get_register(&Register8::A), 0b01001010);
+        assert!(!console.cpu.get_flag(&Flags::Z));
+
+        let mut console = init(vec![(0xAF, 0x100)]);
+        console.cpu.set_register(0b11110001, &Register8::A);
+
+        for n in 0..4 {
+            console.tick();
+        }
+
+        assert_eq!(console.cpu.get_register(&Register8::A), 0b00000000);
+        assert!(console.cpu.get_flag(&Flags::Z));
     }
 }
