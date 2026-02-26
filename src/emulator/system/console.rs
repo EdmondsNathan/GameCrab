@@ -70,7 +70,9 @@ impl Console {
     pub fn tick(&mut self) {
         // self.tick_ppu();
 
-        self.check_interrupts();
+        if self.tick_counter % 4 == 0 {
+            self.check_interrupts();
+        }
 
         self.tick_cpu();
 
@@ -110,36 +112,38 @@ impl Console {
     }
 
     fn check_interrupts(&mut self) {
-        // if !self.cpu.get_ime() {
-        //     return;
-        // }
+        if !self.cpu.get_ime() {
+            return;
+        }
         //
-        // let if_flag = self.ram.fetch(0xFF0F);
-        // let ie_flag = self.ram.fetch(0xFFFF);
-        //
-        // let triggered = if_flag & ie_flag & 0x1F;
-        //
-        // if triggered == 0 {
-        //     return;
-        // }
-        //
-        // // Interrupts are handled according to priority
-        // // VBlank
-        // if triggered & 0x01 != 0 {
-        //     self.handle_interrupt(0x0040, 0x01);
-        // // LCD Stat
-        // } else if triggered & 0x02 != 0 {
-        //     self.handle_interrupt(0x0048, 0x02);
-        // // Timer
-        // } else if triggered & 0x04 != 0 {
-        //     self.handle_interrupt(0x0050, 0x04);
-        // // Serial
-        // } else if triggered & 0x08 != 0 {
-        //     self.handle_interrupt(0x0058, 0x08);
-        // // Joypad
-        // } else if triggered & 0x10 != 0 {
-        //     self.handle_interrupt(0x0060, 0x10);
-        // }
+        let if_flag = self.ram.fetch(0xFF0F);
+        let ie_flag = self.ram.fetch(0xFFFF);
+
+        // Interrupts are only handled when both IE and IF
+        // are set for the specific interrupt
+        let triggered = if_flag & ie_flag & 0x1F;
+
+        if triggered == 0 {
+            return;
+        }
+
+        // Interrupts are handled according to priority
+        // VBlank
+        if triggered & 0x01 != 0 {
+            self.handle_interrupt(0x0040, 0x01);
+        // LCD Stat
+        } else if triggered & 0x02 != 0 {
+            self.handle_interrupt(0x0048, 0x02);
+        // Timer
+        } else if triggered & 0x04 != 0 {
+            self.handle_interrupt(0x0050, 0x04);
+        // Serial
+        } else if triggered & 0x08 != 0 {
+            self.handle_interrupt(0x0058, 0x08);
+        // Joypad
+        } else if triggered & 0x10 != 0 {
+            self.handle_interrupt(0x0060, 0x10);
+        }
     }
 
     fn handle_interrupt(&mut self, address: u16, bit: u8) {
@@ -206,7 +210,7 @@ impl Console {
             .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
 
         self.cpu.set_register_16(
-            self.cpu.get_register_16(&Register16::Sp) - 1,
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
             &Register16::Sp,
         );
 
