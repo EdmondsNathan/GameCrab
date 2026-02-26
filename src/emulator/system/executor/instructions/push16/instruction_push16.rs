@@ -33,7 +33,7 @@ impl Console {
         self.push_command(
             9,
             Read(
-                Source::Register(high),
+                Source::Register(low),
                 Destination::RamFromRegister(Register16::Bus),
             ),
         );
@@ -61,7 +61,7 @@ impl Console {
         self.push_command(
             13,
             Read(
-                Source::Register(low),
+                Source::Register(high),
                 Destination::RamFromRegister(Register16::Bus),
             ),
         );

@@ -16,7 +16,7 @@ impl Console {
             PushPop::Bc => (Register8::B, Register8::C),
             PushPop::De => (Register8::D, Register8::E),
             PushPop::Hl => (Register8::H, Register8::L),
-            PushPop::Af => (Register8::F, Register8::A),
+            PushPop::Af => (Register8::A, Register8::F),
         };
 
         self.push_command(
