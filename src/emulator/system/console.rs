@@ -221,7 +221,7 @@ impl Console {
 
         self.cpu
             .set_register_16(0x0040 + interrupt_index * 8, &Register16::Pc);
-        self.queue_next_instruction(19);
+        self.queue_next_instruction(21);
     }
 
     pub fn is_interrupt_pending(&self) -> bool {
