@@ -13,14 +13,21 @@ use crate::emulator::{
 impl Console {
     pub(crate) fn stack_pop16(&mut self, arg: PushPop) -> Option<u64> {
         let (high, low) = match arg {
-            PushPop::Bc => Register16::Bc,
-            PushPop::De => Register16::De,
-            PushPop::Hl => Register16::Hl,
-            PushPop::Af => Register16::Af,
-        }
-        .register16_to_register8();
+            PushPop::Bc => (Register8::B, Register8::C),
+            PushPop::De => (Register8::D, Register8::E),
+            PushPop::Hl => (Register8::H, Register8::L),
+            PushPop::Af => (Register8::F, Register8::A),
+        };
 
-        self.push_command(3, Update(Console::command_increment_pc));
+        self.push_command(
+            3,
+            Update(|console: &mut Console| {
+                console.cpu.set_register_16(
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
+                    &Register16::Sp,
+                );
+            }),
+        );
 
         self.push_command(
             4,
@@ -36,7 +43,7 @@ impl Console {
             5,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(low),
+                Destination::Register(high),
             ),
         );
 
@@ -44,7 +51,7 @@ impl Console {
             6,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp) + 1,
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
                     &Register16::Sp,
                 );
             }),
@@ -64,7 +71,7 @@ impl Console {
             8,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(high),
+                Destination::Register(low),
             ),
         );
 
