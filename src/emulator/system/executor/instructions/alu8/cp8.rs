@@ -75,10 +75,11 @@ impl Console {
                         let y_register = console.cpu.get_register(&Register8::Y);
                         let a_register = console.cpu.get_register(&Register8::A);
                         let result = a_register == y_register;
+                        let half_carry = (y_register & 0x0F) > (a_register & 0x0F);
 
                         console.cpu.set_flag(result, &Flags::Z);
-                        console.cpu.set_flag(false, &Flags::N);
-                        console.cpu.set_flag(false, &Flags::H);
+                        console.cpu.set_flag(true, &Flags::N);
+                        console.cpu.set_flag(half_carry, &Flags::H);
                         console.cpu.set_flag(false, &Flags::C);
                     }),
                 );

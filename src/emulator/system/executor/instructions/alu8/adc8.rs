@@ -84,7 +84,8 @@ impl Console {
                         let (result, carry1) = a_register.overflowing_add(y_register);
                         let (result, carry2) = result.overflowing_add(carry_flag);
                         let carry = carry1 || carry2;
-                        let half_carry = (a_register & 0x0F) + (y_register & 0xF) >= 0x10;
+                        let half_carry =
+                            (a_register & 0x0F) + (y_register & 0x0F) + (carry as u8) >= 0x10;
 
                         console.cpu.set_register(result, &Register8::A);
 

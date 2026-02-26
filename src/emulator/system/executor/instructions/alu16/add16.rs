@@ -14,11 +14,11 @@ impl Console {
                 let (_, low) = lookup_register(console).register16_to_register8();
                 let add_register = console.cpu.get_register(&low);
                 let l_register = console.cpu.get_register(&Register8::L);
-                let (result, half_carry) = l_register.overflowing_add(add_register);
+                let (result, low_carry) = l_register.overflowing_add(add_register);
 
                 console.cpu.set_register(result, &Register8::L);
 
-                console.cpu.set_flag(half_carry, &Flags::H);
+                console.cpu.set_flag(low_carry, &Flags::H);
             }),
         );
 
@@ -28,13 +28,15 @@ impl Console {
                 let (high, low) = lookup_register(console).register16_to_register8();
                 let add_register = console.cpu.get_register(&high);
                 let h_register = console.cpu.get_register(&Register8::H);
-                let half_carry = console.cpu.get_flag(&Flags::H);
+                let low_carry = console.cpu.get_flag(&Flags::H);
+                let half_carry = (h_register & 0x0F) + (add_register & 0x0F) > 0x0F;
                 let (result, carry1) = h_register.overflowing_add(add_register);
-                let (result, carry2) = result.overflowing_add(half_carry.into());
+                let (result, carry2) = result.overflowing_add(low_carry.into());
                 let carry = carry1 || carry2;
 
                 console.cpu.set_register(result, &Register8::H);
 
+                console.cpu.set_flag(half_carry, &Flags::H);
                 console.cpu.set_flag(false, &Flags::N);
                 console.cpu.set_flag(carry, &Flags::C);
             }),
