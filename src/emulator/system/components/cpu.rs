@@ -46,7 +46,7 @@ impl Cpu {
             Register8::C => self.registers.c = value,
             Register8::D => self.registers.d = value,
             Register8::E => self.registers.e = value,
-            Register8::F => self.registers.f = value,
+            Register8::F => self.registers.f = value & 0xF0,
             Register8::H => self.registers.h = value,
             Register8::L => self.registers.l = value,
             Register8::SpLow => {
@@ -91,7 +91,7 @@ impl Cpu {
         match register {
             Register16::Af => {
                 self.registers.a = (value >> 8) as u8;
-                self.registers.f = value as u8;
+                self.registers.f = (value as u8) & 0xF0;
             }
             Register16::Bc => {
                 self.registers.b = (value >> 8) as u8;
