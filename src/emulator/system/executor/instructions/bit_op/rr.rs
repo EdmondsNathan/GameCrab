@@ -29,13 +29,13 @@ impl Console {
 
                     let carry = ram_value & 0b00000001;
                     let carry_flag = console.cpu.get_flag(&Flags::C) as u8;
+                    let result = (ram_value >> 1) + (carry_flag << 7);
 
-                    console.ram.set(
-                        (ram_value >> 1) + (carry_flag << 7),
-                        console.cpu.get_register_16(&Register16::Bus),
-                    );
+                    console
+                        .ram
+                        .set(result, console.cpu.get_register_16(&Register16::Bus));
 
-                    console.cpu.set_flag(ram_value == 0, &Flags::Z);
+                    console.cpu.set_flag(result == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
                     console.cpu.set_flag(false, &Flags::H);
                     console.cpu.set_flag(carry == 1, &Flags::C);
@@ -63,12 +63,11 @@ impl Console {
                     let register_value = console.cpu.get_register(&register);
                     let carry = register_value & 0b00000001;
                     let carry_flag = console.cpu.get_flag(&Flags::C) as u8;
+                    let result = (register_value >> 1) + (carry_flag << 7);
 
-                    console
-                        .cpu
-                        .set_register((register_value >> 1) + (carry_flag << 7), &register);
+                    console.cpu.set_register(result, &register);
 
-                    console.cpu.set_flag(register_value == 0, &Flags::Z);
+                    console.cpu.set_flag(result == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
                     console.cpu.set_flag(false, &Flags::H);
                     console.cpu.set_flag(carry == 1, &Flags::C);
@@ -102,7 +101,7 @@ mod tests {
     }
 
     #[test]
-    fn to_register8() {
+    fn rr_to_register8() {
         let mut console = init(vec![
             (0xCB, 0x100),
             (0x18, 0x101),
@@ -140,7 +139,7 @@ mod tests {
     }
 
     #[test]
-    fn to_hl() {
+    fn rr_to_hl() {
         let mut console = init(vec![
             (0xCB, 0x100),
             (0x1E, 0x101),
