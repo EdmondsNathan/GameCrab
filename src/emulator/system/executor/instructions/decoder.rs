@@ -62,7 +62,7 @@ pub fn decode(byte: u8) -> Result<Instruction, String> {
             0xB => Ok(Arithmetic16(A16Ops::Dec(A16Args::Hl))),
             0xC => Ok(Arithmetic8(A8Ops::Inc(A8Args::L))),
             0xD => Ok(Arithmetic8(A8Ops::Dec(A8Args::L))),
-            0xE => Ok(Load8(Ld8::A, Ld8::U8)),
+            0xE => Ok(Load8(Ld8::L, Ld8::U8)),
             0xF => Ok(Control(Cpl)),
             _ => Err(log_error(byte)),
         },
