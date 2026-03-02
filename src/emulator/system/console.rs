@@ -70,10 +70,6 @@ impl Console {
     pub fn tick(&mut self) {
         // self.tick_ppu();
 
-        if self.tick_counter % 4 == 0 {
-            self.check_interrupts();
-        }
-
         self.tick_cpu();
 
         self.tick_counter += 1;
@@ -111,11 +107,11 @@ impl Console {
         }
     }
 
-    fn check_interrupts(&mut self) {
+    pub(crate) fn check_interrupts(&mut self) {
         if !self.cpu.get_ime() {
             return;
         }
-        //
+
         let if_flag = self.ram.fetch(0xFF0F);
         let ie_flag = self.ram.fetch(0xFFFF);
 
@@ -147,21 +143,14 @@ impl Console {
     }
 
     fn handle_interrupt(&mut self, address: u16, bit: u8) {
-        // Clear
         self.cpu.set_ime(false);
-        self.cpu.set_ime_pending(false);
 
         // Clear the IF bit for this interrupt
         self.ram.set(self.ram.fetch(0xFF0F) & !bit, 0xFF0F);
 
         // Push the current PC onto the stack
-        self.cpu.set_register_16(
-            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-            &Register16::Sp,
-        );
-
         self.ram.set(
-            (self.cpu.get_register_16(&Register16::Pc) >> 8) as u8,
+            self.cpu.get_register(&Register8::PcLow),
             self.cpu.get_register_16(&Register16::Sp),
         );
 
@@ -171,8 +160,13 @@ impl Console {
         );
 
         self.ram.set(
-            (self.cpu.get_register_16(&Register16::Pc) & 0xFF) as u8,
+            self.cpu.get_register(&Register8::PcHigh),
             self.cpu.get_register_16(&Register16::Sp),
+        );
+
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+            &Register16::Sp,
         );
 
         // Jump PC to handle the interrupt
