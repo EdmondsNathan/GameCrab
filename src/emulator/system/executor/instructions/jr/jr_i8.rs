@@ -35,8 +35,8 @@ impl Console {
             6,
             Update(|console: &mut Console| {
                 let pc = console.cpu.get_register_16(&Register16::Pc);
-                let x = console.cpu.get_register(&Register8::X) as u16;
-                let result = pc.wrapping_add(x);
+                let x = console.cpu.get_register(&Register8::X) as i8 as i16;
+                let result = (pc as i16).wrapping_add(x) as u16;
 
                 console.cpu.set_register_16(result, &Register16::Pc);
             }),
@@ -72,5 +72,19 @@ mod tests {
         }
 
         assert_eq!(console.cpu.get_register_16(&Register16::Pc), 0x107);
+
+        let mut console = init(vec![
+            (0x18, 0xC2CA),
+            (0xF4, 0xC2CB),
+            (0xE5, 0xC2CC),
+            (0xCD, 0xC2CD),
+        ]);
+        console.cpu.set_register_16(0xC2CA, &Register16::Pc);
+
+        for n in 0..12 {
+            console.tick();
+        }
+
+        assert_eq!(console.cpu.get_register_16(&Register16::Pc), 0xC2C0);
     }
 }
