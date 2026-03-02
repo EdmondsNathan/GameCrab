@@ -60,11 +60,12 @@ impl Console {
                     };
 
                     let register_value = console.cpu.get_register(&register);
+                    let result = register_value >> 1;
                     let carry = register_value & 0b00000001;
 
-                    console.cpu.set_register((register_value >> 1), &register);
+                    console.cpu.set_register(result, &register);
 
-                    console.cpu.set_flag(register_value == 0, &Flags::Z);
+                    console.cpu.set_flag(result == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
                     console.cpu.set_flag(false, &Flags::H);
                     console.cpu.set_flag(carry == 1, &Flags::C);
