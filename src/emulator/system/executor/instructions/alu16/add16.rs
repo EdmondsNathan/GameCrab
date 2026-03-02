@@ -29,7 +29,8 @@ impl Console {
                 let add_register = console.cpu.get_register(&high);
                 let h_register = console.cpu.get_register(&Register8::H);
                 let low_carry = console.cpu.get_flag(&Flags::H);
-                let half_carry = (h_register & 0x0F) + (add_register & 0x0F) > 0x0F;
+                let half_carry =
+                    (h_register & 0x0F) + (add_register & 0x0F) + (low_carry as u8) > 0x0F;
                 let (result, carry1) = h_register.overflowing_add(add_register);
                 let (result, carry2) = result.overflowing_add(low_carry.into());
                 let carry = carry1 || carry2;
