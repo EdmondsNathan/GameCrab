@@ -28,13 +28,13 @@ impl Console {
                         .fetch(console.cpu.get_register_16(&Register16::Bus));
 
                     let carry = ram_value & 0b00000001;
+                    let result = (ram_value >> 1);
 
-                    console.ram.set(
-                        (ram_value >> 1),
-                        console.cpu.get_register_16(&Register16::Bus),
-                    );
+                    console
+                        .ram
+                        .set(result, console.cpu.get_register_16(&Register16::Bus));
 
-                    console.cpu.set_flag(ram_value == 0, &Flags::Z);
+                    console.cpu.set_flag(result == 0, &Flags::Z);
                     console.cpu.set_flag(false, &Flags::N);
                     console.cpu.set_flag(false, &Flags::H);
                     console.cpu.set_flag(carry == 1, &Flags::C);
