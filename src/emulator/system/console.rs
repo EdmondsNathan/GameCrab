@@ -102,7 +102,6 @@ impl Console {
 
                 if tima == 0 {
                     self.ram.set(tma, 0xFF05);
-
                     self.ram.set_if(true, Interrupts::Timer);
                 }
             }
@@ -110,11 +109,11 @@ impl Console {
 
         self.ram.set_div(div);
 
-        let (clock_select, bitshift) = match tac & 0b00000011 {
-            0b00 => (1024_u16, 9_u16),
-            0b01 => (16, 3),
-            0b10 => (64, 5),
-            0b11 => (256, 7),
+        let bitshift = match tac & 0b00000011 {
+            0b00 => 9_u16,
+            0b01 => 3,
+            0b10 => 5,
+            0b11 => 7,
             _ => panic!("Impossible value!"),
         };
 
@@ -123,12 +122,11 @@ impl Console {
         let and_result = timer_enable & div_bit;
 
         if self.previous_div_result == 1 && and_result == 0 {
-            let (mut result, overflow) = tima.overflowing_add(1);
+            let (result, overflow) = tima.overflowing_add(1);
+            self.ram.set(result, 0xFF05);
             if overflow {
                 self.tima_overflow_counter = Some(0);
             }
-
-            self.ram.set(result, 0xFF05);
         }
 
         self.previous_div_result = and_result;
