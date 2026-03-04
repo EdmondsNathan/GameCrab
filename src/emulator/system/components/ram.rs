@@ -1,5 +1,6 @@
 pub struct Ram {
     memory: [u8; 0x10000],
+    div: u16,
 }
 
 pub enum Interrupts {
@@ -14,6 +15,7 @@ impl Default for Ram {
     fn default() -> Self {
         Ram {
             memory: [0; 0x10000],
+            div: 0,
         }
     }
 }
@@ -30,6 +32,11 @@ impl Ram {
         // if address == 0xFF44 {
         //     return 0x90;
         // }
+
+        if address == 0xFF04 {
+            return (self.div >> 8) as u8;
+        }
+
         self.memory[address as usize]
     }
 
@@ -49,18 +56,15 @@ impl Ram {
     pub fn set(&mut self, value: u8, address: u16) {
         self.memory[address as usize] = value;
 
+        // Serial port
         if address == 0xFF02 && value == 0x81 {
             let character = self.fetch(0xFF01) as char;
             // print!("{character}");
         }
-
-        // if self.fetch(0xFF01) != 0 {
-        //     println!("{:02X}", self.fetch(0xFF01));
-        // }
-        // // Serial transfer, print byte at SB
-        // if address == 0xFF02 {
-        //     println!("{:02X}", self.fetch(0xFF01));
-        // }
+        //Div register gets reset if any value is written to it
+        else if address == 0xFF04 {
+            self.div = 0;
+        }
     }
 
     /// Set the value of two consecutive addresses. The high byte is the first address and the low byte is the following.
@@ -125,6 +129,14 @@ impl Ram {
         };
 
         self.set(byte | (value << shift), 0xFF0F);
+    }
+
+    pub fn get_div(&mut self) -> u16 {
+        self.div
+    }
+
+    pub fn set_div(&mut self, value: u16) {
+        self.div = value;
     }
 }
 

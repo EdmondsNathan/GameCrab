@@ -14,6 +14,8 @@ pub struct Console {
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
     pub(crate) cb_flag: bool,
+    previous_div_result: u16,
+    tima_overflow_counter: Option<u8>,
 }
 
 impl Default for Console {
@@ -26,6 +28,8 @@ impl Default for Console {
             tick_counter: Default::default(),
             execution_queue: Default::default(),
             cb_flag: Default::default(),
+            previous_div_result: 0,
+            tima_overflow_counter: None,
         };
 
         console.queue_next_instruction(0);
@@ -68,11 +72,66 @@ impl Console {
     // TAG_TODO Move CPU into its own tick function
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
+        self.tick_timers();
+
         self.tick_ppu();
 
         self.tick_cpu();
 
         self.tick_counter += 1;
+    }
+
+    fn tick_timers(&mut self) {
+        if self.cpu.get_is_stopped() {
+            // Div resets if cpu is stopped
+            self.ram.set(0, 0xFF04);
+            return;
+        }
+
+        let div = self.ram.get_div().wrapping_add(1);
+        let tima = self.ram.fetch(0xFF05);
+        let tma = self.ram.fetch(0xFF06);
+        let tac = self.ram.fetch(0xFF07);
+
+        if let Some(mut count) = self.tima_overflow_counter {
+            count += 1;
+            self.tima_overflow_counter = Some(count);
+
+            if count == 3 {
+                self.tima_overflow_counter = None;
+
+                if tima == 0 {
+                    self.ram.set(tma, 0xFF05);
+
+                    self.ram.set_if(true, Interrupts::Timer);
+                }
+            }
+        }
+
+        self.ram.set_div(div);
+
+        let (clock_select, bitshift) = match tac & 0b00000011 {
+            0b00 => (1024_u16, 9_u16),
+            0b01 => (16, 3),
+            0b10 => (64, 5),
+            0b11 => (256, 7),
+            _ => panic!("Impossible value!"),
+        };
+
+        let timer_enable = ((tac as u16) >> 2) & 1;
+        let div_bit = (div >> bitshift) & 1;
+        let and_result = timer_enable & div_bit;
+
+        if self.previous_div_result == 1 && and_result == 0 {
+            let (mut result, overflow) = tima.overflowing_add(1);
+            if overflow {
+                self.tima_overflow_counter = Some(0);
+            }
+
+            self.ram.set(result, 0xFF05);
+        }
+
+        self.previous_div_result = and_result;
     }
 
     fn tick_cpu(&mut self) {
