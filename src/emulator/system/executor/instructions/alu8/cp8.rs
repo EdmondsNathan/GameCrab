@@ -94,14 +94,16 @@ impl Console {
                     3,
                     Update(|console: &mut Console| {
                         let register = lookup_register(console);
-                        let and_register = console.cpu.get_register(&register);
+                        let operand = console.cpu.get_register(&register);
                         let a_register = console.cpu.get_register(&Register8::A);
-                        let result = a_register == and_register;
+                        let result = a_register == operand;
+                        let half_carry = (operand & 0x0F) > (a_register & 0x0F);
+                        let carry = a_register < operand;
 
                         console.cpu.set_flag(result, &Flags::Z);
                         console.cpu.set_flag(true, &Flags::N);
-                        console.cpu.set_flag(false, &Flags::H);
-                        console.cpu.set_flag(false, &Flags::C);
+                        console.cpu.set_flag(half_carry, &Flags::H);
+                        console.cpu.set_flag(carry, &Flags::C);
                     }),
                 );
                 Some(4)
