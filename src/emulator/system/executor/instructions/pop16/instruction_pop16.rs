@@ -19,16 +19,7 @@ impl Console {
             PushPop::Af => (Register8::A, Register8::F),
         };
 
-        self.push_command(
-            3,
-            Update(|console: &mut Console| {
-                console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
-                    &Register16::Sp,
-                );
-            }),
-        );
-
+        // M2: Read low byte from [SP], then SP++
         self.push_command(
             4,
             Update(|console: &mut Console| {
@@ -43,7 +34,7 @@ impl Console {
             5,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(high),
+                Destination::Register(low),
             ),
         );
 
@@ -57,8 +48,9 @@ impl Console {
             }),
         );
 
+        // M3: Read high byte from [SP], then SP++
         self.push_command(
-            7,
+            8,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
                     console.cpu.get_register_16(&Register16::Sp),
@@ -68,11 +60,21 @@ impl Console {
         );
 
         self.push_command(
-            8,
+            9,
             Read(
                 Source::RamFromRegister(Register16::Bus),
-                Destination::Register(low),
+                Destination::Register(high),
             ),
+        );
+
+        self.push_command(
+            10,
+            Update(|console: &mut Console| {
+                console.cpu.set_register_16(
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
+                    &Register16::Sp,
+                );
+            }),
         );
 
         Some(12)
@@ -98,20 +100,15 @@ mod tests {
 
     #[test]
     fn stack_pop() {
-        let mut console = init(vec![(0xC1, 0x100), (0x45, 0x200), (0x67, 0x201)]);
-        console.cpu.set_register_16(0x200, &Register16::Sp);
+        // Memory layout as if PUSH BC placed: [0x1FF]=low(C), [0x200]=high(B)
+        let mut console = init(vec![(0xC1, 0x100), (0x67, 0x1FF), (0x45, 0x200)]);
+        console.cpu.set_register_16(0x1FF, &Register16::Sp);
 
-        for n in 0..16 {
+        for _n in 0..12 {
             console.tick();
         }
 
-        assert_eq!(
-            console.cpu.get_register(&Register8::B),
-            console.ram.fetch(0x201)
-        );
-        assert_eq!(
-            console.cpu.get_register(&Register8::C),
-            console.ram.fetch(0x200)
-        );
+        assert_eq!(console.cpu.get_register(&Register8::C), 0x67);
+        assert_eq!(console.cpu.get_register(&Register8::B), 0x45);
     }
 }

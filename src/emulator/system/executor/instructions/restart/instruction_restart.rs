@@ -11,12 +11,13 @@ use crate::emulator::{
 
 impl Console {
     pub(crate) fn instruction_restart(&mut self) -> Option<u64> {
+        // SP--, write PcHigh to [SP]
         self.push_command(
-            3,
+            7,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp),
-                    &Register16::Bus,
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+                    &Register16::Sp,
                 );
             }),
         );
@@ -25,8 +26,8 @@ impl Console {
             8,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-                    &Register16::Sp,
+                    console.cpu.get_register_16(&Register16::Sp),
+                    &Register16::Bus,
                 );
             }),
         );
@@ -39,12 +40,13 @@ impl Console {
             ),
         );
 
+        // SP--, write PcLow to [SP]
         self.push_command(
             10,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp),
-                    &Register16::Bus,
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+                    &Register16::Sp,
                 );
             }),
         );
@@ -53,8 +55,8 @@ impl Console {
             11,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-                    &Register16::Sp,
+                    console.cpu.get_register_16(&Register16::Sp),
+                    &Register16::Bus,
                 );
             }),
         );
@@ -145,7 +147,7 @@ mod tests {
         }
 
         assert_eq!(console.cpu.get_register_16(&Register16::Pc), 0x0008);
-        assert_eq!(console.ram.fetch(0x200), 0x03);
-        assert_eq!(console.ram.fetch(0x201), 0x01);
+        assert_eq!(console.ram.fetch(0x200), 0x01);
+        assert_eq!(console.ram.fetch(0x1FF), 0x03);
     }
 }

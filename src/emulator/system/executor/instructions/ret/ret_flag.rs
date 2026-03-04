@@ -23,18 +23,9 @@ impl Console {
                     return;
                 } // From this point on, our test flag result succeeded
 
+                // Read PClow from [SP], then SP++
                 console.push_command(
                     4 - tick_offset,
-                    Update(|console: &mut Console| {
-                        console.cpu.set_register_16(
-                            console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
-                            &Register16::Sp,
-                        );
-                    }),
-                );
-
-                console.push_command(
-                    5 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
                             console.cpu.get_register_16(&Register16::Sp),
@@ -44,7 +35,7 @@ impl Console {
                 );
 
                 console.push_command(
-                    6 - tick_offset,
+                    5 - tick_offset,
                     Read(
                         Source::RamFromRegister(Register16::Bus),
                         Destination::Register(Register8::Y),
@@ -52,7 +43,7 @@ impl Console {
                 );
 
                 console.push_command(
-                    7 - tick_offset,
+                    6 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
                             console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
@@ -61,8 +52,9 @@ impl Console {
                     }),
                 );
 
+                // Read PChigh from [SP], then SP++
                 console.push_command(
-                    8 - tick_offset,
+                    7 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
                             console.cpu.get_register_16(&Register16::Sp),
@@ -72,7 +64,7 @@ impl Console {
                 );
 
                 console.push_command(
-                    9 - tick_offset,
+                    8 - tick_offset,
                     Read(
                         Source::RamFromRegister(Register16::Bus),
                         Destination::Register(Register8::X),
@@ -80,10 +72,21 @@ impl Console {
                 );
 
                 console.push_command(
+                    9 - tick_offset,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Sp).wrapping_add(1),
+                            &Register16::Sp,
+                        );
+                    }),
+                );
+
+                // Set PC
+                console.push_command(
                     10,
                     Read(
                         Source::Register(Register8::Y),
-                        Destination::Register(Register8::PcHigh),
+                        Destination::Register(Register8::PcLow),
                     ),
                 );
 
@@ -91,7 +94,7 @@ impl Console {
                     11,
                     Read(
                         Source::Register(Register8::X),
-                        Destination::Register(Register8::PcLow),
+                        Destination::Register(Register8::PcHigh),
                     ),
                 );
 
@@ -135,27 +138,28 @@ mod tests {
 
     #[test]
     fn ret_flag() {
-        let mut console = init(vec![(0xC0, 0x100), (0x20, 0x201), (0x02, 0x202)]);
+        // [SP]=PClow=0x20, [SP+1]=PChigh=0x02 → PC=0x0220
+        let mut console = init(vec![(0xC0, 0x100), (0x20, 0x200), (0x02, 0x201)]);
         console.cpu.set_register_16(0x200, &Register16::Sp);
         console.cpu.set_flag(
             true,
             &crate::emulator::system::components::registers::Flags::Z,
         );
 
-        for n in 0..16 {
+        for _n in 0..16 {
             console.tick();
         }
 
         assert_ne!(console.cpu.get_register_16(&Register16::Pc), 0x0220);
 
-        let mut console = init(vec![(0xD8, 0x100), (0x20, 0x201), (0x02, 0x202)]);
+        let mut console = init(vec![(0xD8, 0x100), (0x20, 0x200), (0x02, 0x201)]);
         console.cpu.set_register_16(0x200, &Register16::Sp);
         console.cpu.set_flag(
             true,
             &crate::emulator::system::components::registers::Flags::C,
         );
 
-        for n in 0..16 {
+        for _n in 0..16 {
             console.tick();
         }
 

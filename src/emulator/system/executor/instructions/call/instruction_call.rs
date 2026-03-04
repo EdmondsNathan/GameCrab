@@ -62,12 +62,13 @@ impl Console {
                     return;
                 }
 
+                // SP--, write PcHigh to [SP]
                 console.push_command(
                     16 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
-                            console.cpu.get_register_16(&Register16::Sp),
-                            &Register16::Bus,
+                            console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+                            &Register16::Sp,
                         );
                     }),
                 );
@@ -76,8 +77,8 @@ impl Console {
                     17 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
-                            console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-                            &Register16::Sp,
+                            console.cpu.get_register_16(&Register16::Sp),
+                            &Register16::Bus,
                         );
                     }),
                 );
@@ -85,13 +86,24 @@ impl Console {
                 console.push_command(
                     18 - tick_offset,
                     Read(
-                        Source::Register(Register8::PcLow),
+                        Source::Register(Register8::PcHigh),
                         Destination::RamFromRegister(Register16::Bus),
                     ),
                 );
 
+                // SP--, write PcLow to [SP]
                 console.push_command(
                     20 - tick_offset,
+                    Update(|console: &mut Console| {
+                        console.cpu.set_register_16(
+                            console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+                            &Register16::Sp,
+                        );
+                    }),
+                );
+
+                console.push_command(
+                    21 - tick_offset,
                     Update(|console: &mut Console| {
                         console.cpu.set_register_16(
                             console.cpu.get_register_16(&Register16::Sp),
@@ -101,19 +113,9 @@ impl Console {
                 );
 
                 console.push_command(
-                    21 - tick_offset,
-                    Update(|console: &mut Console| {
-                        console.cpu.set_register_16(
-                            console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-                            &Register16::Sp,
-                        );
-                    }),
-                );
-
-                console.push_command(
                     22 - tick_offset,
                     Read(
-                        Source::Register(Register8::PcHigh),
+                        Source::Register(Register8::PcLow),
                         Destination::RamFromRegister(Register16::Bus),
                     ),
                 );
@@ -184,28 +186,30 @@ mod tests {
             console.tick();
         }
 
-        assert_ne!(console.ram.fetch(0x201), 0x03);
-        assert_ne!(console.ram.fetch(0x200), 0x01);
+        assert_ne!(console.ram.fetch(0x200), 0x03);
+        assert_ne!(console.ram.fetch(0x1FF), 0x01);
 
         // let mut console = init(vec![(0xCC, 0x100)]);
         console.cpu.set_flag(true, &Flags::Z);
         console.cpu.set_register_16(0x201, &Register16::Sp);
 
-        for n in 0..24 {
+        for _n in 0..24 {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x201), 0x06);
         assert_eq!(console.ram.fetch(0x200), 0x01);
+        assert_eq!(console.ram.fetch(0x1FF), 0x06);
 
         // let mut console = init(vec![(0xCD, 0x100)]);
         console.cpu.set_flag(true, &Flags::Z);
         console.cpu.set_register_16(0x201, &Register16::Sp);
+        console.cpu.set_register_16(0x106, &Register16::Pc);
 
-        for n in 0..24 {
+        for _n in 0..24 {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x201), 0x09);
+        assert_eq!(console.ram.fetch(0x200), 0x01);
+        assert_eq!(console.ram.fetch(0x1FF), 0x09);
     }
 }

@@ -20,6 +20,17 @@ impl Console {
         }
         .register16_to_register8();
 
+        // M2: SP--, write high byte to [SP]
+        self.push_command(
+            7,
+            Update(|console: &mut Console| {
+                console.cpu.set_register_16(
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+                    &Register16::Sp,
+                );
+            }),
+        );
+
         self.push_command(
             8,
             Update(|console: &mut Console| {
@@ -33,11 +44,12 @@ impl Console {
         self.push_command(
             9,
             Read(
-                Source::Register(low),
+                Source::Register(high),
                 Destination::RamFromRegister(Register16::Bus),
             ),
         );
 
+        // M3: SP--, write low byte to [SP]
         self.push_command(
             10,
             Update(|console: &mut Console| {
@@ -61,19 +73,9 @@ impl Console {
         self.push_command(
             13,
             Read(
-                Source::Register(high),
+                Source::Register(low),
                 Destination::RamFromRegister(Register16::Bus),
             ),
-        );
-
-        self.push_command(
-            14,
-            Update(|console: &mut Console| {
-                console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-                    &Register16::Sp,
-                );
-            }),
         );
 
         Some(16)
@@ -109,11 +111,11 @@ mod tests {
 
         assert_eq!(
             console.ram.fetch(0x200),
-            console.cpu.get_register(&Register8::C)
+            console.cpu.get_register(&Register8::B)
         );
         assert_eq!(
-            console.ram.fetch(0x201),
-            console.cpu.get_register(&Register8::B)
+            console.ram.fetch(0x1FF),
+            console.cpu.get_register(&Register8::C)
         );
     }
 }

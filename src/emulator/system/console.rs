@@ -155,12 +155,7 @@ impl Console {
         // Clear the IF bit for this interrupt
         self.ram.set(self.ram.fetch(0xFF0F) & !bit, 0xFF0F);
 
-        // Push the current PC onto the stack
-        self.ram.set(
-            self.cpu.get_register(&Register8::PcLow),
-            self.cpu.get_register_16(&Register16::Sp),
-        );
-
+        // Push the current PC onto the stack (SP--, [SP] = high, SP--, [SP] = low)
         self.cpu.set_register_16(
             self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
             &Register16::Sp,
@@ -174,6 +169,11 @@ impl Console {
         self.cpu.set_register_16(
             self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
             &Register16::Sp,
+        );
+
+        self.ram.set(
+            self.cpu.get_register(&Register8::PcLow),
+            self.cpu.get_register_16(&Register16::Sp),
         );
 
         // Jump PC to handle the interrupt
@@ -194,8 +194,16 @@ impl Console {
 
         self.cpu.set_ime(false);
 
-        self.cpu
-            .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
+        // Push PC onto stack (SP--, [SP] = high, SP--, [SP] = low)
+        self.cpu.set_register_16(
+            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
+            &Register16::Sp,
+        );
+
+        self.ram.set(
+            self.cpu.get_register(&Register8::PcHigh),
+            self.cpu.get_register_16(&Register16::Sp),
+        );
 
         self.cpu.set_register_16(
             self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
@@ -204,20 +212,7 @@ impl Console {
 
         self.ram.set(
             self.cpu.get_register(&Register8::PcLow),
-            self.cpu.get_register_16(&Register16::Bus),
-        );
-
-        self.cpu
-            .set_register_16(self.cpu.get_register_16(&Register16::Sp), &Register16::Bus);
-
-        self.cpu.set_register_16(
-            self.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
-            &Register16::Sp,
-        );
-
-        self.ram.set(
-            self.cpu.get_register(&Register8::PcHigh),
-            self.cpu.get_register_16(&Register16::Bus),
+            self.cpu.get_register_16(&Register16::Sp),
         );
 
         self.cpu
