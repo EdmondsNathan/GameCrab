@@ -93,20 +93,20 @@ impl Console {
         let tma = self.ram.fetch(0xFF06);
         let tac = self.ram.fetch(0xFF07);
 
-        if let Some(mut count) = self.tima_overflow_counter {
-            count += 1;
-            self.tima_overflow_counter = Some(count);
-
-            if count == 4 {
-                self.tima_overflow_counter = None;
-
-                if tima == 0 {
-                    self.ram.set(tma, 0xFF05);
-                    self.ram.set_if(true, Interrupts::Timer);
-                    tima = tma;
-                }
-            }
-        }
+        // if let Some(mut count) = self.tima_overflow_counter {
+        //     count += 1;
+        //     self.tima_overflow_counter = Some(count);
+        //
+        //     if count == 4 {
+        //         self.tima_overflow_counter = None;
+        //
+        //         if tima == 0 {
+        //             self.ram.set(tma, 0xFF05);
+        //             self.ram.set_if(true, Interrupts::Timer);
+        //             tima = tma;
+        //         }
+        //     }
+        // }
 
         self.ram.set_div(div);
 
