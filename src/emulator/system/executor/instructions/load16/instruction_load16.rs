@@ -256,10 +256,8 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(
-            console.ram.fetch_16(0x2008),
-            console.cpu.get_register_16(&Register16::Sp)
-        );
+        assert_eq!(0x10, console.ram.fetch(0x2008));
+        assert_eq!(0x01, console.ram.fetch(0x2009));
     }
 
     #[test]
