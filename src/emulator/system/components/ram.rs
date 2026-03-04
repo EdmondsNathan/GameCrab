@@ -27,9 +27,9 @@ impl Ram {
     /// Fetch the value of an address.
     pub fn fetch(&self, address: u16) -> u8 {
         // GAMEBOY DOCTOR
-        if address == 0xFF44 {
-            return 0x90;
-        }
+        // if address == 0xFF44 {
+        //     return 0x90;
+        // }
         self.memory[address as usize]
     }
 

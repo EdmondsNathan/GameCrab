@@ -68,7 +68,7 @@ impl Console {
     // TAG_TODO Move CPU into its own tick function
     /// Increment the console by one clock cycle.
     pub fn tick(&mut self) {
-        // self.tick_ppu();
+        self.tick_ppu();
 
         self.tick_cpu();
 

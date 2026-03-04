@@ -60,6 +60,7 @@ async fn main() {
 
     loop {
         clear_background(BLACK);
+
         for n in 0..70224 {
             console.tick();
         }

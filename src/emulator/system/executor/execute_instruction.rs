@@ -45,6 +45,7 @@ impl Console {
             BitOp(bit_ops) => self.instruction_bit_op(bit_ops),
         } {
             if ime_pending {
+                self.cpu.set_ime_pending(false);
                 self.push_command(
                     next_instruction_offset - 1,
                     Update(|console: &mut Console| {
@@ -60,12 +61,12 @@ impl Console {
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
         // GAMEBOY DOCTOR
-        println!("{}", log_gameboy_doctor(self));
+        // println!("{}", log_gameboy_doctor(self));
 
         if let Some((address, bit)) = self.check_interrupts() {
             self.handle_interrupt(address, bit);
-            // self.queue_next_instruction(20);
-            // return;
+            self.queue_next_instruction(20);
+            return;
         }
 
         let decoder = match self.cb_flag {
