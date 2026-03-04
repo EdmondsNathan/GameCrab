@@ -6,6 +6,7 @@ impl Console {
             3,
             Update(|console: &mut Console| {
                 console.cpu.set_ime(false);
+                console.cpu.set_ime_pending(false);
             }),
         );
         Some(4)
