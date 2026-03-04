@@ -42,7 +42,7 @@ impl Console {
             10,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp) - 1,
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
                     &Register16::Sp,
                 );
             }),
@@ -70,7 +70,7 @@ impl Console {
             14,
             Update(|console: &mut Console| {
                 console.cpu.set_register_16(
-                    console.cpu.get_register_16(&Register16::Sp) - 1,
+                    console.cpu.get_register_16(&Register16::Sp).wrapping_sub(1),
                     &Register16::Sp,
                 );
             }),
