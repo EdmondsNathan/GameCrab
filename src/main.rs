@@ -24,7 +24,7 @@ fn conf() -> Conf {
         window_height: SCALED_RESOLUTION.y as i32,
         high_dpi: false,
         fullscreen: false,
-        sample_count: 0,
+        sample_count: 1,
         window_resizable: false,
         icon: None,
         platform: Default::default(),
