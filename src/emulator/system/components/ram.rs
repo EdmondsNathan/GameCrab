@@ -26,6 +26,7 @@ impl Ram {
 
     /// Fetch the value of an address.
     pub fn fetch(&self, address: u16) -> u8 {
+        // GAMEBOY DOCTOR
         if address == 0xFF44 {
             return 0x90;
         }
@@ -47,6 +48,11 @@ impl Ram {
     /// Set the value of an address.
     pub fn set(&mut self, value: u8, address: u16) {
         self.memory[address as usize] = value;
+
+        if address == 0xFF02 && value == 0x81 {
+            let character = self.fetch(0xFF01) as char;
+            // print!("{character}");
+        }
 
         // if self.fetch(0xFF01) != 0 {
         //     println!("{:02X}", self.fetch(0xFF01));

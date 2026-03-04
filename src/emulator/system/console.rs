@@ -107,9 +107,9 @@ impl Console {
         }
     }
 
-    pub(crate) fn check_interrupts(&mut self) {
+    pub(crate) fn check_interrupts(&mut self) -> Option<(u16, u8)> {
         if !self.cpu.get_ime() {
-            return;
+            return None;
         }
 
         let if_flag = self.ram.fetch(0xFF0F);
@@ -120,29 +120,36 @@ impl Console {
         let triggered = if_flag & ie_flag & 0x1F;
 
         if triggered == 0 {
-            return;
+            return None;
         }
 
         // Interrupts are handled according to priority
         // VBlank
         if triggered & 0x01 != 0 {
-            self.handle_interrupt(0x0040, 0x01);
+            // self.handle_interrupt(0x0040, 0x01);
+            return Some((0x0040, 0x01));
         // LCD Stat
         } else if triggered & 0x02 != 0 {
-            self.handle_interrupt(0x0048, 0x02);
+            // self.handle_interrupt(0x0048, 0x02);
+            return Some((0x0048, 0x02));
         // Timer
         } else if triggered & 0x04 != 0 {
-            self.handle_interrupt(0x0050, 0x04);
+            // self.handle_interrupt(0x0050, 0x04);
+            return Some((0x0050, 0x04));
         // Serial
         } else if triggered & 0x08 != 0 {
-            self.handle_interrupt(0x0058, 0x08);
+            // self.handle_interrupt(0x0058, 0x08);
+            return Some((0x0058, 0x08));
         // Joypad
         } else if triggered & 0x10 != 0 {
-            self.handle_interrupt(0x0060, 0x10);
+            // self.handle_interrupt(0x0060, 0x10);
+            return Some((0x0060, 0x10));
         }
+
+        None
     }
 
-    fn handle_interrupt(&mut self, address: u16, bit: u8) {
+    pub(crate) fn handle_interrupt(&mut self, address: u16, bit: u8) {
         self.cpu.set_ime(false);
 
         // Clear the IF bit for this interrupt
@@ -196,7 +203,7 @@ impl Console {
         );
 
         self.ram.set(
-            self.cpu.get_register(&Register8::PcHigh),
+            self.cpu.get_register(&Register8::PcLow),
             self.cpu.get_register_16(&Register16::Bus),
         );
 
@@ -209,7 +216,7 @@ impl Console {
         );
 
         self.ram.set(
-            self.cpu.get_register(&Register8::PcLow),
+            self.cpu.get_register(&Register8::PcHigh),
             self.cpu.get_register_16(&Register16::Bus),
         );
 
@@ -222,6 +229,6 @@ impl Console {
         let interrupt_enabled = self.ram.fetch(0xFFFF);
         let interrupt_flag = self.ram.fetch(0xFF0F);
 
-        (interrupt_enabled & interrupt_flag) != 0
+        (interrupt_enabled & interrupt_flag & 0x1F) != 0
     }
 }

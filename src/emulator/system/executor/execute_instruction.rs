@@ -59,9 +59,15 @@ impl Console {
     // TAG_REFACTOR Split into separate functions to increase readability.
     /// Fetch an instruction at the address of PC and then queue that instruction.
     pub(crate) fn fetch_decode_execute(&mut self) {
-        // if self.tick_counter != 0 {
+        // GAMEBOY DOCTOR
         println!("{}", log_gameboy_doctor(self));
-        // }
+
+        if let Some((address, bit)) = self.check_interrupts() {
+            self.handle_interrupt(address, bit);
+            // self.queue_next_instruction(20);
+            // return;
+        }
+
         let decoder = match self.cb_flag {
             true => decode_cb,
             false => decode,
