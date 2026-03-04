@@ -89,7 +89,7 @@ impl Console {
         }
 
         let div = self.ram.get_div().wrapping_add(1);
-        let tima = self.ram.fetch(0xFF05);
+        let mut tima = self.ram.fetch(0xFF05);
         let tma = self.ram.fetch(0xFF06);
         let tac = self.ram.fetch(0xFF07);
 
@@ -97,12 +97,13 @@ impl Console {
             count += 1;
             self.tima_overflow_counter = Some(count);
 
-            if count == 3 {
+            if count == 4 {
                 self.tima_overflow_counter = None;
 
                 if tima == 0 {
                     self.ram.set(tma, 0xFF05);
                     self.ram.set_if(true, Interrupts::Timer);
+                    tima = tma;
                 }
             }
         }
