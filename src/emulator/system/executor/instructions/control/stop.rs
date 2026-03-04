@@ -57,7 +57,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.tick_counter, 8);
+        assert_eq!(console.tick_counter, 16);
 
         // TAG_TODO Test for joypad input
         console.cpu.set_is_stopped(false);

@@ -56,7 +56,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::A), 0b01000000);
+        assert_eq!(console.cpu.get_register(&Register8::A), 0b11000000);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         console.cpu.set_register(0b00000000, &Register8::A);

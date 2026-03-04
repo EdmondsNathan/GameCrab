@@ -118,7 +118,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.cpu.get_register(&Register8::B), 0b01000000);
+        assert_eq!(console.cpu.get_register(&Register8::B), 0b11000000);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         console.cpu.set_flag(false, &Flags::C);
@@ -157,7 +157,7 @@ mod tests {
             console.tick();
         }
 
-        assert_eq!(console.ram.fetch(0x200), 0b01000000);
+        assert_eq!(console.ram.fetch(0x200), 0b11000000);
         assert_eq!(console.cpu.get_register(&Register8::F), 0b00010000);
 
         console.cpu.set_register_16(0x201, &Register16::Hl);

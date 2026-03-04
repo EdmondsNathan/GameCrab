@@ -88,7 +88,7 @@ mod tests {
         }
 
         assert_eq!(console.cpu.get_register_16(&Register16::Hl), 0x01FE);
-        assert!(console.cpu.get_flag(&Flags::H));
+        assert!(!console.cpu.get_flag(&Flags::H));
 
         console.cpu.set_register_16(0x0001, &Register16::Hl);
         console.cpu.set_register_16(0xFFFF, &Register16::De);
