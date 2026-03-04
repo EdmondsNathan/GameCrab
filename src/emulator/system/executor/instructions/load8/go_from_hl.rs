@@ -26,7 +26,7 @@ impl Console {
             console.push_command(
                 4,
                 Read(
-                    Source::RamFromRegister(Register16::Hl),
+                    Source::RamFromRegister(Register16::Bus),
                     Destination::Register(to),
                 ),
             );
