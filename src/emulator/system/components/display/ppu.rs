@@ -91,6 +91,7 @@ impl Console {
             PpuMode::HBlank => {
                 if self.ppu.dots == 456 {
                     self.set_lcd_y(self.get_lcd_y() + 1);
+                    self.check_lyc();
                     self.ppu.dots = 0;
                     if self.get_lcd_y() == 144 {
                         self.set_ppu_mode(PpuMode::VBlank);
@@ -105,8 +106,10 @@ impl Console {
                 if self.ppu.dots == 456 {
                     self.ppu.dots = 0;
                     self.set_lcd_y(self.get_lcd_y() + 1);
+                    self.check_lyc();
                     if self.get_lcd_y() == 154 {
                         self.set_lcd_y(0);
+                        self.check_lyc();
                         self.set_ppu_mode(PpuMode::OamScan);
                     }
                 }
@@ -214,6 +217,22 @@ impl Console {
     fn set_ppu_mode(&mut self, new_mode: PpuMode) {
         self.ppu.draw_mode = new_mode.clone();
         self.set_lcd_status(self.get_lcd_status() & 0xFC | (new_mode) as u8);
+
+    fn check_lyc(&mut self) {
+        let ly = self.get_lcd_y();
+        let lyc = self.get_lcd_y_compare();
+        let mut stat = self.get_lcd_status();
+
+        if ly == lyc {
+            stat |= 0x04; // Set bit 2 (coincidence flag)
+            self.set_lcd_status(stat);
+            if stat & 0x40 != 0 {
+                self.ram.set_if(true, Interrupts::Lcd);
+            }
+        } else {
+            stat &= !0x04; // Clear bit 2
+            self.set_lcd_status(stat);
+        }
     }
 
     fn get_lcd_control(&self) -> u8 {
