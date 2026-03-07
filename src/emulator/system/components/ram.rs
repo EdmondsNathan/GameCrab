@@ -73,8 +73,19 @@ impl Ram {
         (self.fetch(address + 1) as u16) << 8 | (self.fetch(address) as u16)
     }
 
+    /// Write directly to the memory array, bypassing all hardware checks.
+    /// Used for initial ROM loading.
+    pub fn set_raw(&mut self, address: u16, value: u8) {
+        self.memory[address as usize] = value;
+    }
+
     /// Set the value of an address.
     pub fn set(&mut self, value: u8, address: u16) {
+        // ROM space (0x0000-0x7FFF): writes are ignored (no MBC)
+        if address < 0x8000 {
+            return;
+        }
+
         // JOYP: only bits 4-5 (select) are writable
         if address == 0xFF00 {
             self.memory[0xFF00] = (self.memory[0xFF00] & 0xCF) | (value & 0x30);

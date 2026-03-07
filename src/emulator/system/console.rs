@@ -77,7 +77,7 @@ impl Console {
     /// load the contents of a Rom into Ram.
     pub(crate) fn rom_into_ram(&mut self) {
         for (i, byte) in (0_u16..).zip(self.rom.bytes.iter()) {
-            self.ram.set(*byte, i);
+            self.ram.set_raw(i, *byte);
         }
     }
 
