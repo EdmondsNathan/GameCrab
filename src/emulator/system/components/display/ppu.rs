@@ -54,6 +54,9 @@ impl Console {
             // LCD is off - reset PPU state and show white screen
             self.ppu.dots = 0;
             self.set_lcd_y(0);
+            self.ppu.draw_mode = PpuMode::HBlank;
+            // Clear mode bits in STAT register (bits 0-1)
+            self.set_lcd_status(self.get_lcd_status() & 0xFC);
             // Fill framebuffer with white
             self.ppu.framebuffer.fill(255);
             return;
