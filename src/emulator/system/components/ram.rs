@@ -116,9 +116,9 @@ impl Ram {
 
         // self.set(byte | (value_u8 << shift), 0xFFFF);
         if value {
-            self.set(byte | (1 << shift), 0xFF0F);
+            self.set(byte | (1 << shift), 0xFFFF);
         } else {
-            self.set(byte & !(1 << shift), 0xFF0F);
+            self.set(byte & !(1 << shift), 0xFFFF);
         }
     }
 
