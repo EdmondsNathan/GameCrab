@@ -216,7 +216,19 @@ impl Console {
 
     fn set_ppu_mode(&mut self, new_mode: PpuMode) {
         self.ppu.draw_mode = new_mode.clone();
-        self.set_lcd_status(self.get_lcd_status() & 0xFC | (new_mode) as u8);
+        self.set_lcd_status(self.get_lcd_status() & 0xFC | (new_mode.clone()) as u8);
+
+        let stat = self.get_lcd_status();
+        let fire = match new_mode {
+            PpuMode::HBlank => stat & 0x08 != 0,
+            PpuMode::VBlank => stat & 0x10 != 0,
+            PpuMode::OamScan => stat & 0x20 != 0,
+            PpuMode::Draw => false,
+        };
+        if fire {
+            self.ram.set_if(true, Interrupts::Lcd);
+        }
+    }
 
     fn check_lyc(&mut self) {
         let ly = self.get_lcd_y();
