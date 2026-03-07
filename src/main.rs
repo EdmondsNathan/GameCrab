@@ -35,8 +35,8 @@ fn conf() -> Conf {
 async fn main() {
     let mut console =
     // Console::new();
-    // Console::new_with_rom("roms/Tetris.gb");
-    Console::new_with_rom("roms/DrMario.gb");
+    Console::new_with_rom("roms/Tetris.gb");
+    // Console::new_with_rom("roms/DrMario.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/03-op sp,hl.gb");

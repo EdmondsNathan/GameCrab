@@ -55,6 +55,11 @@ impl Ram {
             return result;
         }
 
+        // Echo RAM: 0xE000-0xFDFF mirrors 0xC000-0xDDFF
+        if address >= 0xE000 && address <= 0xFDFF {
+            return self.memory[(address - 0x2000) as usize];
+        }
+
         self.memory[address as usize]
     }
 
