@@ -64,6 +64,7 @@ impl Ram {
         //Div register gets reset if any value is written to it
         else if address == 0xFF04 {
             self.div = 0;
+            self.memory[address as usize] = 0;
         }
     }
 
@@ -103,7 +104,7 @@ impl Ram {
 
     pub fn set_ie(&mut self, value: bool, interrupt: Interrupts) {
         let byte = self.fetch(0xFFFF);
-        let value = value as u8;
+        let value_u8 = value as u8;
 
         let shift = match interrupt {
             Interrupts::VBlank => 0,
@@ -113,12 +114,17 @@ impl Ram {
             Interrupts::Joypad => 4,
         };
 
-        self.set(byte | (value << shift), 0xFFFF);
+        // self.set(byte | (value_u8 << shift), 0xFFFF);
+        if value {
+            self.set(byte | (1 << shift), 0xFF0F);
+        } else {
+            self.set(byte & !(1 << shift), 0xFF0F);
+        }
     }
 
     pub fn set_if(&mut self, value: bool, interrupt: Interrupts) {
         let byte = self.fetch(0xFF0F);
-        let value = value as u8;
+        let value_u8 = value as u8;
 
         let shift = match interrupt {
             Interrupts::VBlank => 0,
@@ -128,7 +134,12 @@ impl Ram {
             Interrupts::Joypad => 4,
         };
 
-        self.set(byte | (value << shift), 0xFF0F);
+        // self.set(byte | (value << shift), 0xFF0F);
+        if value {
+            self.set(byte | (1 << shift), 0xFF0F);
+        } else {
+            self.set(byte & !(1 << shift), 0xFF0F);
+        }
     }
 
     pub fn get_div(&mut self) -> u16 {
