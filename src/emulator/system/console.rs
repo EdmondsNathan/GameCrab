@@ -1,3 +1,4 @@
+use crate::emulator::print_logs::log_gameboy_doctor;
 use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
@@ -185,29 +186,30 @@ impl Console {
         // VBlank
         if triggered & 0x01 != 0 {
             // self.handle_interrupt(0x0040, 0x01);
-            return Some((0x0040, 0x01));
+            Some((0x0040, 0x01))
         // LCD Stat
         } else if triggered & 0x02 != 0 {
             // self.handle_interrupt(0x0048, 0x02);
-            return Some((0x0048, 0x02));
+            Some((0x0048, 0x02))
         // Timer
         } else if triggered & 0x04 != 0 {
             // self.handle_interrupt(0x0050, 0x04);
-            return Some((0x0050, 0x04));
+            Some((0x0050, 0x04))
         // Serial
         } else if triggered & 0x08 != 0 {
             // self.handle_interrupt(0x0058, 0x08);
-            return Some((0x0058, 0x08));
+            Some((0x0058, 0x08))
         // Joypad
         } else if triggered & 0x10 != 0 {
             // self.handle_interrupt(0x0060, 0x10);
-            return Some((0x0060, 0x10));
+            Some((0x0060, 0x10))
+        } else {
+            None
         }
-
-        None
     }
 
     pub(crate) fn handle_interrupt(&mut self, address: u16, bit: u8) {
+        println!("Interrupt handling");
         self.cpu.set_ime(false);
 
         // Clear the IF bit for this interrupt
@@ -236,6 +238,8 @@ impl Console {
 
         // Jump PC to handle the interrupt
         self.cpu.set_register_16(address, &Register16::Pc);
+
+        self.queue_next_instruction(20);
     }
 
     fn end_halt(&mut self) {

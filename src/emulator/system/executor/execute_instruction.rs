@@ -63,9 +63,12 @@ impl Console {
         // GAMEBOY DOCTOR
         // println!("{}", log_gameboy_doctor(self));
 
-        if let Some((address, bit)) = self.check_interrupts() {
+        if !self.cb_flag
+            && let Some((address, bit)) = self.check_interrupts()
+        {
             self.handle_interrupt(address, bit);
-            self.queue_next_instruction(20);
+            // GAMEBOY DOCTOR
+            // self.queue_next_instruction(20);
             return;
         }
 
