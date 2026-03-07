@@ -66,6 +66,13 @@ impl Ram {
             self.div = 0;
             self.memory[address as usize] = 0;
         }
+        // OAM DMA transfer
+        else if address == 0xFF46 {
+            let source_base = (value as u16) << 8;
+            for i in 0..160u16 {
+                self.memory[0xFE00 + i as usize] = self.memory[source_base as usize + i as usize];
+            }
+        }
     }
 
     /// Set the value of two consecutive addresses. The high byte is the first address and the low byte is the following.
