@@ -153,6 +153,7 @@ impl Console {
                 self.end_halt();
             } else {
                 // Do not jump for the interrupt, continue on normally
+                self.cpu.set_halt(false);
                 self.queue_next_instruction(1);
             }
         }
