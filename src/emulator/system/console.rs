@@ -210,7 +210,6 @@ impl Console {
     }
 
     pub(crate) fn handle_interrupt(&mut self, address: u16, bit: u8) {
-        println!("Interrupt handling");
         self.cpu.set_ime(false);
 
         // Clear the IF bit for this interrupt
