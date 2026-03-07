@@ -1,6 +1,10 @@
 pub struct Ram {
     memory: [u8; 0x10000],
     div: u16,
+    /// Action buttons state (active low): bit0=A, bit1=B, bit2=Select, bit3=Start
+    pub(crate) joypad_action: u8,
+    /// Direction buttons state (active low): bit0=Right, bit1=Left, bit2=Up, bit3=Down
+    pub(crate) joypad_direction: u8,
 }
 
 pub enum Interrupts {
@@ -16,6 +20,8 @@ impl Default for Ram {
         Ram {
             memory: [0; 0x10000],
             div: 0,
+            joypad_action: 0x0F,
+            joypad_direction: 0x0F,
         }
     }
 }
@@ -37,23 +43,45 @@ impl Ram {
             return (self.div >> 8) as u8;
         }
 
+        if address == 0xFF00 {
+            let select = self.memory[0xFF00] & 0x30;
+            let mut result = select | 0xC0; // Upper bits always set
+            match select {
+                0x10 => result |= self.joypad_action,   // Bit 4 clear: read action
+                0x20 => result |= self.joypad_direction, // Bit 5 clear: read direction
+                0x00 => result |= self.joypad_action & self.joypad_direction, // Both selected
+                _ => result |= 0x0F,                     // Neither selected
+            }
+            return result;
+        }
+
         self.memory[address as usize]
     }
 
     /// Fetch the signed value of an address.
     pub fn fetch_signed(&self, address: u16) -> i8 {
-        self.memory[address as usize] as i8
+        self.fetch(address) as i8
     }
 
     /// Fetch two consecutive addresses. The first address is the high byte and the second is the low.
     pub fn fetch_16(&self, address: u16) -> u16 {
-        let address = address as usize;
-
-        ((self.memory[address + 1] as u16) << 8) + (self.memory[address] as u16)
+        (self.fetch(address + 1) as u16) << 8 | (self.fetch(address) as u16)
     }
 
     /// Set the value of an address.
     pub fn set(&mut self, value: u8, address: u16) {
+        // JOYP: only bits 4-5 (select) are writable
+        if address == 0xFF00 {
+            self.memory[0xFF00] = (self.memory[0xFF00] & 0xCF) | (value & 0x30);
+            return;
+        }
+
+        // Echo RAM: 0xE000-0xFDFF mirrors 0xC000-0xDDFF
+        if address >= 0xE000 && address <= 0xFDFF {
+            self.memory[(address - 0x2000) as usize] = value;
+            return;
+        }
+
         self.memory[address as usize] = value;
 
         // Serial port
@@ -147,6 +175,12 @@ impl Ram {
         } else {
             self.set(byte & !(1 << shift), 0xFF0F);
         }
+    }
+
+    /// Update joypad button state. Each nibble is active-low (0 = pressed).
+    pub fn set_joypad(&mut self, action: u8, direction: u8) {
+        self.joypad_action = action & 0x0F;
+        self.joypad_direction = direction & 0x0F;
     }
 
     pub fn get_div(&mut self) -> u16 {

@@ -293,6 +293,19 @@ impl Console {
         self.queue_next_instruction(21);
     }
 
+    /// Update joypad state and request joypad interrupt if a button was newly pressed.
+    pub fn update_joypad(&mut self, action: u8, direction: u8) {
+        let old_action = self.ram.joypad_action;
+        let old_direction = self.ram.joypad_direction;
+        self.ram.set_joypad(action, direction);
+
+        // A button went from released (1) to pressed (0) — fire joypad interrupt
+        let newly_pressed = (old_action & !action) | (old_direction & !direction);
+        if newly_pressed != 0 {
+            self.ram.set_if(true, Interrupts::Joypad);
+        }
+    }
+
     pub fn is_interrupt_pending(&self) -> bool {
         let interrupt_enabled = self.ram.fetch(0xFFFF);
         let interrupt_flag = self.ram.fetch(0xFF0F);

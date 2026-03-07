@@ -61,6 +61,8 @@ async fn main() {
     loop {
         clear_background(BLACK);
 
+        poll_joypad(&mut console);
+
         for n in 0..70224 {
             console.tick();
         }
@@ -70,6 +72,22 @@ async fn main() {
         // draw_fps();
         next_frame().await
     }
+}
+
+fn poll_joypad(console: &mut Console) {
+    // Action buttons (active low: 0 = pressed, 1 = released)
+    let action = (!is_key_down(KeyCode::Z) as u8)           // A
+        | ((!is_key_down(KeyCode::X) as u8) << 1)           // B
+        | ((!is_key_down(KeyCode::Backspace) as u8) << 2)   // Select
+        | ((!is_key_down(KeyCode::Enter) as u8) << 3); // Start
+
+    // Direction buttons (active low)
+    let direction = (!is_key_down(KeyCode::Right) as u8)
+        | ((!is_key_down(KeyCode::Left) as u8) << 1)
+        | ((!is_key_down(KeyCode::Up) as u8) << 2)
+        | ((!is_key_down(KeyCode::Down) as u8) << 3);
+
+    console.update_joypad(action, direction);
 }
 
 fn framebuffer_to_texture(texture: &Texture2D, framebuffer: [u8; 160 * 144 * 4]) {
