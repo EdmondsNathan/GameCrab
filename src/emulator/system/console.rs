@@ -33,6 +33,17 @@ impl Default for Console {
             tima_overflow_counter: None,
         };
 
+        // Initialize IO registers to post-boot ROM values (DMG)
+        console.ram.set(0xCF, 0xFF00); // JOYP
+        console.ram.set(0x7E, 0xFF02); // SC
+        console.ram.set(0xF8, 0xFF07); // TAC
+        console.ram.set(0xE1, 0xFF0F); // IF
+        console.ram.set(0x91, 0xFF40); // LCDC
+        console.ram.set(0x85, 0xFF41); // STAT
+        console.ram.set(0xFC, 0xFF47); // BGP
+        console.ram.set(0xFF, 0xFF48); // OBP0
+        console.ram.set(0xFF, 0xFF49); // OBP1
+
         console.queue_next_instruction(0);
 
         console
