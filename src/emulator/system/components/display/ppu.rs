@@ -81,6 +81,7 @@ impl Console {
                 let pixel_x = (self.ppu.dots - 80) as u8;
                 if pixel_x < 160 {
                     self.draw_background(pixel_x);
+                    self.draw_sprites(pixel_x);
                 }
 
                 // Can actually be 168-291 dots
@@ -212,6 +213,106 @@ impl Console {
         self.ppu.framebuffer[fb_index + 1] = shade; // G
         self.ppu.framebuffer[fb_index + 2] = shade; // B
         self.ppu.framebuffer[fb_index + 3] = 255; // A
+    }
+
+    fn draw_sprites(&mut self, pixel_x: u8) {
+        // Check if sprites are enabled (LCDC bit 1)
+        if self.get_lcd_control() & 0x02 == 0 {
+            return;
+        }
+
+        let sprite_height: u8 = if self.get_lcd_control() & 0x04 != 0 {
+            16
+        } else {
+            8
+        };
+
+        let ly = self.get_lcd_y();
+
+        // Iterate sprites in reverse so lower-index sprites (higher priority) draw last
+        for i in (0..self.ppu.oam_sprites.len()).rev() {
+            let sprite_x = self.ppu.oam_sprites[i].x.wrapping_sub(8);
+            let sprite_y = self.ppu.oam_sprites[i].y.wrapping_sub(16);
+            let tile_index = self.ppu.oam_sprites[i].tile_index;
+            let attributes = self.ppu.oam_sprites[i].attributes;
+
+            // Check if this sprite covers pixel_x
+            if pixel_x < sprite_x || pixel_x >= sprite_x.wrapping_add(8) {
+                continue;
+            }
+
+            let x_flip = attributes & 0x20 != 0;
+            let y_flip = attributes & 0x40 != 0;
+            let bg_priority = attributes & 0x80 != 0;
+            let palette_num = attributes & 0x10 != 0;
+
+            let mut tile_row = ly.wrapping_sub(sprite_y) as u16;
+            if y_flip {
+                tile_row = (sprite_height as u16 - 1) - tile_row;
+            }
+
+            let actual_tile = if sprite_height == 16 {
+                // 8x16 mode: bit 0 of tile index is ignored
+                if tile_row < 8 {
+                    tile_index & 0xFE
+                } else {
+                    tile_row -= 8;
+                    tile_index | 0x01
+                }
+            } else {
+                tile_index
+            };
+
+            let tile_data_address = 0x8000 + (actual_tile as u16) * 16 + tile_row * 2;
+            let byte1 = self.ram.fetch(tile_data_address);
+            let byte2 = self.ram.fetch(tile_data_address + 1);
+
+            let mut tile_pixel_x = pixel_x.wrapping_sub(sprite_x);
+            if x_flip {
+                tile_pixel_x = 7 - tile_pixel_x;
+            }
+
+            let bit_position = 7 - tile_pixel_x;
+            let color_bit_0 = (byte1 >> bit_position) & 1;
+            let color_bit_1 = (byte2 >> bit_position) & 1;
+            let color_id = (color_bit_1 << 1) | color_bit_0;
+
+            // Color 0 is transparent for sprites
+            if color_id == 0 {
+                continue;
+            }
+
+            // If BG priority bit is set, sprite is behind non-zero BG colors
+            if bg_priority {
+                let fb_index =
+                    ((ly as usize) * 160 + (pixel_x as usize)) * 4;
+                // Check if BG pixel is non-white (non-zero color)
+                if self.ppu.framebuffer[fb_index] != 255 {
+                    continue;
+                }
+            }
+
+            let palette = if palette_num {
+                self.get_obj_palette1()
+            } else {
+                self.get_obj_palette0()
+            };
+            let palette_color = (palette >> (color_id * 2)) & 0x03;
+
+            let shade = match palette_color {
+                0 => 255,
+                1 => 192,
+                2 => 96,
+                3 => 0,
+                _ => 0,
+            };
+
+            let fb_index = ((ly as usize) * 160 + (pixel_x as usize)) * 4;
+            self.ppu.framebuffer[fb_index] = shade;
+            self.ppu.framebuffer[fb_index + 1] = shade;
+            self.ppu.framebuffer[fb_index + 2] = shade;
+            self.ppu.framebuffer[fb_index + 3] = 255;
+        }
     }
 
     fn set_ppu_mode(&mut self, new_mode: PpuMode) {
