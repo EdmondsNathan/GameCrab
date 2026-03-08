@@ -1,3 +1,5 @@
+use std::io::{Read, Write};
+
 use super::cartridge::Cartridge;
 
 pub struct Ram {
@@ -217,6 +219,27 @@ impl Ram {
 
     pub fn save_ram(&mut self) {
         self.cartridge.save_ram();
+    }
+
+    pub fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&self.memory)?;
+        w.write_all(&self.div.to_le_bytes())?;
+        w.write_all(&[self.joypad_action, self.joypad_direction])?;
+        self.cartridge.save_state(w)?;
+        Ok(())
+    }
+
+    pub fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        r.read_exact(&mut self.memory)?;
+        let mut buf = [0u8; 2];
+        r.read_exact(&mut buf)?;
+        self.div = u16::from_le_bytes(buf);
+        let mut joypad = [0u8; 2];
+        r.read_exact(&mut joypad)?;
+        self.joypad_action = joypad[0];
+        self.joypad_direction = joypad[1];
+        self.cartridge.load_state(r)?;
+        Ok(())
     }
 }
 

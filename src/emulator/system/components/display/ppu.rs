@@ -1,3 +1,5 @@
+use std::io::{Read, Write};
+
 use crate::emulator::system::{
     components::{display::ppu_mode::PpuMode, ram::Interrupts},
     console::Console,
@@ -44,6 +46,40 @@ impl Default for Ppu {
 impl Ppu {
     pub(crate) fn new() -> Ppu {
         Self::default()
+    }
+
+    pub(crate) fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&self.dots.to_le_bytes())?;
+        w.write_all(&[self.draw_mode.clone() as u8])?;
+        w.write_all(&[self.window_line, self.window_triggered as u8])?;
+        w.write_all(&self.framebuffer)?;
+        Ok(())
+    }
+
+    pub(crate) fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut buf = [0u8; 2];
+        r.read_exact(&mut buf)?;
+        self.dots = u16::from_le_bytes(buf);
+
+        let mut mode = [0u8; 1];
+        r.read_exact(&mut mode)?;
+        self.draw_mode = match mode[0] {
+            0 => PpuMode::HBlank,
+            1 => PpuMode::VBlank,
+            2 => PpuMode::OamScan,
+            3 => PpuMode::Draw,
+            _ => PpuMode::HBlank,
+        };
+
+        let mut win = [0u8; 2];
+        r.read_exact(&mut win)?;
+        self.window_line = win[0];
+        self.window_triggered = win[1] != 0;
+
+        r.read_exact(&mut self.framebuffer)?;
+
+        self.oam_sprites.clear();
+        Ok(())
     }
 }
 

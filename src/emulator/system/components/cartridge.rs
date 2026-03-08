@@ -1,9 +1,13 @@
+use std::io::{Read, Write};
 use std::path::PathBuf;
 
 pub trait Mbc {
     fn read(&self, address: u16) -> u8;
     fn write(&mut self, address: u16, value: u8);
     fn ram(&self) -> &[u8];
+    fn mbc_type_tag(&self) -> u8;
+    fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()>;
+    fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()>;
 }
 
 pub struct Cartridge {
@@ -114,6 +118,29 @@ impl Cartridge {
         self.mbc.write(address, value);
     }
 
+    pub fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&[self.mbc.mbc_type_tag()])?;
+        self.mbc.save_state(w)?;
+        Ok(())
+    }
+
+    pub fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut tag = [0u8; 1];
+        r.read_exact(&mut tag)?;
+        if tag[0] != self.mbc.mbc_type_tag() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                format!(
+                    "MBC type mismatch: save state has {}, cartridge has {}",
+                    tag[0],
+                    self.mbc.mbc_type_tag()
+                ),
+            ));
+        }
+        self.mbc.load_state(r)?;
+        Ok(())
+    }
+
     pub fn save_ram(&mut self) {
         if !self.has_battery || !self.ram_dirty {
             return;
@@ -180,6 +207,26 @@ impl Mbc for NoMbc {
 
     fn ram(&self) -> &[u8] {
         &self.ram
+    }
+
+    fn mbc_type_tag(&self) -> u8 {
+        0
+    }
+
+    fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        let ram_len = self.ram.len() as u32;
+        w.write_all(&ram_len.to_le_bytes())?;
+        w.write_all(&self.ram)?;
+        Ok(())
+    }
+
+    fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut len_buf = [0u8; 4];
+        r.read_exact(&mut len_buf)?;
+        let ram_len = u32::from_le_bytes(len_buf) as usize;
+        self.ram.resize(ram_len, 0);
+        r.read_exact(&mut self.ram)?;
+        Ok(())
     }
 }
 
@@ -300,6 +347,33 @@ impl Mbc for Mbc1 {
     fn ram(&self) -> &[u8] {
         &self.ram
     }
+
+    fn mbc_type_tag(&self) -> u8 {
+        1
+    }
+
+    fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&[self.rom_bank, self.ram_bank, self.ram_enabled as u8, self.banking_mode as u8])?;
+        let ram_len = self.ram.len() as u32;
+        w.write_all(&ram_len.to_le_bytes())?;
+        w.write_all(&self.ram)?;
+        Ok(())
+    }
+
+    fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut regs = [0u8; 4];
+        r.read_exact(&mut regs)?;
+        self.rom_bank = regs[0];
+        self.ram_bank = regs[1];
+        self.ram_enabled = regs[2] != 0;
+        self.banking_mode = regs[3] != 0;
+        let mut len_buf = [0u8; 4];
+        r.read_exact(&mut len_buf)?;
+        let ram_len = u32::from_le_bytes(len_buf) as usize;
+        self.ram.resize(ram_len, 0);
+        r.read_exact(&mut self.ram)?;
+        Ok(())
+    }
 }
 
 struct Mbc3 {
@@ -408,5 +482,31 @@ impl Mbc for Mbc3 {
 
     fn ram(&self) -> &[u8] {
         &self.ram
+    }
+
+    fn mbc_type_tag(&self) -> u8 {
+        2
+    }
+
+    fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&[self.rom_bank, self.ram_bank, self.ram_enabled as u8])?;
+        let ram_len = self.ram.len() as u32;
+        w.write_all(&ram_len.to_le_bytes())?;
+        w.write_all(&self.ram)?;
+        Ok(())
+    }
+
+    fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut regs = [0u8; 3];
+        r.read_exact(&mut regs)?;
+        self.rom_bank = regs[0];
+        self.ram_bank = regs[1];
+        self.ram_enabled = regs[2] != 0;
+        let mut len_buf = [0u8; 4];
+        r.read_exact(&mut len_buf)?;
+        let ram_len = u32::from_le_bytes(len_buf) as usize;
+        self.ram.resize(ram_len, 0);
+        r.read_exact(&mut self.ram)?;
+        Ok(())
     }
 }

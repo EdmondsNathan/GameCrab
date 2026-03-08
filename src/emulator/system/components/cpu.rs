@@ -1,3 +1,5 @@
+use std::io::{Read, Write};
+
 use crate::emulator::system::components::registers::{Flags, Register16, Register8, Registers};
 
 #[derive(Default)]
@@ -191,5 +193,65 @@ impl Cpu {
 
     pub(crate) fn set_halt_bug(&mut self, value: bool) {
         self.halt_bug = value;
+    }
+
+    pub(crate) fn save_state(&self, w: &mut dyn Write) -> std::io::Result<()> {
+        w.write_all(&[
+            self.registers.a,
+            self.registers.b,
+            self.registers.c,
+            self.registers.d,
+            self.registers.e,
+            self.registers.f,
+            self.registers.h,
+            self.registers.l,
+        ])?;
+        w.write_all(&self.registers.sp.to_le_bytes())?;
+        w.write_all(&self.registers.pc.to_le_bytes())?;
+        w.write_all(&self.registers.bus.to_le_bytes())?;
+        w.write_all(&[self.registers.x, self.registers.y])?;
+        w.write_all(&[
+            self.ime_pending as u8,
+            self.ime as u8,
+            self.is_stopped as u8,
+            self.is_halted as u8,
+            self.halt_bug as u8,
+        ])?;
+        Ok(())
+    }
+
+    pub(crate) fn load_state(&mut self, r: &mut dyn Read) -> std::io::Result<()> {
+        let mut regs8 = [0u8; 8];
+        r.read_exact(&mut regs8)?;
+        self.registers.a = regs8[0];
+        self.registers.b = regs8[1];
+        self.registers.c = regs8[2];
+        self.registers.d = regs8[3];
+        self.registers.e = regs8[4];
+        self.registers.f = regs8[5];
+        self.registers.h = regs8[6];
+        self.registers.l = regs8[7];
+
+        let mut buf16 = [0u8; 2];
+        r.read_exact(&mut buf16)?;
+        self.registers.sp = u16::from_le_bytes(buf16);
+        r.read_exact(&mut buf16)?;
+        self.registers.pc = u16::from_le_bytes(buf16);
+        r.read_exact(&mut buf16)?;
+        self.registers.bus = u16::from_le_bytes(buf16);
+
+        let mut xy = [0u8; 2];
+        r.read_exact(&mut xy)?;
+        self.registers.x = xy[0];
+        self.registers.y = xy[1];
+
+        let mut flags = [0u8; 5];
+        r.read_exact(&mut flags)?;
+        self.ime_pending = flags[0] != 0;
+        self.ime = flags[1] != 0;
+        self.is_stopped = flags[2] != 0;
+        self.is_halted = flags[3] != 0;
+        self.halt_bug = flags[4] != 0;
+        Ok(())
     }
 }

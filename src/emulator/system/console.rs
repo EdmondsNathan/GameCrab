@@ -1,3 +1,6 @@
+use std::io::{Read, Write};
+use std::path::PathBuf;
+
 use crate::emulator::print_logs::log_gameboy_doctor;
 use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
@@ -16,6 +19,7 @@ pub struct Console {
     pub(crate) cb_flag: bool,
     previous_div_result: u16,
     tima_overflow_counter: Option<u8>,
+    rom_path: Option<String>,
 }
 
 impl Default for Console {
@@ -29,6 +33,7 @@ impl Default for Console {
             cb_flag: Default::default(),
             previous_div_result: 0,
             tima_overflow_counter: None,
+            rom_path: None,
         };
 
         // Initialize IO registers to post-boot ROM values (DMG)
@@ -62,6 +67,7 @@ impl Console {
 
         let mut console = Console {
             ram,
+            rom_path: Some(path.to_string()),
             ..Default::default()
         };
 
@@ -301,6 +307,106 @@ impl Console {
         let newly_pressed = (old_action & !action) | (old_direction & !direction);
         if newly_pressed != 0 {
             self.ram.set_if(true, Interrupts::Joypad);
+        }
+    }
+
+    pub fn save_state(&self) {
+        let path = match &self.rom_path {
+            Some(p) => {
+                let mut pb = PathBuf::from(p);
+                pb.set_extension("state");
+                pb
+            }
+            None => {
+                eprintln!("Cannot save state: no ROM loaded");
+                return;
+            }
+        };
+
+        let result = (|| -> std::io::Result<()> {
+            let mut file = std::fs::File::create(&path)?;
+            file.write_all(b"GCSS")?;
+            file.write_all(&[0x01])?;
+            self.cpu.save_state(&mut file)?;
+            self.ram.save_state(&mut file)?;
+            self.ppu.save_state(&mut file)?;
+            file.write_all(&self.tick_counter.to_le_bytes())?;
+            file.write_all(&[self.cb_flag as u8])?;
+            file.write_all(&self.previous_div_result.to_le_bytes())?;
+            let tima_bytes = match self.tima_overflow_counter {
+                Some(v) => [1, v],
+                None => [0, 0],
+            };
+            file.write_all(&tima_bytes)?;
+            Ok(())
+        })();
+
+        match result {
+            Ok(()) => eprintln!("State saved to {:?}", path),
+            Err(e) => eprintln!("Failed to save state: {}", e),
+        }
+    }
+
+    pub fn load_state(&mut self) {
+        let path = match &self.rom_path {
+            Some(p) => {
+                let mut pb = PathBuf::from(p);
+                pb.set_extension("state");
+                pb
+            }
+            None => {
+                eprintln!("Cannot load state: no ROM loaded");
+                return;
+            }
+        };
+
+        let result = (|| -> std::io::Result<()> {
+            let mut file = std::fs::File::open(&path)?;
+            let mut magic = [0u8; 4];
+            file.read_exact(&mut magic)?;
+            if &magic != b"GCSS" {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Invalid save state magic",
+                ));
+            }
+            let mut version = [0u8; 1];
+            file.read_exact(&mut version)?;
+            if version[0] != 0x01 {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    format!("Unsupported save state version: {}", version[0]),
+                ));
+            }
+            self.cpu.load_state(&mut file)?;
+            self.ram.load_state(&mut file)?;
+            self.ppu.load_state(&mut file)?;
+
+            let mut buf8 = [0u8; 8];
+            file.read_exact(&mut buf8)?;
+            self.tick_counter = u64::from_le_bytes(buf8);
+
+            let mut cb = [0u8; 1];
+            file.read_exact(&mut cb)?;
+            self.cb_flag = cb[0] != 0;
+
+            let mut div_buf = [0u8; 2];
+            file.read_exact(&mut div_buf)?;
+            self.previous_div_result = u16::from_le_bytes(div_buf);
+
+            let mut tima = [0u8; 2];
+            file.read_exact(&mut tima)?;
+            self.tima_overflow_counter = if tima[0] != 0 { Some(tima[1]) } else { None };
+
+            self.execution_queue.clear();
+            self.queue_next_instruction(0);
+
+            Ok(())
+        })();
+
+        match result {
+            Ok(()) => eprintln!("State loaded from {:?}", path),
+            Err(e) => eprintln!("Failed to load state: {}", e),
         }
     }
 

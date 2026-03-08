@@ -73,6 +73,13 @@ async fn main() {
 
         poll_joypad(&mut console);
 
+        if is_key_pressed(KeyCode::F5) {
+            console.save_state();
+        }
+        if is_key_pressed(KeyCode::F9) {
+            console.load_state();
+        }
+
         for n in 0..70224 {
             console.tick();
         }

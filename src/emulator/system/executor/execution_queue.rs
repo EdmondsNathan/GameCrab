@@ -33,4 +33,9 @@ impl ExecutionQueue {
     pub(crate) fn peek(&mut self, tick: &u64) -> Option<&VecDeque<Command>> {
         self.map.get(tick)
     }
+
+    /// Clear all queued commands.
+    pub(crate) fn clear(&mut self) {
+        self.map.clear();
+    }
 }
