@@ -190,10 +190,7 @@ impl Mbc for NoMbc {
     fn write(&mut self, address: u16, value: u8) {
         match address {
             0x0000..=0x7FFF => {
-                let addr = address as usize;
-                if addr < self.rom.len() {
-                    self.rom[addr] = value;
-                }
+                // ROM: writes are ignored with no MBC
             }
             0xA000..=0xBFFF => {
                 let addr = (address - 0xA000) as usize;
