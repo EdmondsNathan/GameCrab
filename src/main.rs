@@ -3,7 +3,9 @@ pub mod emulator;
 
 use std::time::Instant;
 
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use macroquad::prelude::*;
+use ringbuf::traits::{Consumer, Split};
 
 use crate::emulator::{
     print_logs::{log_dump_ram, log_dump_ram_nonzero},
@@ -43,6 +45,9 @@ async fn main() {
         }
     };
     let mut console = Console::new_with_rom(rom_path);
+
+    // Set up audio output with cpal
+    let _audio_stream = setup_audio(&mut console);
 
     let texture = Texture2D::from_rgba8(160, 144, &[0; 160 * 144 * 4]);
     texture.set_filter(FilterMode::Nearest);
@@ -84,6 +89,51 @@ async fn main() {
         // draw_fps();
         next_frame().await
     }
+}
+
+fn setup_audio(console: &mut Console) -> Option<cpal::Stream> {
+    let host = cpal::default_host();
+    let device = match host.default_output_device() {
+        Some(d) => d,
+        None => {
+            eprintln!("No audio output device found");
+            return None;
+        }
+    };
+
+    let config = cpal::StreamConfig {
+        channels: 2,
+        sample_rate: cpal::SampleRate(44100),
+        buffer_size: cpal::BufferSize::Default,
+    };
+
+    // Large buffer to absorb timing jitter between emulation and audio threads
+    let ring = ringbuf::HeapRb::<f32>::new(16384);
+    let (producer, mut consumer) = ring.split();
+    console.apu.set_producer(producer);
+
+    let stream = device
+        .build_output_stream(
+            &config,
+            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                // On underrun, hold the last sample value to avoid pops
+                let mut last = 0.0f32;
+                for sample in data.iter_mut() {
+                    if let Some(s) = consumer.try_pop() {
+                        last = s;
+                    }
+                    *sample = last;
+                }
+            },
+            |err| {
+                eprintln!("Audio stream error: {}", err);
+            },
+            None,
+        )
+        .ok()?;
+
+    stream.play().ok()?;
+    Some(stream)
 }
 
 fn poll_joypad(console: &mut Console) {

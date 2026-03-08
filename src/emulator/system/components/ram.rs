@@ -2,6 +2,37 @@ use std::io::{Read, Write};
 
 use super::cartridge::Cartridge;
 
+// OR masks for reading APU registers (write-only bits read as 1)
+const APU_READ_MASKS: [u8; 48] = [
+    0x80, // 0xFF10 NR10
+    0x3F, // 0xFF11 NR11 (length bits write-only)
+    0x00, // 0xFF12 NR12
+    0xFF, // 0xFF13 NR13 (write-only)
+    0xBF, // 0xFF14 NR14
+    0xFF, // 0xFF15 unused
+    0x3F, // 0xFF16 NR21
+    0x00, // 0xFF17 NR22
+    0xFF, // 0xFF18 NR23 (write-only)
+    0xBF, // 0xFF19 NR24
+    0x7F, // 0xFF1A NR30
+    0xFF, // 0xFF1B NR31 (write-only)
+    0x9F, // 0xFF1C NR32
+    0xFF, // 0xFF1D NR33 (write-only)
+    0xBF, // 0xFF1E NR34
+    0xFF, // 0xFF1F unused
+    0xFF, // 0xFF20 NR41 (write-only)
+    0x00, // 0xFF21 NR42
+    0x00, // 0xFF22 NR43
+    0xBF, // 0xFF23 NR44
+    0x00, // 0xFF24 NR50
+    0x00, // 0xFF25 NR51
+    0x70, // 0xFF26 NR52 (bits 4-6 always set; channel status handled by APU sync)
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // 0xFF27-0xFF2F unused
+    // 0xFF30-0xFF3F wave RAM (fully readable)
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+];
+
 pub struct Ram {
     memory: [u8; 0x10000],
     cartridge: Cartridge,
@@ -10,6 +41,8 @@ pub struct Ram {
     pub(crate) joypad_action: u8,
     /// Direction buttons state (active low): bit0=Right, bit1=Left, bit2=Up, bit3=Down
     pub(crate) joypad_direction: u8,
+    /// Queued APU register writes for Console to forward to the APU
+    pub(crate) apu_register_writes: Vec<(u16, u8)>,
 }
 
 pub enum Interrupts {
@@ -28,6 +61,7 @@ impl Default for Ram {
             div: 0,
             joypad_action: 0x0F,
             joypad_direction: 0x0F,
+            apu_register_writes: Vec::new(),
         }
     }
 }
@@ -69,6 +103,11 @@ impl Ram {
             return self.cartridge.read(address);
         }
 
+        // APU register read masks
+        if address >= 0xFF10 && address <= 0xFF3F {
+            return self.memory[address as usize] | APU_READ_MASKS[(address - 0xFF10) as usize];
+        }
+
         // Echo RAM: 0xE000-0xFDFF mirrors 0xC000-0xDDFF
         if address >= 0xE000 && address <= 0xFDFF {
             return self.memory[(address - 0x2000) as usize];
@@ -108,6 +147,12 @@ impl Ram {
         }
 
         self.memory[address as usize] = value;
+
+        // APU registers: queue write notification for Console to forward to APU
+        if address >= 0xFF10 && address <= 0xFF3F {
+            self.apu_register_writes.push((address, value));
+            return;
+        }
 
         // Serial port
         if address == 0xFF02 && value == 0x81 {
@@ -209,6 +254,11 @@ impl Ram {
         self.joypad_direction = direction & 0x0F;
     }
 
+    /// Set a value directly in memory without triggering side effects (APU notifications, etc.)
+    pub fn set_raw(&mut self, value: u8, address: u16) {
+        self.memory[address as usize] = value;
+    }
+
     pub fn get_div(&mut self) -> u16 {
         self.div
     }
@@ -239,6 +289,7 @@ impl Ram {
         self.joypad_action = joypad[0];
         self.joypad_direction = joypad[1];
         self.cartridge.load_state(r)?;
+        self.apu_register_writes.clear();
         Ok(())
     }
 }

@@ -2,6 +2,7 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 
 use crate::emulator::print_logs::log_gameboy_doctor;
+use crate::emulator::system::components::audio::apu::Apu;
 use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
@@ -14,6 +15,7 @@ pub struct Console {
     pub(crate) cpu: Cpu,
     pub(crate) ram: Ram,
     pub(crate) ppu: Ppu,
+    pub(crate) apu: Apu,
     pub(crate) tick_counter: u64,
     pub(crate) execution_queue: ExecutionQueue,
     pub(crate) cb_flag: bool,
@@ -28,6 +30,7 @@ impl Default for Console {
             cpu: Default::default(),
             ram: Default::default(),
             ppu: Default::default(),
+            apu: Default::default(),
             tick_counter: Default::default(),
             execution_queue: Default::default(),
             cb_flag: Default::default(),
@@ -46,6 +49,14 @@ impl Default for Console {
         console.ram.set(0xFC, 0xFF47); // BGP
         console.ram.set(0xFF, 0xFF48); // OBP0
         console.ram.set(0xFF, 0xFF49); // OBP1
+
+        // Initialize APU registers to post-boot values
+        console.apu.write_register(0xFF26, 0xF1); // NR52: APU on, ch1+ch2 active
+        console.apu.write_register(0xFF11, 0x80); // NR11
+        console.apu.write_register(0xFF12, 0xF3); // NR12
+        console.apu.write_register(0xFF14, 0xBF); // NR14
+        console.apu.write_register(0xFF24, 0x77); // NR50
+        console.apu.write_register(0xFF25, 0xF3); // NR51
 
         console.queue_next_instruction(0);
 
@@ -82,6 +93,14 @@ impl Console {
         console.ram.set(0xFF, 0xFF48); // OBP0
         console.ram.set(0xFF, 0xFF49); // OBP1
 
+        // Re-initialize APU registers
+        console.apu.write_register(0xFF26, 0xF1); // NR52
+        console.apu.write_register(0xFF11, 0x80); // NR11
+        console.apu.write_register(0xFF12, 0xF3); // NR12
+        console.apu.write_register(0xFF14, 0xBF); // NR14
+        console.apu.write_register(0xFF24, 0x77); // NR50
+        console.apu.write_register(0xFF25, 0xF3); // NR51
+
         console
     }
 
@@ -91,6 +110,8 @@ impl Console {
         self.tick_timers();
 
         self.tick_ppu();
+
+        self.tick_apu();
 
         self.tick_cpu();
 
@@ -326,10 +347,11 @@ impl Console {
         let result = (|| -> std::io::Result<()> {
             let mut file = std::fs::File::create(&path)?;
             file.write_all(b"GCSS")?;
-            file.write_all(&[0x01])?;
+            file.write_all(&[0x02])?;
             self.cpu.save_state(&mut file)?;
             self.ram.save_state(&mut file)?;
             self.ppu.save_state(&mut file)?;
+            self.apu.save_state(&mut file)?;
             file.write_all(&self.tick_counter.to_le_bytes())?;
             file.write_all(&[self.cb_flag as u8])?;
             file.write_all(&self.previous_div_result.to_le_bytes())?;
@@ -372,7 +394,7 @@ impl Console {
             }
             let mut version = [0u8; 1];
             file.read_exact(&mut version)?;
-            if version[0] != 0x01 {
+            if version[0] != 0x01 && version[0] != 0x02 {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
                     format!("Unsupported save state version: {}", version[0]),
@@ -381,6 +403,9 @@ impl Console {
             self.cpu.load_state(&mut file)?;
             self.ram.load_state(&mut file)?;
             self.ppu.load_state(&mut file)?;
+            if version[0] >= 0x02 {
+                self.apu.load_state(&mut file)?;
+            }
 
             let mut buf8 = [0u8; 8];
             file.read_exact(&mut buf8)?;
