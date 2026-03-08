@@ -60,13 +60,26 @@ async fn main() {
     // print!("{}", log_dump_ram_nonzero(&console));
     // return;
 
+    let mut frame_counter: u32 = 0;
+
     loop {
+        if is_quit_requested() {
+            console.save_ram();
+            break;
+        }
+        prevent_quit();
+
         clear_background(BLACK);
 
         poll_joypad(&mut console);
 
         for n in 0..70224 {
             console.tick();
+        }
+
+        frame_counter += 1;
+        if frame_counter % 60 == 0 {
+            console.save_ram();
         }
 
         framebuffer_to_texture(&texture, console.get_framebuffer());

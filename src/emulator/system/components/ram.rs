@@ -214,6 +214,10 @@ impl Ram {
     pub fn set_div(&mut self, value: u16) {
         self.div = value;
     }
+
+    pub fn save_ram(&mut self) {
+        self.cartridge.save_ram();
+    }
 }
 
 #[cfg(test)]

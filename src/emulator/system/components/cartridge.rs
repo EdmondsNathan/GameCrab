@@ -1,10 +1,16 @@
+use std::path::PathBuf;
+
 pub trait Mbc {
     fn read(&self, address: u16) -> u8;
     fn write(&mut self, address: u16, value: u8);
+    fn ram(&self) -> &[u8];
 }
 
 pub struct Cartridge {
     mbc: Box<dyn Mbc>,
+    has_battery: bool,
+    save_path: Option<PathBuf>,
+    ram_dirty: bool,
 }
 
 impl Default for Cartridge {
@@ -14,22 +20,19 @@ impl Default for Cartridge {
                 rom: vec![0; 0x8000],
                 ram: vec![0; 0x2000],
             }),
+            has_battery: false,
+            save_path: None,
+            ram_dirty: false,
         }
     }
 }
 
 impl Cartridge {
-    pub fn from_rom(bytes: Vec<u8>) -> Cartridge {
+    pub fn from_rom(bytes: Vec<u8>, rom_path: &str) -> Cartridge {
         let mbc_type = if bytes.len() > 0x0147 {
             bytes[0x0147]
         } else {
             0x00
-        };
-
-        let rom_size = if bytes.len() > 0x0148 {
-            0x8000 << bytes[0x0148]
-        } else {
-            bytes.len()
         };
 
         let ram_size = if bytes.len() > 0x0149 {
@@ -46,13 +49,40 @@ impl Cartridge {
             0
         };
 
+        let has_battery = matches!(
+            mbc_type,
+            0x03 | 0x06 | 0x09 | 0x0F | 0x10 | 0x13 | 0x1B | 0x1E
+        );
+
+        let save_path = if has_battery {
+            let mut path = PathBuf::from(rom_path);
+            path.set_extension("sav");
+            Some(path)
+        } else {
+            None
+        };
+
+        // Load saved RAM if a .sav file exists
+        let saved_ram = if has_battery {
+            if let Some(ref path) = save_path {
+                std::fs::read(path).ok().map(|mut data| {
+                    data.resize(ram_size, 0);
+                    data
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
         let mbc: Box<dyn Mbc> = match mbc_type {
             0x00 => Box::new(NoMbc {
                 rom: bytes,
-                ram: vec![0; ram_size],
+                ram: saved_ram.unwrap_or_else(|| vec![0; ram_size]),
             }),
-            0x01..=0x03 => Box::new(Mbc1::new(bytes, ram_size)),
-            0x0F..=0x13 => Box::new(Mbc3::new(bytes, ram_size)),
+            0x01..=0x03 => Box::new(Mbc1::new(bytes, ram_size, saved_ram)),
+            0x0F..=0x13 => Box::new(Mbc3::new(bytes, ram_size, saved_ram)),
             _ => {
                 eprintln!(
                     "Warning: unsupported MBC type 0x{:02X}, falling back to NoMbc",
@@ -60,12 +90,17 @@ impl Cartridge {
                 );
                 Box::new(NoMbc {
                     rom: bytes,
-                    ram: vec![0; ram_size],
+                    ram: saved_ram.unwrap_or_else(|| vec![0; ram_size]),
                 })
             }
         };
 
-        Cartridge { mbc }
+        Cartridge {
+            mbc,
+            has_battery,
+            save_path,
+            ram_dirty: false,
+        }
     }
 
     pub fn read(&self, address: u16) -> u8 {
@@ -73,7 +108,27 @@ impl Cartridge {
     }
 
     pub fn write(&mut self, address: u16, value: u8) {
+        if (0xA000..=0xBFFF).contains(&address) {
+            self.ram_dirty = true;
+        }
         self.mbc.write(address, value);
+    }
+
+    pub fn save_ram(&mut self) {
+        if !self.has_battery || !self.ram_dirty {
+            return;
+        }
+        let ram = self.mbc.ram();
+        if ram.is_empty() {
+            return;
+        }
+        if let Some(ref path) = self.save_path {
+            if let Err(e) = std::fs::write(path, ram) {
+                eprintln!("Failed to write save file {:?}: {}", path, e);
+            } else {
+                self.ram_dirty = false;
+            }
+        }
     }
 }
 
@@ -122,6 +177,10 @@ impl Mbc for NoMbc {
             _ => {}
         }
     }
+
+    fn ram(&self) -> &[u8] {
+        &self.ram
+    }
 }
 
 struct Mbc1 {
@@ -134,10 +193,10 @@ struct Mbc1 {
 }
 
 impl Mbc1 {
-    fn new(rom: Vec<u8>, ram_size: usize) -> Self {
+    fn new(rom: Vec<u8>, ram_size: usize, saved_ram: Option<Vec<u8>>) -> Self {
         Mbc1 {
             rom,
-            ram: vec![0; ram_size],
+            ram: saved_ram.unwrap_or_else(|| vec![0; ram_size]),
             rom_bank: 1,
             ram_bank: 0,
             ram_enabled: false,
@@ -237,6 +296,10 @@ impl Mbc for Mbc1 {
             _ => {}
         }
     }
+
+    fn ram(&self) -> &[u8] {
+        &self.ram
+    }
 }
 
 struct Mbc3 {
@@ -248,10 +311,10 @@ struct Mbc3 {
 }
 
 impl Mbc3 {
-    fn new(rom: Vec<u8>, ram_size: usize) -> Self {
+    fn new(rom: Vec<u8>, ram_size: usize, saved_ram: Option<Vec<u8>>) -> Self {
         Mbc3 {
             rom,
-            ram: vec![0; ram_size],
+            ram: saved_ram.unwrap_or_else(|| vec![0; ram_size]),
             rom_bank: 1,
             ram_bank: 0,
             ram_enabled: false,
@@ -341,5 +404,9 @@ impl Mbc for Mbc3 {
             }
             _ => {}
         }
+    }
+
+    fn ram(&self) -> &[u8] {
+        &self.ram
     }
 }

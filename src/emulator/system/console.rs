@@ -57,7 +57,7 @@ impl Console {
     /// Create a new console object and load a rom from path.
     pub fn new_with_rom(path: &str) -> Console {
         let bytes = std::fs::read(path).unwrap_or_else(|_| panic!("INVALID ROM PATH: {}", path));
-        let cartridge = Cartridge::from_rom(bytes);
+        let cartridge = Cartridge::from_rom(bytes, path);
         let ram = Ram::new(cartridge);
 
         let mut console = Console {
@@ -302,6 +302,10 @@ impl Console {
         if newly_pressed != 0 {
             self.ram.set_if(true, Interrupts::Joypad);
         }
+    }
+
+    pub fn save_ram(&mut self) {
+        self.ram.save_ram();
     }
 
     pub fn is_interrupt_pending(&self) -> bool {
