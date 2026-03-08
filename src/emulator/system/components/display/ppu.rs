@@ -222,14 +222,16 @@ impl Console {
 
         // Check if the window covers this pixel
         let wy = self.get_window_y();
-        let wx = self.get_window_x().wrapping_sub(7);
+        // WX values below 7 shift the window left off-screen; use signed math
+        // to avoid underflow (e.g. WX=6 means wx_signed=-1).
+        let wx_signed = self.get_window_x() as i16 - 7;
         let window_enabled = lcdc & 0x20 != 0;
-        let in_window = window_enabled && ly >= wy && pixel_x >= wx;
+        let in_window = window_enabled && ly >= wy && (pixel_x as i16) >= wx_signed;
 
         let (tile_x, tile_y, tile_pixel_x, tile_pixel_y, tilemap_base) = if in_window {
             self.ppu.window_triggered = true;
 
-            let win_x = pixel_x - wx;
+            let win_x = (pixel_x as i16 - wx_signed) as u8;
             let win_y = self.ppu.window_line;
 
             (
