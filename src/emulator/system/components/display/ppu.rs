@@ -18,6 +18,11 @@ pub(crate) struct Ppu {
     oam_sprites: Vec<SpriteObject>,
 
     framebuffer: [u8; 160 * 144 * 4],
+
+    /// Internal window line counter. Increments only on scanlines where the window was rendered.
+    window_line: u8,
+    /// Whether the window was rendered on the current scanline.
+    window_triggered: bool,
 }
 
 impl Default for Ppu {
@@ -26,10 +31,12 @@ impl Default for Ppu {
             dots: 0,
             draw_mode: PpuMode::OamScan,
 
-            // oam_sprite_index: 0,
             oam_sprites: vec![],
 
             framebuffer: [0; 160 * 144 * 4],
+
+            window_line: 0,
+            window_triggered: false,
         }
     }
 }
@@ -87,6 +94,12 @@ impl Console {
             }
             PpuMode::HBlank => {
                 if self.ppu.dots == 456 {
+                    // Advance window line counter if the window was active this scanline
+                    if self.ppu.window_triggered {
+                        self.ppu.window_line += 1;
+                        self.ppu.window_triggered = false;
+                    }
+
                     self.set_lcd_y(self.get_lcd_y() + 1);
                     self.ppu.dots = 0;
                     if self.get_lcd_y() == 144 {
@@ -104,6 +117,11 @@ impl Console {
                     self.set_lcd_y(self.get_lcd_y() + 1);
                     if self.get_lcd_y() == 154 {
                         self.set_lcd_y(0);
+<<<<<<< Updated upstream
+=======
+                        self.check_lyc();
+                        self.ppu.window_line = 0;
+>>>>>>> Stashed changes
                         self.set_ppu_mode(PpuMode::OamScan);
                     }
                 }
@@ -154,28 +172,49 @@ impl Console {
     }
 
     fn draw_background(&mut self, pixel_x: u8) {
-        let map_x = self.get_scroll_x().wrapping_add(pixel_x);
-        let map_y = self.get_scroll_y().wrapping_add(self.get_lcd_y());
+        let lcdc = self.get_lcd_control();
+        let ly = self.get_lcd_y();
 
-        let tile_x = (map_x / 8) as u16;
-        let tile_y = (map_y / 8) as u16;
+        // Check if the window covers this pixel
+        let wy = self.get_window_y();
+        let wx = self.get_window_x().wrapping_sub(7);
+        let window_enabled = lcdc & 0x20 != 0;
+        let in_window = window_enabled && ly >= wy && pixel_x >= wx;
 
-        let tile_pixel_x = map_x % 8;
-        let tile_pixel_y = map_y % 8;
+        let (tile_x, tile_y, tile_pixel_x, tile_pixel_y, tilemap_base) = if in_window {
+            self.ppu.window_triggered = true;
 
-        let tilemap_base = if self.get_lcd_control() & 0x08 != 0 {
-            0x9C00
+            let win_x = pixel_x - wx;
+            let win_y = self.ppu.window_line;
+
+            (
+                (win_x / 8) as u16,
+                (win_y / 8) as u16,
+                win_x % 8,
+                win_y % 8,
+                // Window tilemap selected by LCDC bit 6
+                if lcdc & 0x40 != 0 { 0x9C00u16 } else { 0x9800u16 },
+            )
         } else {
-            0x9800
+            let map_x = self.get_scroll_x().wrapping_add(pixel_x);
+            let map_y = self.get_scroll_y().wrapping_add(ly);
+
+            (
+                (map_x / 8) as u16,
+                (map_y / 8) as u16,
+                map_x % 8,
+                map_y % 8,
+                // BG tilemap selected by LCDC bit 3
+                if lcdc & 0x08 != 0 { 0x9C00u16 } else { 0x9800u16 },
+            )
         };
+
         let tilemap_address = tilemap_base + (tile_y * 32) + tile_x;
         let tile_index = self.ram.fetch(tilemap_address);
 
-        let tile_data_base = if self.get_lcd_control() & 0x10 != 0 {
-            // Unsigned: 0x8000 base
+        let tile_data_base = if lcdc & 0x10 != 0 {
             0x8000 + (tile_index as u16) * 16
         } else {
-            // Signed: 0x9000 base, tile_index is i8
             0x9000u16.wrapping_add(((tile_index as i8) as i16 * 16) as u16)
         };
 
@@ -188,24 +227,22 @@ impl Console {
         let color_bit_1 = (byte2 >> bit_position) & 1;
         let color_id = (color_bit_1 << 1) | color_bit_0;
 
-        // Get the palette value from BGP register
         let palette = self.get_bg_palette();
         let palette_color = (palette >> (color_id * 2)) & 0x03;
 
-        // Map palette color to grayscale shade (0=white, 3=black)
         let shade = match palette_color {
-            0 => 255, // White
-            1 => 192, // Light gray
-            2 => 96,  // Dark gray
-            3 => 0,   // Black
+            0 => 255,
+            1 => 192,
+            2 => 96,
+            3 => 0,
             _ => 0,
         };
 
-        let fb_index = ((self.get_lcd_y() as usize) * 160 + (pixel_x as usize)) * 4;
-        self.ppu.framebuffer[fb_index] = shade; // R
-        self.ppu.framebuffer[fb_index + 1] = shade; // G
-        self.ppu.framebuffer[fb_index + 2] = shade; // B
-        self.ppu.framebuffer[fb_index + 3] = 255; // A
+        let fb_index = ((ly as usize) * 160 + (pixel_x as usize)) * 4;
+        self.ppu.framebuffer[fb_index] = shade;
+        self.ppu.framebuffer[fb_index + 1] = shade;
+        self.ppu.framebuffer[fb_index + 2] = shade;
+        self.ppu.framebuffer[fb_index + 3] = 255;
     }
 
     fn set_ppu_mode(&mut self, new_mode: PpuMode) {
