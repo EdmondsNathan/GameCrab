@@ -1,5 +1,8 @@
+use super::cartridge::Cartridge;
+
 pub struct Ram {
     memory: [u8; 0x10000],
+    cartridge: Cartridge,
     div: u16,
     /// Action buttons state (active low): bit0=A, bit1=B, bit2=Select, bit3=Start
     pub(crate) joypad_action: u8,
@@ -19,6 +22,7 @@ impl Default for Ram {
     fn default() -> Self {
         Ram {
             memory: [0; 0x10000],
+            cartridge: Cartridge::default(),
             div: 0,
             joypad_action: 0x0F,
             joypad_direction: 0x0F,
@@ -27,9 +31,12 @@ impl Default for Ram {
 }
 
 impl Ram {
-    /// Create a new Ram object.
-    pub fn new() -> Ram {
-        Self::default()
+    /// Create a new Ram with a cartridge.
+    pub fn new(cartridge: Cartridge) -> Ram {
+        Ram {
+            cartridge,
+            ..Default::default()
+        }
     }
 
     /// Fetch the value of an address.
@@ -55,6 +62,11 @@ impl Ram {
             return result;
         }
 
+        // ROM and external RAM: delegate to cartridge
+        if address <= 0x7FFF || (address >= 0xA000 && address <= 0xBFFF) {
+            return self.cartridge.read(address);
+        }
+
         // Echo RAM: 0xE000-0xFDFF mirrors 0xC000-0xDDFF
         if address >= 0xE000 && address <= 0xFDFF {
             return self.memory[(address - 0x2000) as usize];
@@ -73,16 +85,11 @@ impl Ram {
         (self.fetch(address + 1) as u16) << 8 | (self.fetch(address) as u16)
     }
 
-    /// Write directly to the memory array, bypassing all hardware checks.
-    /// Used for initial ROM loading.
-    pub fn set_raw(&mut self, address: u16, value: u8) {
-        self.memory[address as usize] = value;
-    }
-
     /// Set the value of an address.
     pub fn set(&mut self, value: u8, address: u16) {
-        // ROM space (0x0000-0x7FFF): writes are ignored (no MBC)
-        if address < 0x8000 {
+        // ROM and external RAM: delegate to cartridge (handles MBC registers)
+        if address <= 0x7FFF || (address >= 0xA000 && address <= 0xBFFF) {
+            self.cartridge.write(address, value);
             return;
         }
 
@@ -114,7 +121,8 @@ impl Ram {
         else if address == 0xFF46 {
             let source_base = (value as u16) << 8;
             for i in 0..160u16 {
-                self.memory[0xFE00 + i as usize] = self.memory[source_base as usize + i as usize];
+                let byte = self.fetch(source_base + i);
+                self.memory[0xFE00 + i as usize] = byte;
             }
         }
     }

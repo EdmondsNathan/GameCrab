@@ -35,7 +35,11 @@ fn conf() -> Conf {
 async fn main() {
     let mut console =
     // Console::new();
-    Console::new_with_rom("roms/Tetris.gb");
+    // Console::new_with_rom("roms/Tetris.gb");
+    // Console::new_with_rom("roms/Asteroids.gb");
+    Console::new_with_rom("roms/Pokemon Red.gb");
+    // Console::new_with_rom("roms/Pinball Deluxe.gb");
+    // Console::new_with_rom("roms/Super Mario Land.gb");
     // Console::new_with_rom("roms/DrMario.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
@@ -49,8 +53,6 @@ async fn main() {
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/10-bit ops.gb");
     // Console::new_with_rom("roms/gb-test-roms-master/cpu_instrs/individual/11-op a,(hl).gb");
     // Console::new_with_rom("roms/gb-test-roms-master/halt_bug.gb");
-
-    console.rom_into_ram();
 
     let texture = Texture2D::from_rgba8(160, 144, &[0; 160 * 144 * 4]);
     texture.set_filter(FilterMode::Nearest);

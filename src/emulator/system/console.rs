@@ -2,14 +2,13 @@ use crate::emulator::print_logs::log_gameboy_doctor;
 use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
-use crate::emulator::system::components::rom::Rom;
+use crate::emulator::system::components::cartridge::Cartridge;
 use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
 use crate::emulator::system::console;
 use crate::emulator::system::executor::{execute_instruction, execution_queue::ExecutionQueue};
 
 pub struct Console {
     pub(crate) cpu: Cpu,
-    pub(crate) rom: Rom,
     pub(crate) ram: Ram,
     pub(crate) ppu: Ppu,
     pub(crate) tick_counter: u64,
@@ -23,7 +22,6 @@ impl Default for Console {
     fn default() -> Self {
         let mut console = Self {
             cpu: Default::default(),
-            rom: Default::default(),
             ram: Default::default(),
             ppu: Default::default(),
             tick_counter: Default::default(),
@@ -58,27 +56,27 @@ impl Console {
 
     /// Create a new console object and load a rom from path.
     pub fn new_with_rom(path: &str) -> Console {
-        Console {
-            rom: Self::load_rom(path),
+        let bytes = std::fs::read(path).unwrap_or_else(|_| panic!("INVALID ROM PATH: {}", path));
+        let cartridge = Cartridge::from_rom(bytes);
+        let ram = Ram::new(cartridge);
+
+        let mut console = Console {
+            ram,
             ..Default::default()
-        }
-    }
+        };
 
-    /// Load a rom or panic if none is found.
-    fn load_rom(path: &str) -> Rom {
-        match Rom::try_new(path) {
-            Ok(rom) => rom,
-            Err(error) => {
-                panic!("{error}");
-            }
-        }
-    }
+        // Re-initialize IO registers (Default sets them, but we replaced ram)
+        console.ram.set(0xCF, 0xFF00); // JOYP
+        console.ram.set(0x7E, 0xFF02); // SC
+        console.ram.set(0xF8, 0xFF07); // TAC
+        console.ram.set(0xE1, 0xFF0F); // IF
+        console.ram.set(0x91, 0xFF40); // LCDC
+        console.ram.set(0x85, 0xFF41); // STAT
+        console.ram.set(0xFC, 0xFF47); // BGP
+        console.ram.set(0xFF, 0xFF48); // OBP0
+        console.ram.set(0xFF, 0xFF49); // OBP1
 
-    /// load the contents of a Rom into Ram.
-    pub(crate) fn rom_into_ram(&mut self) {
-        for (i, byte) in (0_u16..).zip(self.rom.bytes.iter()) {
-            self.ram.set_raw(i, *byte);
-        }
+        console
     }
 
     // TAG_TODO Move CPU into its own tick function
