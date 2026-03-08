@@ -152,15 +152,22 @@ impl Console {
                 }
             }
             PpuMode::VBlank => {
+                // Scanline 153 quirk: 4 T-cycles after LY becomes 153,
+                // LY resets to 0 (while remaining in VBlank mode).
+                if self.get_lcd_y() == 153 && self.ppu.dots == 4 {
+                    self.set_lcd_y(0);
+                    self.check_lyc();
+                }
+
                 if self.ppu.dots == 456 {
                     self.ppu.dots = 0;
-                    self.set_lcd_y(self.get_lcd_y() + 1);
-                    self.check_lyc();
-                    if self.get_lcd_y() == 154 {
-                        self.set_lcd_y(0);
-                        self.check_lyc();
+                    if self.get_lcd_y() == 0 {
+                        // End of line 153 (LY already reset to 0 by quirk above)
                         self.ppu.window_line = 0;
                         self.set_ppu_mode(PpuMode::OamScan);
+                    } else {
+                        self.set_lcd_y(self.get_lcd_y() + 1);
+                        self.check_lyc();
                     }
                 }
             }
