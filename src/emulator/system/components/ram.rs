@@ -117,6 +117,11 @@ impl Ram {
             return self.memory[(address - 0x2000) as usize];
         }
 
+        // Unused IO registers return 0xFF on DMG
+        if address >= 0xFF4C && address <= 0xFF7F {
+            return 0xFF;
+        }
+
         self.memory[address as usize]
     }
 
@@ -162,6 +167,11 @@ impl Ram {
         if address == 0xFF02 && value == 0x81 {
             let character = self.fetch(0xFF01) as char;
             // print!("{character}");
+            // Transfer complete: clear bit 7 and set incoming byte to 0xFF (no link partner)
+            self.memory[0xFF02] = value & 0x7F;
+            self.memory[0xFF01] = 0xFF;
+            self.set_if(true, Interrupts::Serial);
+            return;
         }
         //Div register gets reset if any value is written to it
         else if address == 0xFF04 {

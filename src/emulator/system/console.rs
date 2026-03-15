@@ -328,6 +328,7 @@ impl Console {
         let newly_pressed = (old_action & !action) | (old_direction & !direction);
         if newly_pressed != 0 {
             self.ram.set_if(true, Interrupts::Joypad);
+            self.cpu.set_is_stopped(false);
         }
     }
 
