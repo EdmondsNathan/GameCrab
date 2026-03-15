@@ -7,7 +7,7 @@ impl Console {
             Update(|console: &mut Console| {
                 let interrupt_enable = console.ram.fetch(0xFFFF);
                 let interrupt_flag = console.ram.fetch(0xFF0F);
-                let halt_bug = !console.cpu.get_ime() && ((interrupt_enable & interrupt_flag) != 0);
+                let halt_bug = !console.cpu.get_ime() && ((interrupt_enable & interrupt_flag & 0x1F) != 0);
 
                 console.cpu.set_halt(true);
                 console.cpu.set_halt_bug(halt_bug);

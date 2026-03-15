@@ -86,6 +86,10 @@ impl Ram {
             return (self.div >> 8) as u8;
         }
 
+        if address == 0xFF0F {
+            return self.memory[0xFF0F] | 0xE0;
+        }
+
         if address == 0xFF00 {
             let select = self.memory[0xFF00] & 0x30;
             let mut result = select | 0xC0; // Upper bits always set
