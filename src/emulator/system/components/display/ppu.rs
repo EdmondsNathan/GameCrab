@@ -21,6 +21,9 @@ pub(crate) struct Ppu {
 
     framebuffer: [u8; 160 * 144 * 4],
 
+    /// BG color IDs for the current scanline (before palette mapping), used for sprite priority.
+    bg_color_ids: [u8; 160],
+
     /// Internal window line counter. Only increments on scanlines where the window was rendered.
     window_line: u8,
     /// Whether the window was rendered on the current scanline.
@@ -36,6 +39,7 @@ impl Default for Ppu {
             oam_sprites: vec![],
 
             framebuffer: [0; 160 * 144 * 4],
+            bg_color_ids: [0; 160],
 
             window_line: 0,
             window_triggered: false,
@@ -274,6 +278,8 @@ impl Console {
         let color_bit_1 = (byte2 >> bit_position) & 1;
         let color_id = (color_bit_1 << 1) | color_bit_0;
 
+        self.ppu.bg_color_ids[pixel_x as usize] = color_id;
+
         let palette = self.get_bg_palette();
         let palette_color = (palette >> (color_id * 2)) & 0x03;
 
@@ -306,8 +312,13 @@ impl Console {
 
         let ly = self.get_lcd_y();
 
-        // Iterate sprites in reverse so lower-index sprites (higher priority) draw last
-        for i in (0..self.ppu.oam_sprites.len()).rev() {
+        // DMG priority: lower X first, then lower OAM index for ties.
+        // Sort descending so highest-priority sprite draws last (on top).
+        self.ppu.oam_sprites.sort_by(|a, b| {
+            b.x.cmp(&a.x).then(b.oam_index.cmp(&a.oam_index))
+        });
+
+        for i in 0..self.ppu.oam_sprites.len() {
             let sprite_x = self.ppu.oam_sprites[i].x.wrapping_sub(8);
             let sprite_y = self.ppu.oam_sprites[i].y.wrapping_sub(16);
             let tile_index = self.ppu.oam_sprites[i].tile_index;
@@ -361,10 +372,7 @@ impl Console {
 
             // If BG priority bit is set, sprite is behind non-zero BG colors
             if bg_priority {
-                let fb_index =
-                    ((ly as usize) * 160 + (pixel_x as usize)) * 4;
-                // Check if BG pixel is non-white (non-zero color)
-                if self.ppu.framebuffer[fb_index] != 255 {
+                if self.ppu.bg_color_ids[pixel_x as usize] != 0 {
                     continue;
                 }
             }
