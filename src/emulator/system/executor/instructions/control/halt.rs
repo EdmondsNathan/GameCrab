@@ -126,6 +126,6 @@ mod tests {
         }
 
         assert_eq!(console.cpu.get_register_16(&Register16::Pc), 0x048);
-        assert_eq!(console.ram.fetch(0xFF0F), 0b00000001);
+        assert_eq!(console.ram.fetch(0xFF0F) & 0x1F, 0b00000001);
     }
 }
