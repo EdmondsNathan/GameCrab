@@ -425,7 +425,9 @@ impl Console {
             self.tima_overflow_counter = if tima[0] != 0 { Some(tima[1]) } else { None };
 
             self.execution_queue.clear();
-            self.queue_next_instruction(0);
+            if !self.cpu.get_halt() && !self.cpu.get_is_stopped() {
+                self.queue_next_instruction(0);
+            }
 
             Ok(())
         })();
