@@ -45,8 +45,8 @@ Requires the [Rust toolchain](https://rustup.rs/) (stable, 2024 edition).
 |-----|--------|-|-----|----------|
 | Z | A | | F5 | Save state |
 | X | B | | F9 | Load state |
-| Enter | Start | | | |
-| Backspace | Select | | | |
+| C | Start | | | |
+| V | Select | | | |
 | Arrows | D-Pad | | | |
 
 ## Technical Highlights

@@ -140,8 +140,8 @@ fn poll_joypad(console: &mut Console) {
     // Action buttons (active low: 0 = pressed, 1 = released)
     let action = (!is_key_down(KeyCode::Z) as u8)           // A
         | ((!is_key_down(KeyCode::X) as u8) << 1)           // B
-        | ((!is_key_down(KeyCode::Backspace) as u8) << 2)   // Select
-        | ((!is_key_down(KeyCode::Enter) as u8) << 3); // Start
+        | ((!is_key_down(KeyCode::C) as u8) << 2)   // Select
+        | ((!is_key_down(KeyCode::V) as u8) << 3); // Start
 
     // Direction buttons (active low)
     let direction = (!is_key_down(KeyCode::Right) as u8)
