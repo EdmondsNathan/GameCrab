@@ -3,10 +3,10 @@ use std::path::PathBuf;
 
 use crate::emulator::print_logs::log_gameboy_doctor;
 use crate::emulator::system::components::audio::apu::Apu;
+use crate::emulator::system::components::cartridge::Cartridge;
 use crate::emulator::system::components::display::ppu::Ppu;
 use crate::emulator::system::components::ram::Interrupts;
 use crate::emulator::system::components::registers::{Register16, Register8};
-use crate::emulator::system::components::cartridge::Cartridge;
 use crate::emulator::system::components::{cpu::Cpu, ram::Ram};
 use crate::emulator::system::console;
 use crate::emulator::system::executor::{execute_instruction, execution_queue::ExecutionQueue};
