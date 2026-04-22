@@ -2,6 +2,8 @@
 
 A cycle-accurate Game Boy (DMG) emulator written in Rust. Built from scratch to faithfully reproduce the Sharp SM83 CPU, PPU, APU, and memory subsystem at the T-cycle level.
 
+![Tetris](assets/Tetris.gif) ![Metroid II](assets/Metroid2.gif)
+
 ## Features
 
 - **Full SM83 CPU** -- all standard and CB-prefixed opcodes, interrupts, HALT/STOP, and the HALT bug
